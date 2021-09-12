@@ -96,7 +96,7 @@ def parse_arguments():
                         + 'use as input for generation. Has to be a YAML file path relative to data/keyboards. '
                         + 'Can be specified multiple times.')
     parser.add_argument('--generate-scancodes', action='store_true', dest='generate_scancodes', help='also '
-                        + 'generate scancode tables (only works for US layout currently')
+                        + 'generate scancode tables (only works for US layout currently)')
     parser.add_argument('--output', dest='output', type=str, help='output directory for generated files')
     args = parser.parse_args()
 

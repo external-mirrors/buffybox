@@ -24,7 +24,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --input INPUT         squeekboard layout to use as input for generation. Has to be a YAML file path relative to data/keyboards. Can be specified
                         multiple times.
-  --generate-scancodes  also generate scancode tables (only works for US layout currently
+  --generate-scancodes  also generate scancode tables (only works for US layout currently)
   --output OUTPUT       output directory for generated files
 ```
 
