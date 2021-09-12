@@ -28,7 +28,7 @@ optional arguments:
   --output OUTPUT       output directory for generated files
 ```
 
-As an example, the following command converts [squeekboard]'s US layout to C
+As an example, the following command converts [squeekboard's US layout] to C
 
 ```
 $ pipenv run python squeek2lvgl.py --input us.yaml --output .
@@ -44,4 +44,5 @@ squeek2lvgl is licensed under the GNU General Public License as published by the
 
 [LVGL]: https://github.com/lvgl/lvgl
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard
+[squeekboard's US layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/us.yaml
 [examples]: ./examples
