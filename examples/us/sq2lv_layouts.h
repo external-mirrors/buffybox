@@ -5,7 +5,7 @@
 #ifndef SQ2LV_LAYOUTS_H
 #define SQ2LV_LAYOUTS_H
 
-#include "../lvgl/lvgl.h"
+#include "lvgl/lvgl.h"
 
 /* Layout IDs, values can be used as indexes into the sq2lv_layouts array */
 typedef enum {

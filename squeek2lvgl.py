@@ -593,7 +593,7 @@ if __name__ == '__main__':
     c_builder.add_line()
 
     h_builder = SourceFileBuilder()
-    h_builder.add_include('../lvgl/lvgl.h')
+    h_builder.add_include('lvgl/lvgl.h')
     h_builder.add_line()
 
     layouts = []
