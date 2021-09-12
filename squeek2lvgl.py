@@ -693,7 +693,7 @@ if __name__ == '__main__':
     h_builder.add_line('    const int * const switcher_dests;')
     if args.generate_scancodes:
         h_builder.add_line('    /* Total number of scancodes */')
-        h_builder.add_line('    const int const num_scancodes;')
+        h_builder.add_line('    const int num_scancodes;')
         h_builder.add_line('    /* Flat array of scancodes */')
         h_builder.add_line('    const int * const scancodes;')
         h_builder.add_line('    /* Start index in scancodes array for key cap */')

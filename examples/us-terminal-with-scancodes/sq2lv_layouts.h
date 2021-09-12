@@ -25,7 +25,7 @@ typedef struct {
     /* Indexes of layers to jump to when triggering layer switch buttons */
     const int * const switcher_dests;
     /* Total number of scancodes */
-    const int const num_scancodes;
+    const int num_scancodes;
     /* Flat array of scancodes */
     const int * const scancodes;
     /* Start index in scancodes array for key cap */
