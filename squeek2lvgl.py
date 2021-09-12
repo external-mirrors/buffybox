@@ -528,9 +528,11 @@ def get_keycaps_attrs_switchers_scancodes(args, layout_id, view_id, data_views, 
 
                 if 'set_view' in action:
                     dest = action['set_view']
-                elif 'locking' in action and 'lock_view' in action['locking']:
-                    dest = action['locking']['lock_view']
-
+                elif 'locking' in action and 'lock_view' in action['locking'] and 'unlock_view' in action['locking']:
+                    if action['locking']['lock_view'] == view_id:
+                        dest = action['locking']['unlock_view']
+                    elif action['locking']['unlock_view'] == view_id:
+                        dest = action['locking']['lock_view']
                 if dest:
                     switcher_idxs.append(idx)
                     switcher_dests.append(dest)

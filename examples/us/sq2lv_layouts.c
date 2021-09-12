@@ -59,7 +59,7 @@ static const int switcher_idxs_upper_us[] = { \
 };
 
 static const int switcher_dests_upper_us[] = { \
-    1, 2 \
+    0, 2 \
 };
 
 /* Layer: Numbers / symbols - generated from numbers */

@@ -90,7 +90,7 @@ static const int switcher_idxs_upper_terminal_us[] = { \
 };
 
 static const int switcher_dests_upper_terminal_us[] = { \
-    1, 2 \
+    0, 2 \
 };
 
 static const int num_scancodes_upper_terminal_us = 5;
