@@ -173,6 +173,46 @@ static const int scancode_nums_numbers_terminal_us[] = { \
     0, 1, 1, 1 \
 };
 
+/* Layer array */
+
+static const int num_layers_terminal_us = 3;
+
+static const sq2lv_layer_t layers_terminal_us[] = {
+    {
+        .keycaps = keycaps_lower_terminal_us,
+        .attributes = attributes_lower_terminal_us,
+        .num_switchers = num_switchers_lower_terminal_us,
+        .switcher_idxs = switcher_idxs_lower_terminal_us,
+        .switcher_dests = switcher_dests_lower_terminal_us,
+        .num_scancodes = num_scancodes_lower_terminal_us,
+        .scancodes = scancodes_lower_terminal_us,
+        .scancode_idxs = scancode_idxs_lower_terminal_us,
+        .scancode_nums = scancode_nums_lower_terminal_us
+    },
+    {
+        .keycaps = keycaps_upper_terminal_us,
+        .attributes = attributes_upper_terminal_us,
+        .num_switchers = num_switchers_upper_terminal_us,
+        .switcher_idxs = switcher_idxs_upper_terminal_us,
+        .switcher_dests = switcher_dests_upper_terminal_us,
+        .num_scancodes = num_scancodes_upper_terminal_us,
+        .scancodes = scancodes_upper_terminal_us,
+        .scancode_idxs = scancode_idxs_upper_terminal_us,
+        .scancode_nums = scancode_nums_upper_terminal_us
+    },
+    {
+        .keycaps = keycaps_numbers_terminal_us,
+        .attributes = attributes_numbers_terminal_us,
+        .num_switchers = num_switchers_numbers_terminal_us,
+        .switcher_idxs = switcher_idxs_numbers_terminal_us,
+        .switcher_dests = switcher_dests_numbers_terminal_us,
+        .num_scancodes = num_scancodes_numbers_terminal_us,
+        .scancodes = scancodes_numbers_terminal_us,
+        .scancode_idxs = scancode_idxs_numbers_terminal_us,
+        .scancode_nums = scancode_nums_numbers_terminal_us
+    }
+};
+
 /**
  * Public interface
  **/
@@ -180,42 +220,8 @@ static const int scancode_nums_numbers_terminal_us[] = { \
 const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English (Terminal) */
     {
-        .layers = (sq2lv_layer_t[]){
-            {
-                .keycaps = keycaps_lower_terminal_us,
-                .attributes = attributes_lower_terminal_us,
-                .num_switchers = num_switchers_lower_terminal_us,
-                .switcher_idxs = switcher_idxs_lower_terminal_us,
-                .switcher_dests = switcher_dests_lower_terminal_us,
-                .num_scancodes = num_scancodes_lower_terminal_us,
-                .scancodes = scancodes_lower_terminal_us,
-                .scancode_idxs = scancode_idxs_lower_terminal_us,
-                .scancode_nums = scancode_nums_lower_terminal_us
-            },
-            {
-                .keycaps = keycaps_upper_terminal_us,
-                .attributes = attributes_upper_terminal_us,
-                .num_switchers = num_switchers_upper_terminal_us,
-                .switcher_idxs = switcher_idxs_upper_terminal_us,
-                .switcher_dests = switcher_dests_upper_terminal_us,
-                .num_scancodes = num_scancodes_upper_terminal_us,
-                .scancodes = scancodes_upper_terminal_us,
-                .scancode_idxs = scancode_idxs_upper_terminal_us,
-                .scancode_nums = scancode_nums_upper_terminal_us
-            },
-            {
-                .keycaps = keycaps_numbers_terminal_us,
-                .attributes = attributes_numbers_terminal_us,
-                .num_switchers = num_switchers_numbers_terminal_us,
-                .switcher_idxs = switcher_idxs_numbers_terminal_us,
-                .switcher_dests = switcher_dests_numbers_terminal_us,
-                .num_scancodes = num_scancodes_numbers_terminal_us,
-                .scancodes = scancodes_numbers_terminal_us,
-                .scancode_idxs = scancode_idxs_numbers_terminal_us,
-                .scancode_nums = scancode_nums_numbers_terminal_us
-            }
-        },
-        .num_layers = 3
+        .num_layers = num_layers_terminal_us,
+        .layers = layers_terminal_us
     }
 };
 

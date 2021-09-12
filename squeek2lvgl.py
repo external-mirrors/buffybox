@@ -665,10 +665,25 @@ if __name__ == '__main__':
                     c_builder.add_array(True, 'const int', f'scancode_nums_{layer_identifier}', scancode_nums, '', '')
                     c_builder.add_line()
 
+            c_builder.add_subsection_comment(f'Layer array')
+            c_builder.add_line()
+            c_builder.add_line(f'static const int num_layers_{layout_identifier} = {len(layer_identifiers)};')
+            c_builder.add_line()
+            c_builder.add_line(f'static const sq2lv_layer_t layers_{layout_identifier}[] = ' + '{')
+            for i, identifier in enumerate(layer_identifiers):
+                c_builder.add_line('    {')
+                fields = ['keycaps', 'attributes', 'num_switchers', 'switcher_idxs', 'switcher_dests']
+                if args.generate_scancodes:
+                    fields += ['num_scancodes', 'scancodes', 'scancode_idxs', 'scancode_nums']
+                for k, field in enumerate(fields):
+                    c_builder.add_line(f'        .{field} = {field}_{identifier}{comma_if_needed(fields, k)}')
+                c_builder.add_line('    }' + comma_if_needed(layer_identifiers, i))
+            c_builder.add_line('};')
+            c_builder.add_line()
+
             layouts.append({
                 'name': layout_id_to_layout_name(layout_id),
-                'identifier': layout_identifier,
-                'layer_identifiers': layer_identifiers
+                'identifier': layout_identifier
             })
 
     h_builder.add_line('/* Layout IDs, values can be used as indexes into the sq2lv_layouts array */')
@@ -705,10 +720,10 @@ if __name__ == '__main__':
 
     h_builder.add_line('/* Layout type */')
     h_builder.add_line('typedef struct {')
-    h_builder.add_line('    /* Layers array */')
-    h_builder.add_line('    const sq2lv_layer_t * const layers;')
     h_builder.add_line('    /* Total number of layers */')
     h_builder.add_line('    const int num_layers;')
+    h_builder.add_line('    /* Layers array */')
+    h_builder.add_line('    const sq2lv_layer_t * const layers;')
     h_builder.add_line('} sq2lv_layout_t;')
     h_builder.add_line()
 
@@ -727,17 +742,8 @@ if __name__ == '__main__':
     for i, layout in enumerate(layouts):
         c_builder.add_line('    /* ' + layout['name'] + ' */')
         c_builder.add_line('    {')
-        c_builder.add_line('        .layers = (sq2lv_layer_t[]){')
-        for j, identifier in enumerate(layout['layer_identifiers']):
-            c_builder.add_line('            {')
-            fields = ['keycaps', 'attributes', 'num_switchers', 'switcher_idxs', 'switcher_dests']
-            if args.generate_scancodes:
-                fields += ['num_scancodes', 'scancodes', 'scancode_idxs', 'scancode_nums']
-            for k, field in enumerate(fields):
-                c_builder.add_line(f'                .{field} = {field}_{identifier}{comma_if_needed(fields, k)}')
-            c_builder.add_line('            }' + comma_if_needed(layout['layer_identifiers'], j))
-        c_builder.add_line('        },')
-        c_builder.add_line('        .num_layers = ' + str(len(layout['layer_identifiers'])))
+        c_builder.add_line('        .num_layers = num_layers_' + layout['identifier'] + ',')
+        c_builder.add_line('        .layers = layers_' + layout['identifier'])
         c_builder.add_line('    }' + comma_if_needed(layouts, i))
     c_builder.add_line('};')
     c_builder.add_line()

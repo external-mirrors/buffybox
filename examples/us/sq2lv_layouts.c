@@ -88,6 +88,34 @@ static const int switcher_dests_numbers_us[] = { \
     0 \
 };
 
+/* Layer array */
+
+static const int num_layers_us = 3;
+
+static const sq2lv_layer_t layers_us[] = {
+    {
+        .keycaps = keycaps_lower_us,
+        .attributes = attributes_lower_us,
+        .num_switchers = num_switchers_lower_us,
+        .switcher_idxs = switcher_idxs_lower_us,
+        .switcher_dests = switcher_dests_lower_us
+    },
+    {
+        .keycaps = keycaps_upper_us,
+        .attributes = attributes_upper_us,
+        .num_switchers = num_switchers_upper_us,
+        .switcher_idxs = switcher_idxs_upper_us,
+        .switcher_dests = switcher_dests_upper_us
+    },
+    {
+        .keycaps = keycaps_numbers_us,
+        .attributes = attributes_numbers_us,
+        .num_switchers = num_switchers_numbers_us,
+        .switcher_idxs = switcher_idxs_numbers_us,
+        .switcher_dests = switcher_dests_numbers_us
+    }
+};
+
 /**
  * Public interface
  **/
@@ -95,30 +123,8 @@ static const int switcher_dests_numbers_us[] = { \
 const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English */
     {
-        .layers = (sq2lv_layer_t[]){
-            {
-                .keycaps = keycaps_lower_us,
-                .attributes = attributes_lower_us,
-                .num_switchers = num_switchers_lower_us,
-                .switcher_idxs = switcher_idxs_lower_us,
-                .switcher_dests = switcher_dests_lower_us
-            },
-            {
-                .keycaps = keycaps_upper_us,
-                .attributes = attributes_upper_us,
-                .num_switchers = num_switchers_upper_us,
-                .switcher_idxs = switcher_idxs_upper_us,
-                .switcher_dests = switcher_dests_upper_us
-            },
-            {
-                .keycaps = keycaps_numbers_us,
-                .attributes = attributes_numbers_us,
-                .num_switchers = num_switchers_numbers_us,
-                .switcher_idxs = switcher_idxs_numbers_us,
-                .switcher_dests = switcher_dests_numbers_us
-            }
-        },
-        .num_layers = 3
+        .num_layers = num_layers_us,
+        .layers = layers_us
     }
 };
 

@@ -36,10 +36,10 @@ typedef struct {
 
 /* Layout type */
 typedef struct {
-    /* Layers array */
-    const sq2lv_layer_t * const layers;
     /* Total number of layers */
     const int num_layers;
+    /* Layers array */
+    const sq2lv_layer_t * const layers;
 } sq2lv_layout_t;
 
 /* Layouts */
