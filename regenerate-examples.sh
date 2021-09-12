@@ -21,7 +21,8 @@ pipenv install
 
 pipenv run python squeek2lvgl.py \
     --input us.yaml \
-    --output examples/us
+    --output examples/us \
+    --surround-space-with-arrows
 
 pipenv run python squeek2lvgl.py \
     --input terminal/us.yaml \

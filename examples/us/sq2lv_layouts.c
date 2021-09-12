@@ -23,7 +23,17 @@ static const lv_btnmatrix_ctrl_t attributes_lower_us[] = { \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+};
+
+static const int num_switchers_lower_us = 2;
+
+static const int switcher_idxs_lower_us[] = { \
+    19, 28 \
+};
+
+static const int switcher_dests_lower_us[] = { \
+    1, 2 \
 };
 
 /* Layer: Uppercase letters - generated from upper */
@@ -39,7 +49,17 @@ static const lv_btnmatrix_ctrl_t attributes_upper_us[] = { \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+};
+
+static const int num_switchers_upper_us = 2;
+
+static const int switcher_idxs_upper_us[] = { \
+    19, 28 \
+};
+
+static const int switcher_dests_upper_us[] = { \
+    1, 2 \
 };
 
 /* Layer: Numbers / symbols - generated from numbers */
@@ -55,7 +75,17 @@ static const lv_btnmatrix_ctrl_t attributes_numbers_us[] = { \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+};
+
+static const int num_switchers_numbers_us = 1;
+
+static const int switcher_idxs_numbers_us[] = { \
+    28 \
+};
+
+static const int switcher_dests_numbers_us[] = { \
+    0 \
 };
 
 /**
@@ -68,15 +98,24 @@ const sq2lv_layout_t sq2lv_layouts[] = {
         .layers = (sq2lv_layer_t[]){
             {
                 .keycaps = keycaps_lower_us,
-                .attributes = attributes_lower_us
+                .attributes = attributes_lower_us,
+                .num_switchers = num_switchers_lower_us,
+                .switcher_idxs = switcher_idxs_lower_us,
+                .switcher_dests = switcher_dests_lower_us
             },
             {
                 .keycaps = keycaps_upper_us,
-                .attributes = attributes_upper_us
+                .attributes = attributes_upper_us,
+                .num_switchers = num_switchers_upper_us,
+                .switcher_idxs = switcher_idxs_upper_us,
+                .switcher_dests = switcher_dests_upper_us
             },
             {
                 .keycaps = keycaps_numbers_us,
-                .attributes = attributes_numbers_us
+                .attributes = attributes_numbers_us,
+                .num_switchers = num_switchers_numbers_us,
+                .switcher_idxs = switcher_idxs_numbers_us,
+                .switcher_dests = switcher_dests_numbers_us
             }
         },
         .num_layers = 3

@@ -34,38 +34,6 @@ outfile_h = 'sq2lv_layouts.h'
 repository_url = 'https://gitlab.gnome.org/World/Phosh/squeekboard.git'
 rel_layouts_dir = 'data/keyboards'
 
-typedef_layer_t = [
-    'typedef struct {',
-    '    /* Key caps */',
-    '    const char ** const keycaps;',
-    '    /* Button matrix attributes */',
-    '    const lv_btnmatrix_ctrl_t * const attributes;',
-    # '    /* Number of buttons that trigger a layer switch */',
-    # '    const int num_triggers;',
-    # '    /* Button indexes that trigger a layer switch */',
-    # '    const int * const trigger_idxs;',
-    # '    /* Indexes of layers to jump to when hitting trigger */',
-    # '    const int * const trigger_targets;',
-    '    /* Total number of scancodes */',
-    '    const int const num_scancodes;',
-    '    /* Flat array of scancodes */',
-    '    const int * const scancodes;',
-    '    /* Start index in scancodes array for key cap */',
-    '    const int * const scancode_idxs;',
-    '    /* Number of scancodes for key cap */',
-    '    const int * const scancode_nums;',
-    '} sq2lv_layer_t;'
-]
-
-typedef_layout_t = [
-    'typedef struct {',
-    '    /* Layers array */',
-    '    const sq2lv_layer_t * const layers;',
-    '    /* Total number of layers */',
-    '    const int num_layers;',
-    '} sq2lv_layout_t;'
-]
-
 
 ###
 # General helpers
@@ -95,9 +63,12 @@ def parse_arguments():
     parser.add_argument('--input', dest='input', action='append', required=True, help='squeekboard layout to '
                         + 'use as input for generation. Has to be a YAML file path relative to data/keyboards. '
                         + 'Can be specified multiple times.')
+    parser.add_argument('--surround-space-with-arrows', action='store_true', dest='arrows_around_space',
+                        help='insert left / right arrow before / after space key')
     parser.add_argument('--generate-scancodes', action='store_true', dest='generate_scancodes', help='also '
                         + 'generate scancode tables (only works for US layout currently)')
-    parser.add_argument('--output', dest='output', type=str, help='output directory for generated files')
+    parser.add_argument('--output', dest='output', type=str, required=True, help='output directory for generated '
+                        + 'files')
     args = parser.parse_args()
 
     if not args.output or not os.path.isdir(args.output):
@@ -114,7 +85,7 @@ def clone_squeekboard_repo(destination):
     git.Repo.clone_from(repository_url, destination, depth=1)
 
 
-def load_yaml(rel_path):
+def load_yaml(layouts_dir, rel_path):
     """ Load a YAML file and return its dictionary representation.
     
     rel_path -- path of the YAML file relative to the layouts root directory
@@ -241,7 +212,7 @@ class SourceFileBuilder(object):
         return self
 
     def add_array(self, static, type, identifier, values, row_terminator, array_terminator):
-        """Add a C array and return the builder.
+        """Add a row-based C array and return the builder.
         
         static -- True if the variable is static
         type -- variable type
@@ -262,6 +233,17 @@ class SourceFileBuilder(object):
             self.add_line(f'    {joined}{comma_if_needed(values, i)} \\')
         self.add_line('};')
         return self
+
+    def add_flat_array(self, static, type, identifier, values, array_terminator):
+        """Add a flat C array and return the builder.
+        
+        static -- True if the variable is static
+        type -- variable type
+        identifier -- variable identifier
+        values -- list of values,
+        array_terminator -- element to append after the last element
+        """
+        return self.add_array(static, type, identifier, [values], '', array_terminator)
 
 
 ###
@@ -347,12 +329,12 @@ keycap_for_key = {
     'show_numbers': '1#',
     'show_numbers_from_symbols': '1#',
     'show_symbols': None,
-    'space': ['LV_SYMBOL_LEFT', ' ', 'LV_SYMBOL_RIGHT'],
+    'space': ' ',
     'Return': 'LV_SYMBOL_OK',
 }
 
 def key_to_keycap(key, view_id, layout_id):
-    """Return the list of keycaps for a key
+    """Return the keycap for a key
  
     key -- the key
     view_id -- ID of the view the key appears on
@@ -366,11 +348,7 @@ def key_to_keycap(key, view_id, layout_id):
             keycap = keycap[layout_id]
         else:
             keycap = None
-    if not keycap:
-        return []
-    if isinstance(keycap, list):
-        return keycap
-    return [keycap]
+    return keycap
 
 
 def key_to_attributes(key, data_buttons):
@@ -500,34 +478,73 @@ def keycap_to_scancodes(keycap):
     return scancodes_for_keycap[keycap]
 
 
-def get_keycaps_attrs_scancodes(layout_id, view_id, data_views, data_buttons, include_scancodes):
-    """Return keycaps, LVGL button attributes and scancodes for a view
+def get_keycaps_attrs_switchers_scancodes(args, layout_id, view_id, data_views, data_buttons):
+    """Return keycaps, LVGL button attributes, layer switching key indexes, layer switching key
+    destinations and scancodes for a view
     
+    args -- Commandline arguments
     layout_id -- ID of the layout
     view_id -- ID of the view
     data_views -- the "views" object from the layout's YAML file
     data_buttons -- the "buttons" object from the layout's YAML file
-    include_scancodes -- True if scancodes should be included
     """
     keycaps = []
     attrs = []
+    switcher_idxs = []
+    switcher_dests = []
     scancodes = []
+
+    idx = 0
 
     for row in data_views[view_id]:
         keycaps_in_row = []
         attrs_in_row = []
         scancodes_in_row = []
-        for key in row.split():
-            for keycap in key_to_keycap(key, view_id, layout_id):
-                keycaps_in_row.append(keycap_to_c_value(keycap))
-                attrs_in_row.append(key_to_attributes(key, data_buttons))
-                if include_scancodes:
-                    scancodes_in_row.append(keycap_to_scancodes(keycap))
+
+        keys = row.split()
+
+        if args.arrows_around_space:
+            space_idx = None
+            try:
+                space_idx = keys.index('space')
+            except ValueError:
+                pass
+            if space_idx != None:
+                keys.insert(space_idx, '←')
+                keys.insert(space_idx + 2, '→')
+
+
+        for key in keys:
+            keycap = key_to_keycap(key, view_id, layout_id)
+            if not keycap:
+                continue
+
+            keycaps_in_row.append(keycap_to_c_value(keycap))
+            attrs_in_row.append(key_to_attributes(key, data_buttons))
+
+            if key in data_buttons and 'action' in data_buttons[key]:
+                action = data_buttons[key]['action']
+                dest = None
+
+                if 'set_view' in action:
+                    dest = action['set_view']
+                elif 'locking' in action and 'lock_view' in action['locking']:
+                    dest = action['locking']['lock_view']
+
+                if dest:
+                    switcher_idxs.append(idx)
+                    switcher_dests.append(dest)
+
+            if args.generate_scancodes:
+                scancodes_in_row.append(keycap_to_scancodes(keycap))
+
+            idx += 1
+
         keycaps.append(keycaps_in_row)
         attrs.append(attrs_in_row)
         scancodes.append(scancodes_in_row)
 
-    return keycaps, attrs, scancodes
+    return keycaps, attrs, switcher_idxs, switcher_dests, scancodes
 
 
 def flatten_scancodes(scancodes):
@@ -590,7 +607,7 @@ if __name__ == '__main__':
             layout_id, _ = os.path.splitext(file)
             layout_identifier = layout_id_to_c_identifier(layout_id)
 
-            data = load_yaml(file)
+            data = load_yaml(layouts_dir, file)
             data_views = data['views']
             data_buttons = data['buttons'] if 'buttons' in data else {}
 
@@ -600,6 +617,8 @@ if __name__ == '__main__':
             c_builder.add_line()
 
             layer_identifiers = []
+
+            view_ids = [view_id for view_id in data_views if view_id_to_layer_name(view_id) != None]
 
             for view_id in data_views:
                 layer_name = view_id_to_layer_name(view_id)
@@ -613,11 +632,25 @@ if __name__ == '__main__':
                 c_builder.add_subsection_comment(f'Layer: {layer_name} - generated from {view_id}')
                 c_builder.add_line()
  
-                keycaps, attrs, scancodes = get_keycaps_attrs_scancodes(layout_id, view_id, data_views, data_buttons, args.generate_scancodes)
+                keycaps, attrs, switcher_idxs, switcher_dests, scancodes = get_keycaps_attrs_switchers_scancodes(
+                    args, layout_id, view_id, data_views, data_buttons)
+
+                for dest in switcher_dests:
+                    if dest not in view_ids:
+                        die(f'Unhandled layer switch destination {dest}')
+                switcher_dests = [view_ids.index(d) for d in switcher_dests if d in view_ids]
 
                 c_builder.add_array(True, 'const char * const', f'keycaps_{layer_identifier}', keycaps, '"\\n"', '""')
                 c_builder.add_line()
                 c_builder.add_array(True, 'const lv_btnmatrix_ctrl_t', f'attributes_{layer_identifier}', attrs, '', '')
+                c_builder.add_line()
+
+
+                c_builder.add_line(f'static const int num_switchers_{layer_identifier} = {len(switcher_idxs)};')
+                c_builder.add_line()
+                c_builder.add_flat_array(True, 'const int', f'switcher_idxs_{layer_identifier}', switcher_idxs, '')
+                c_builder.add_line()
+                c_builder.add_flat_array(True, 'const int', f'switcher_dests_{layer_identifier}', switcher_dests, '')
                 c_builder.add_line()
 
                 if args.generate_scancodes:
@@ -647,11 +680,36 @@ if __name__ == '__main__':
     h_builder.add_line()
 
     h_builder.add_line('/* Layout type */')
-    h_builder.add_lines(typedef_layout_t)
+    h_builder.add_line('typedef struct {')
+    h_builder.add_line('    /* Layers array */')
+    h_builder.add_line('    const sq2lv_layer_t * const layers;')
+    h_builder.add_line('    /* Total number of layers */')
+    h_builder.add_line('    const int num_layers;')
+    h_builder.add_line('} sq2lv_layout_t;')
     h_builder.add_line()
 
     h_builder.add_line('/* Layer type */')
-    h_builder.add_lines(typedef_layer_t)
+    h_builder.add_line('typedef struct {')
+    h_builder.add_line('    /* Key caps */')
+    h_builder.add_line('    const char ** const keycaps;')
+    h_builder.add_line('    /* Button matrix attributes */')
+    h_builder.add_line('    const lv_btnmatrix_ctrl_t * const attributes;')
+    h_builder.add_line('    /* Number of buttons that trigger a layer switch */')
+    h_builder.add_line('    const int num_switchers;')
+    h_builder.add_line('    /* Button indexes that trigger a layer switch */')
+    h_builder.add_line('    const int * const switcher_idxs;')
+    h_builder.add_line('    /* Indexes of layers to jump to when triggering layer switch buttons */')
+    h_builder.add_line('    const int * const switcher_dests;')
+    if args.generate_scancodes:
+        h_builder.add_line('    /* Total number of scancodes */')
+        h_builder.add_line('    const int const num_scancodes;')
+        h_builder.add_line('    /* Flat array of scancodes */')
+        h_builder.add_line('    const int * const scancodes;')
+        h_builder.add_line('    /* Start index in scancodes array for key cap */')
+        h_builder.add_line('    const int * const scancode_idxs;')
+        h_builder.add_line('    /* Number of scancodes for key cap */')
+        h_builder.add_line('    const int * const scancode_nums;')
+    h_builder.add_line('} sq2lv_layer_t;')
     h_builder.add_line()
 
     h_builder.add_line('/* Layouts */')
@@ -672,7 +730,7 @@ if __name__ == '__main__':
         c_builder.add_line('        .layers = (sq2lv_layer_t[]){')
         for j, identifier in enumerate(layout['layer_identifiers']):
             c_builder.add_line('            {')
-            fields = ['keycaps', 'attributes']
+            fields = ['keycaps', 'attributes', 'num_switchers', 'switcher_idxs', 'switcher_dests']
             if args.generate_scancodes:
                 fields += ['num_scancodes', 'scancodes', 'scancode_idxs', 'scancode_nums']
             for k, field in enumerate(fields):

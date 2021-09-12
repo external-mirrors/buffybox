@@ -26,14 +26,12 @@ typedef struct {
     const char ** const keycaps;
     /* Button matrix attributes */
     const lv_btnmatrix_ctrl_t * const attributes;
-    /* Total number of scancodes */
-    const int const num_scancodes;
-    /* Flat array of scancodes */
-    const int * const scancodes;
-    /* Start index in scancodes array for key cap */
-    const int * const scancode_idxs;
-    /* Number of scancodes for key cap */
-    const int * const scancode_nums;
+    /* Number of buttons that trigger a layer switch */
+    const int num_switchers;
+    /* Button indexes that trigger a layer switch */
+    const int * const switcher_idxs;
+    /* Indexes of layers to jump to when triggering layer switch buttons */
+    const int * const switcher_dests;
 } sq2lv_layer_t;
 
 /* Layouts */

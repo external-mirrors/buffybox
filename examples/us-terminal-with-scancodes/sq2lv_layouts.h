@@ -26,6 +26,12 @@ typedef struct {
     const char ** const keycaps;
     /* Button matrix attributes */
     const lv_btnmatrix_ctrl_t * const attributes;
+    /* Number of buttons that trigger a layer switch */
+    const int num_switchers;
+    /* Button indexes that trigger a layer switch */
+    const int * const switcher_idxs;
+    /* Indexes of layers to jump to when triggering layer switch buttons */
+    const int * const switcher_dests;
     /* Total number of scancodes */
     const int const num_scancodes;
     /* Flat array of scancodes */
