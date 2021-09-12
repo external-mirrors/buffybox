@@ -38,7 +38,7 @@ When the process has finished, `sq2lv_layouts.h` and `sq2lv_layouts.c` will have
 
 ## License
 
-squeek2lvgl Generator is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+squeek2lvgl is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 [squeekboard] and its keyboard layouts are licensed under the GNU General Public License version 3.0.
 
