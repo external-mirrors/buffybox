@@ -217,6 +217,8 @@ static const sq2lv_layer_t layers_terminal_us[] = {
  * Public interface
  **/
 
+const int sq2lv_num_layouts = 1;
+
 const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English (Terminal) */
     {
@@ -225,7 +227,16 @@ const sq2lv_layout_t sq2lv_layouts[] = {
     }
 };
 
-const int sq2lv_num_layouts = 1;
-
 const char * const sq2lv_layout_names = 
     "US English (Terminal)";
+
+const int sq2lv_num_unique_scancodes = 57;
+
+const int sq2lv_unique_scancodes[] = {
+    KEY_LEFTCTRL, KEY_LEFTALT, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_Q, KEY_W, KEY_E, KEY_R,
+    KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_A, KEY_S, KEY_D, KEY_F,
+    KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B,
+    KEY_N, KEY_M, KEY_BACKSPACE, KEY_SPACE, KEY_ENTER, KEY_PAGEUP, KEY_PAGEDOWN, KEY_HOME, KEY_END, KEY_LEFTSHIFT,
+    KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0,
+    KEY_QUESTION, KEY_MINUS, KEY_EQUAL, KEY_COMMA, KEY_APOSTROPHE, KEY_SEMICOLON, KEY_DOT
+};

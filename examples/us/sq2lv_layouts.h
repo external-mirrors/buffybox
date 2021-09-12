@@ -35,10 +35,10 @@ typedef struct {
 } sq2lv_layout_t;
 
 /* Layouts */
-extern const sq2lv_layout_t sq2lv_layouts[];
 extern const int sq2lv_num_layouts;
+extern const sq2lv_layout_t sq2lv_layouts[];
 
-/* Layout names (suitable for use in lv_dropdown_t */
+/* Layout names (suitable for use in lv_dropdown_t) */
 extern const char * const sq2lv_layout_names;
 
 #endif /* SQ2LV_LAYOUTS_H */

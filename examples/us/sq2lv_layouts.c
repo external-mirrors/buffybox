@@ -120,6 +120,8 @@ static const sq2lv_layer_t layers_us[] = {
  * Public interface
  **/
 
+const int sq2lv_num_layouts = 1;
+
 const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English */
     {
@@ -127,8 +129,6 @@ const sq2lv_layout_t sq2lv_layouts[] = {
         .layers = layers_us
     }
 };
-
-const int sq2lv_num_layouts = 1;
 
 const char * const sq2lv_layout_names = 
     "US English";

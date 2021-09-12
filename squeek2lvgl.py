@@ -171,7 +171,7 @@ class SourceFileBuilder(object):
         self.lines.insert(idx, '')
         self.lines.insert(idx + 1, f'#ifndef {macro}')
         self.lines.insert(idx + 2, f'#define {macro}')
-        self.add_lines(['', f'#endif /* {macro} */'])
+        self.add_lines([f'#endif /* {macro} */', ''])
 
     def _add_header_comment(self):
         """Add the generator header comment and return the builder.
@@ -550,8 +550,8 @@ def get_keycaps_attrs_switchers_scancodes(args, layout_id, view_id, data_views, 
 
 
 def flatten_scancodes(scancodes):
-    """Process a nested list of scancodes per key and return a flattened list, a list of starting indexes and a
-    list of scancode counts.
+    """Process a nested list of scancodes per row and key and return a flattened list of scancodes per row,
+    a list of starting indexes and a list of scancode counts.
     
     scancodes -- list (rows) of list (keys) of list (scancodes) of scancodes
     """
@@ -599,6 +599,7 @@ if __name__ == '__main__':
     h_builder.add_line()
 
     layouts = []
+    unique_scancodes = {}
 
     with tempfile.TemporaryDirectory() as tmp:
         clone_squeekboard_repo(tmp)
@@ -657,6 +658,10 @@ if __name__ == '__main__':
 
                 if args.generate_scancodes:
                     scancodes_flat, scancode_idxs, scancode_nums = flatten_scancodes(scancodes)
+
+                    for scancodes_in_row in scancodes_flat:
+                        for scancode in scancodes_in_row:
+                            unique_scancodes[scancode] = True
 
                     c_builder.add_line(f'static const int num_scancodes_{layer_identifier} = {len(scancodes)};')
                     c_builder.add_line()
@@ -730,14 +735,24 @@ if __name__ == '__main__':
     h_builder.add_line()
 
     h_builder.add_line('/* Layouts */')
-    h_builder.add_line('extern const sq2lv_layout_t sq2lv_layouts[];')
     h_builder.add_line('extern const int sq2lv_num_layouts;')
+    h_builder.add_line('extern const sq2lv_layout_t sq2lv_layouts[];')
     h_builder.add_line()
 
-    h_builder.add_line('/* Layout names (suitable for use in lv_dropdown_t */')
+    h_builder.add_line('/* Layout names (suitable for use in lv_dropdown_t) */')
     h_builder.add_line('extern const char * const sq2lv_layout_names;') 
+    h_builder.add_line()
+
+    if args.generate_scancodes:
+        h_builder.add_line('/* Unique scancodes from all layout (suitable for setting up uinput devices) */')
+        h_builder.add_line('extern const int sq2lv_num_unique_scancodes;')
+        h_builder.add_line('extern const int sq2lv_unique_scancodes[];')
+        h_builder.add_line()
 
     c_builder.add_section_comment('Public interface')
+    c_builder.add_line()
+
+    c_builder.add_line('const int sq2lv_num_layouts = ' + str(len(layouts)) + ';')
     c_builder.add_line()
 
     c_builder.add_line('const sq2lv_layout_t sq2lv_layouts[] = {')
@@ -750,16 +765,23 @@ if __name__ == '__main__':
     c_builder.add_line('};')
     c_builder.add_line()
 
-    c_builder.add_line('const int sq2lv_num_layouts = ' + str(len(layouts)) + ';')
-    c_builder.add_line()
-
     names = [layout['name'] for layout in layouts]
     names = '\n    ' + ' "\\n"\n    '.join([f'"{name}"' for name in names])
     c_builder.add_line(f'const char * const sq2lv_layout_names = {names};')
+    c_builder.add_line()
+
+    if args.generate_scancodes:
+        c_builder.add_line(f'const int sq2lv_num_unique_scancodes = {len(unique_scancodes)};')
+        c_builder.add_line()
+        c_builder.add_line('const int sq2lv_unique_scancodes[] = {')
+        scancodes = list(unique_scancodes.keys())
+        chunks = [scancodes[i:i + 10] for i in range(0, len(scancodes), 10)]
+        for i, chunk in enumerate(chunks):
+            joined = ', '.join(chunk)
+            c_builder.add_line(f'    {joined}{comma_if_needed(chunks, i)}')
+        c_builder.add_line('};')
+        c_builder.add_line()
 
     h_builder.wrap_in_ifndef('SQ2LV_LAYOUTS_H')
-
-    c_builder.add_line()
-    h_builder.add_line()
 
     write_files(c_builder.lines, h_builder.lines)
