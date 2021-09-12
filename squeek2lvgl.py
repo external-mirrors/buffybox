@@ -679,15 +679,6 @@ if __name__ == '__main__':
     h_builder.add_line('} sq2lv_layout_id_t;')
     h_builder.add_line()
 
-    h_builder.add_line('/* Layout type */')
-    h_builder.add_line('typedef struct {')
-    h_builder.add_line('    /* Layers array */')
-    h_builder.add_line('    const sq2lv_layer_t * const layers;')
-    h_builder.add_line('    /* Total number of layers */')
-    h_builder.add_line('    const int num_layers;')
-    h_builder.add_line('} sq2lv_layout_t;')
-    h_builder.add_line()
-
     h_builder.add_line('/* Layer type */')
     h_builder.add_line('typedef struct {')
     h_builder.add_line('    /* Key caps */')
@@ -710,6 +701,15 @@ if __name__ == '__main__':
         h_builder.add_line('    /* Number of scancodes for key cap */')
         h_builder.add_line('    const int * const scancode_nums;')
     h_builder.add_line('} sq2lv_layer_t;')
+    h_builder.add_line()
+
+    h_builder.add_line('/* Layout type */')
+    h_builder.add_line('typedef struct {')
+    h_builder.add_line('    /* Layers array */')
+    h_builder.add_line('    const sq2lv_layer_t * const layers;')
+    h_builder.add_line('    /* Total number of layers */')
+    h_builder.add_line('    const int num_layers;')
+    h_builder.add_line('} sq2lv_layout_t;')
     h_builder.add_line()
 
     h_builder.add_line('/* Layouts */')

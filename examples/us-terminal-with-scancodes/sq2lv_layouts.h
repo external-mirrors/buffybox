@@ -12,14 +12,6 @@ typedef enum {
     SQ2LV_LAYOUT_TERMINAL_US = 0
 } sq2lv_layout_id_t;
 
-/* Layout type */
-typedef struct {
-    /* Layers array */
-    const sq2lv_layer_t * const layers;
-    /* Total number of layers */
-    const int num_layers;
-} sq2lv_layout_t;
-
 /* Layer type */
 typedef struct {
     /* Key caps */
@@ -41,6 +33,14 @@ typedef struct {
     /* Number of scancodes for key cap */
     const int * const scancode_nums;
 } sq2lv_layer_t;
+
+/* Layout type */
+typedef struct {
+    /* Layers array */
+    const sq2lv_layer_t * const layers;
+    /* Total number of layers */
+    const int num_layers;
+} sq2lv_layout_t;
 
 /* Layouts */
 extern const sq2lv_layout_t sq2lv_layouts[];

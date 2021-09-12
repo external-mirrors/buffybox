@@ -12,14 +12,6 @@ typedef enum {
     SQ2LV_LAYOUT_US = 0
 } sq2lv_layout_id_t;
 
-/* Layout type */
-typedef struct {
-    /* Layers array */
-    const sq2lv_layer_t * const layers;
-    /* Total number of layers */
-    const int num_layers;
-} sq2lv_layout_t;
-
 /* Layer type */
 typedef struct {
     /* Key caps */
@@ -33,6 +25,14 @@ typedef struct {
     /* Indexes of layers to jump to when triggering layer switch buttons */
     const int * const switcher_dests;
 } sq2lv_layer_t;
+
+/* Layout type */
+typedef struct {
+    /* Layers array */
+    const sq2lv_layer_t * const layers;
+    /* Total number of layers */
+    const int num_layers;
+} sq2lv_layout_t;
 
 /* Layouts */
 extern const sq2lv_layout_t sq2lv_layouts[];
