@@ -20,6 +20,10 @@ typedef struct {
     const char ** const keycaps;
     /* Button matrix attributes */
     const lv_btnmatrix_ctrl_t * const attributes;
+    /* Number of modifier keys */
+    const int num_modifiers;
+    /* Button indexes of modifier keys */
+    const int * const modifier_idxs;
     /* Number of buttons that trigger a layer switch */
     const int num_switchers;
     /* Button indexes that trigger a layer switch */

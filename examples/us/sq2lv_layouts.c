@@ -28,6 +28,12 @@ static const lv_btnmatrix_ctrl_t attributes_lower_us[] = { \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
 };
 
+static const int num_modifiers_lower_us = 0;
+
+static const int modifier_idxs_lower_us[] = { \
+     \
+};
+
 static const int num_switchers_lower_us = 2;
 
 static const int switcher_idxs_lower_us[] = { \
@@ -54,6 +60,12 @@ static const lv_btnmatrix_ctrl_t attributes_upper_us[] = { \
     2, 2, 2, 2, 2, 2, 2, 2, 2, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+};
+
+static const int num_modifiers_upper_us = 0;
+
+static const int modifier_idxs_upper_us[] = { \
+     \
 };
 
 static const int num_switchers_upper_us = 2;
@@ -84,6 +96,12 @@ static const lv_btnmatrix_ctrl_t attributes_numbers_us[] = { \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
 };
 
+static const int num_modifiers_numbers_us = 0;
+
+static const int modifier_idxs_numbers_us[] = { \
+     \
+};
+
 static const int num_switchers_numbers_us = 1;
 
 static const int switcher_idxs_numbers_us[] = { \
@@ -103,6 +121,8 @@ static const sq2lv_layer_t layers_us[] = {
         .num_keys = num_keys_lower_us,
         .keycaps = keycaps_lower_us,
         .attributes = attributes_lower_us,
+        .num_modifiers = num_modifiers_lower_us,
+        .modifier_idxs = modifier_idxs_lower_us,
         .num_switchers = num_switchers_lower_us,
         .switcher_idxs = switcher_idxs_lower_us,
         .switcher_dests = switcher_dests_lower_us
@@ -111,6 +131,8 @@ static const sq2lv_layer_t layers_us[] = {
         .num_keys = num_keys_upper_us,
         .keycaps = keycaps_upper_us,
         .attributes = attributes_upper_us,
+        .num_modifiers = num_modifiers_upper_us,
+        .modifier_idxs = modifier_idxs_upper_us,
         .num_switchers = num_switchers_upper_us,
         .switcher_idxs = switcher_idxs_upper_us,
         .switcher_dests = switcher_dests_upper_us
@@ -119,6 +141,8 @@ static const sq2lv_layer_t layers_us[] = {
         .num_keys = num_keys_numbers_us,
         .keycaps = keycaps_numbers_us,
         .attributes = attributes_numbers_us,
+        .num_modifiers = num_modifiers_numbers_us,
+        .modifier_idxs = modifier_idxs_numbers_us,
         .num_switchers = num_switchers_numbers_us,
         .switcher_idxs = switcher_idxs_numbers_us,
         .switcher_dests = switcher_dests_numbers_us

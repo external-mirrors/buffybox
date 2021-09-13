@@ -478,9 +478,9 @@ def keycap_to_scancodes(keycap):
     return scancodes_for_keycap[keycap]
 
 
-def get_keycaps_attrs_switchers_scancodes(args, layout_id, view_id, data_views, data_buttons):
-    """Return keycaps, LVGL button attributes, layer switching key indexes, layer switching key
-    destinations and scancodes for a view
+def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, data_views, data_buttons):
+    """Return keycaps, LVGL button attributes, modifier key indexes, layer switching key indexes,
+    layer switching key destinations and scancodes for a view
     
     args -- Commandline arguments
     layout_id -- ID of the layout
@@ -490,6 +490,7 @@ def get_keycaps_attrs_switchers_scancodes(args, layout_id, view_id, data_views, 
     """
     keycaps = []
     attrs = []
+    modifier_idxs = []
     switcher_idxs = []
     switcher_dests = []
     scancodes = []
@@ -522,6 +523,9 @@ def get_keycaps_attrs_switchers_scancodes(args, layout_id, view_id, data_views, 
             keycaps_in_row.append(keycap_to_c_value(keycap))
             attrs_in_row.append(key_to_attributes(key, data_buttons))
 
+            if key in data_buttons and 'modifier' in data_buttons[key]:
+                modifier_idxs.append(idx)
+
             if key in data_buttons and 'action' in data_buttons[key]:
                 action = data_buttons[key]['action']
                 dest = None
@@ -546,7 +550,7 @@ def get_keycaps_attrs_switchers_scancodes(args, layout_id, view_id, data_views, 
         attrs.append(attrs_in_row)
         scancodes.append(scancodes_in_row)
 
-    return keycaps, attrs, switcher_idxs, switcher_dests, scancodes
+    return keycaps, attrs, modifier_idxs, switcher_idxs, switcher_dests, scancodes
 
 
 def flatten_scancodes(scancodes):
@@ -635,7 +639,7 @@ if __name__ == '__main__':
                 c_builder.add_subsection_comment(f'Layer: {layer_name} - generated from {view_id}')
                 c_builder.add_line()
  
-                keycaps, attrs, switcher_idxs, switcher_dests, scancodes = get_keycaps_attrs_switchers_scancodes(
+                keycaps, attrs, modifier_idxs, switcher_idxs, switcher_dests, scancodes = get_keycaps_attrs_modifiers_switchers_scancodes(
                     args, layout_id, view_id, data_views, data_buttons)
 
                 for dest in switcher_dests:
@@ -650,6 +654,10 @@ if __name__ == '__main__':
                 c_builder.add_array(True, 'const lv_btnmatrix_ctrl_t', f'attributes_{layer_identifier}', attrs, '', '')
                 c_builder.add_line()
 
+                c_builder.add_line(f'static const int num_modifiers_{layer_identifier} = {len(modifier_idxs)};')
+                c_builder.add_line()
+                c_builder.add_flat_array(True, 'const int', f'modifier_idxs_{layer_identifier}', modifier_idxs, '')
+                c_builder.add_line()
 
                 c_builder.add_line(f'static const int num_switchers_{layer_identifier} = {len(switcher_idxs)};')
                 c_builder.add_line()
@@ -681,7 +689,7 @@ if __name__ == '__main__':
             c_builder.add_line(f'static const sq2lv_layer_t layers_{layout_identifier}[] = ' + '{')
             for i, identifier in enumerate(layer_identifiers):
                 c_builder.add_line('    {')
-                fields = ['num_keys', 'keycaps', 'attributes', 'num_switchers', 'switcher_idxs', 'switcher_dests']
+                fields = ['num_keys', 'keycaps', 'attributes', 'num_modifiers', 'modifier_idxs', 'num_switchers', 'switcher_idxs', 'switcher_dests']
                 if args.generate_scancodes:
                     fields += ['num_scancodes', 'scancodes', 'scancode_idxs', 'scancode_nums']
                 for k, field in enumerate(fields):
@@ -711,6 +719,10 @@ if __name__ == '__main__':
     h_builder.add_line('    const char ** const keycaps;')
     h_builder.add_line('    /* Button matrix attributes */')
     h_builder.add_line('    const lv_btnmatrix_ctrl_t * const attributes;')
+    h_builder.add_line('    /* Number of modifier keys */')
+    h_builder.add_line('    const int num_modifiers;')
+    h_builder.add_line('    /* Button indexes of modifier keys */')
+    h_builder.add_line('    const int * const modifier_idxs;')
     h_builder.add_line('    /* Number of buttons that trigger a layer switch */')
     h_builder.add_line('    const int num_switchers;')
     h_builder.add_line('    /* Button indexes that trigger a layer switch */')
