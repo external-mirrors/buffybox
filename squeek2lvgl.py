@@ -351,16 +351,37 @@ def key_to_keycap(key, view_id, layout_id):
     return keycap
 
 
+def key_is_modifier(key, data_buttons):
+    """Return true if a key acts as a modifier..
+
+    key -- the key in question
+    data_buttons -- the "buttons" object from the layout's YAML file
+    """
+    return key in data_buttons and 'modifier' in data_buttons[key]
+
+
 def key_to_attributes(key, data_buttons):
     """Return the LVGL button attributes for a key.
     
     key -- the key in question
     data_buttons -- the "buttons" object from the layout's YAML file
     """
-    if key in ['period', 'colon', '"'] or key not in data_buttons:
-        return '2'
-    width = 7 if key == 'space' else 3
-    return f'LV_KEYBOARD_CTRL_BTN_FLAGS | {width}'
+    attributes = []
+
+    if key in data_buttons and key not in ['period', 'colon', '"']:
+        attributes.append('LV_KEYBOARD_CTRL_BTN_FLAGS')
+
+    if key_is_modifier(key, data_buttons):
+        attributes.append('LV_BTNMATRIX_CTRL_CHECKABLE')
+
+    if key not in data_buttons or key in ['period', 'colon', '"']:
+        attributes.append('2')
+    elif key == 'space':
+        attributes.append('7')
+    else:
+        attributes.append('3')
+
+    return ' | '.join(attributes)
 
 
 def keycap_to_c_value(keycap):
@@ -523,7 +544,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, da
             keycaps_in_row.append(keycap_to_c_value(keycap))
             attrs_in_row.append(key_to_attributes(key, data_buttons))
 
-            if key in data_buttons and 'modifier' in data_buttons[key]:
+            if key_is_modifier(key, data_buttons):
                 modifier_idxs.append(idx)
 
             if key in data_buttons and 'action' in data_buttons[key]:
