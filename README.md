@@ -61,7 +61,13 @@ $ npx lv_font_conv --bpp 4 --size 32 --no-compress -o montserrat_extended_32.c -
 
 ## Changing layouts
 
-Buffyboards uses squeekboard layouts converted to C via [squeek2lvgl].
+Buffyboard uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerate the layouts, run
+
+```
+$ ./regenerate-layouts.sh
+```
+
+from the root of the repository.
 
 # Acknowledgements
 
@@ -88,6 +94,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [lvgl]: https://github.com/lvgl/lvgl
 [Montserrat]: https://fonts.google.com/specimen/Montserrat
 [FontAwesome]: https://fontawesome.com/
+[squeekboard layouts]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards
 [squeek2lvgl]: https://gitlab.com/cherrypicker/squeek2lvgl]
 [bakonyiferenc/fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master
