@@ -32,7 +32,7 @@
 void bb_layout_switch_layout(lv_obj_t *keyboard, sq2lv_layout_id_t layout_id);
 
 /**
- * Attempt to perform a layer switch after pressing a key.
+ * Attempt to perform a layer switch after pressing a key in the current layer.
  *
  * @param keyboard keyboard widget
  * @param btn_id button index corresponding to the pressed key
@@ -41,13 +41,31 @@ void bb_layout_switch_layout(lv_obj_t *keyboard, sq2lv_layout_id_t layout_id);
 bool bb_layout_switch_layer(lv_obj_t *keyboard, uint16_t btn_id);
 
 /**
- * Get scancodes associated with a key.
- * 
+ * Get scancodes associated with a key in the current layer.
+ *
  * @param keyboard keyboard widget
  * @param btn_id button index corresponding to the key
  * @param num_scancodes pointer to an integer into which the number of scancodes will be written
  * @return pointer into an array of scancodes at the appropriate index
  */
 const int * const bb_layout_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes);
+
+/**
+ * Check if a key is a modifier in the current layer.
+ *
+ * @param keyboard keyboard widget
+ * @param btn_id button index corresponding to the key
+ * @return true if the key is a modifier, false otherwise
+ */
+bool bb_is_modifier(lv_obj_t *keyboard, uint16_t btn_id);
+
+/**
+ * Get the button indexes for all modifier keys in the current layer.
+ *
+ * @param keyboard keyboard widget
+ * @param num_modifiers pointer to an integer into which the number of modifiers will be written
+ * @return pointer to the array of button indexes corresponding to modifier keys
+ */
+const int * const bb_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers);
 
 #endif /* BB_LAYOUT_H */

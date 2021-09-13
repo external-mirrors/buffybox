@@ -24,11 +24,17 @@ static const char * const keycaps_lower_terminal_us[] = { \
 };
 
 static const lv_btnmatrix_ctrl_t attributes_lower_terminal_us[] = { \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
+    LV_KEYBOARD_CTRL_BTN_FLAGS | LV_BTNMATRIX_CTRL_CHECKABLE | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | LV_BTNMATRIX_CTRL_CHECKABLE | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+};
+
+static const int num_modifiers_lower_terminal_us = 2;
+
+static const int modifier_idxs_lower_terminal_us[] = { \
+    0, 1 \
 };
 
 static const int num_switchers_lower_terminal_us = 2;
@@ -80,11 +86,17 @@ static const char * const keycaps_upper_terminal_us[] = { \
 };
 
 static const lv_btnmatrix_ctrl_t attributes_upper_terminal_us[] = { \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
+    LV_KEYBOARD_CTRL_BTN_FLAGS | LV_BTNMATRIX_CTRL_CHECKABLE | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | LV_BTNMATRIX_CTRL_CHECKABLE | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+};
+
+static const int num_modifiers_upper_terminal_us = 2;
+
+static const int modifier_idxs_upper_terminal_us[] = { \
+    0, 1 \
 };
 
 static const int num_switchers_upper_terminal_us = 2;
@@ -136,11 +148,17 @@ static const char * const keycaps_numbers_terminal_us[] = { \
 };
 
 static const lv_btnmatrix_ctrl_t attributes_numbers_terminal_us[] = { \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
+    LV_KEYBOARD_CTRL_BTN_FLAGS | LV_BTNMATRIX_CTRL_CHECKABLE | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | LV_BTNMATRIX_CTRL_CHECKABLE | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
     LV_KEYBOARD_CTRL_BTN_FLAGS | 3, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+};
+
+static const int num_modifiers_numbers_terminal_us = 2;
+
+static const int modifier_idxs_numbers_terminal_us[] = { \
+    0, 1 \
 };
 
 static const int num_switchers_numbers_terminal_us = 1;
@@ -188,6 +206,8 @@ static const sq2lv_layer_t layers_terminal_us[] = {
         .num_keys = num_keys_lower_terminal_us,
         .keycaps = keycaps_lower_terminal_us,
         .attributes = attributes_lower_terminal_us,
+        .num_modifiers = num_modifiers_lower_terminal_us,
+        .modifier_idxs = modifier_idxs_lower_terminal_us,
         .num_switchers = num_switchers_lower_terminal_us,
         .switcher_idxs = switcher_idxs_lower_terminal_us,
         .switcher_dests = switcher_dests_lower_terminal_us,
@@ -200,6 +220,8 @@ static const sq2lv_layer_t layers_terminal_us[] = {
         .num_keys = num_keys_upper_terminal_us,
         .keycaps = keycaps_upper_terminal_us,
         .attributes = attributes_upper_terminal_us,
+        .num_modifiers = num_modifiers_upper_terminal_us,
+        .modifier_idxs = modifier_idxs_upper_terminal_us,
         .num_switchers = num_switchers_upper_terminal_us,
         .switcher_idxs = switcher_idxs_upper_terminal_us,
         .switcher_dests = switcher_dests_upper_terminal_us,
@@ -212,6 +234,8 @@ static const sq2lv_layer_t layers_terminal_us[] = {
         .num_keys = num_keys_numbers_terminal_us,
         .keycaps = keycaps_numbers_terminal_us,
         .attributes = attributes_numbers_terminal_us,
+        .num_modifiers = num_modifiers_numbers_terminal_us,
+        .modifier_idxs = modifier_idxs_numbers_terminal_us,
         .num_switchers = num_switchers_numbers_terminal_us,
         .switcher_idxs = switcher_idxs_numbers_terminal_us,
         .switcher_dests = switcher_dests_numbers_terminal_us,

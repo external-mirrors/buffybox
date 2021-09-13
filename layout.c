@@ -185,3 +185,42 @@ const int * const bb_layout_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, i
     const int index = sq2lv_layouts[current_layout_id].layers[layer_index].scancode_idxs[btn_id];
     return &(sq2lv_layouts[current_layout_id].layers[layer_index].scancodes[index]);
 }
+
+bool bb_is_modifier(lv_obj_t *keyboard, uint16_t btn_id) {
+    if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
+        return false;
+    }
+
+    int layer_index = get_layer_index(keyboard);
+    if (layer_index < 0 || layer_index >= sq2lv_layouts[current_layout_id].num_layers) {
+        return false;
+    }
+
+    for (int i = 0; i < sq2lv_layouts[current_layout_id].layers[layer_index].num_modifiers; ++i) {
+        if (sq2lv_layouts[current_layout_id].layers[layer_index].modifier_idxs[i] == btn_id) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+const int * const bb_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers) {
+    if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
+        *num_modifiers = 0;
+        return NULL;
+    }
+
+    int layer_index = get_layer_index(keyboard);
+    if (layer_index < 0 || layer_index >= sq2lv_layouts[current_layout_id].num_layers) {
+        *num_modifiers = 0;
+        return NULL;
+    }
+
+    *num_modifiers = sq2lv_layouts[current_layout_id].layers[layer_index].num_modifiers;
+    if (*num_modifiers == 0) {
+        return NULL;
+    }
+
+    return &(sq2lv_layouts[current_layout_id].layers[layer_index].modifier_idxs[0]);
+}

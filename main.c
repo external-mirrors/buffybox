@@ -69,6 +69,16 @@ static void set_theme(bool is_dark);
  */
 static void keyboard_value_changed_cb(lv_event_t *event);
 
+/**
+ * Emit key down and up events for a key.
+ *
+ * @param keyboard keyboard widget
+ * @param btn_id button index corresponding to the key
+ * @param key_down true if a key down event should be emitted
+ * @param key_up true if a key up event should be emitted
+ */
+static void emit_key_events(lv_obj_t *keyboard, uint16_t btn_id, bool key_down, bool key_up);
+
 
 /**
  * Static functions
@@ -90,17 +100,47 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
         return;
     }
 
+    /* Note that the LV_BTNMATRIX_CTRL_CHECKED logic is inverted because LV_KEYBOARD_CTRL_BTN_FLAGS already
+     * contains LV_BTNMATRIX_CTRL_CHECKED. As a result, pressing e.g. CTRL will _un_check the key. To account
+     * for this, we invert the meaning of "checked" below. */
+
+    bool is_modifier = bb_is_modifier(keyboard, btn_id);
+    bool is_checked = !lv_btnmatrix_has_btn_ctrl(keyboard, btn_id, LV_BTNMATRIX_CTRL_CHECKED);
+
+    /* Emit key events. Suppress key up events for modifiers unless they were unchecked. For checked modifiers
+     * the key up events are sent with the next non-modifier key press. */
+    emit_key_events(keyboard, btn_id, true, !is_modifier || !is_checked);
+
+    /* Pop any previously checked modifiers when a non-modifier key was pressed */
+    if (!is_modifier) {
+        int num_modifiers = 0;
+        int *modifier_idxs = bb_get_modifier_indexes(keyboard, &num_modifiers);
+
+        for (int i = 0; i < num_modifiers; ++i) {
+            if (!lv_btnmatrix_has_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED)) {
+                emit_key_events(keyboard, modifier_idxs[i], false, true);
+                lv_btnmatrix_set_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED);
+            }
+        }
+    }
+}
+
+static void emit_key_events(lv_obj_t *keyboard, uint16_t btn_id, bool key_down, bool key_up) {
     int num_scancodes = 0;
     int *scancodes = bb_layout_get_scancodes(keyboard, btn_id, &num_scancodes);
 
-    /* Emit key downs in forward order */
-    for (int i = 0; i < num_scancodes; ++i) {
-        bb_uinput_device_emit_key_down(scancodes[i]);
+    if (key_down) {
+        /* Emit key down events in forward order */
+        for (int i = 0; i < num_scancodes; ++i) {
+            bb_uinput_device_emit_key_down(scancodes[i]);
+        }
     }
 
-    /* Emit key ups in backward order */
-    for (int i = num_scancodes - 1; i >= 0; --i) {
-        bb_uinput_device_emit_key_up(scancodes[i]);
+    if (key_up) {
+        /* Emit key up events in backward order */
+        for (int i = num_scancodes - 1; i >= 0; --i) {
+            bb_uinput_device_emit_key_up(scancodes[i]);
+        }
     }
 }
 
