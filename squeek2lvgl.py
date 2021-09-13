@@ -643,6 +643,8 @@ if __name__ == '__main__':
                         die(f'Unhandled layer switch destination {dest}')
                 switcher_dests = [view_ids.index(d) for d in switcher_dests if d in view_ids]
 
+                c_builder.add_line(f'static const int num_keys_{layer_identifier} = {sum([len(row) for row in keycaps])};')
+                c_builder.add_line()
                 c_builder.add_array(True, 'const char * const', f'keycaps_{layer_identifier}', keycaps, '"\\n"', '""')
                 c_builder.add_line()
                 c_builder.add_array(True, 'const lv_btnmatrix_ctrl_t', f'attributes_{layer_identifier}', attrs, '', '')
@@ -679,7 +681,7 @@ if __name__ == '__main__':
             c_builder.add_line(f'static const sq2lv_layer_t layers_{layout_identifier}[] = ' + '{')
             for i, identifier in enumerate(layer_identifiers):
                 c_builder.add_line('    {')
-                fields = ['keycaps', 'attributes', 'num_switchers', 'switcher_idxs', 'switcher_dests']
+                fields = ['num_keys', 'keycaps', 'attributes', 'num_switchers', 'switcher_idxs', 'switcher_dests']
                 if args.generate_scancodes:
                     fields += ['num_scancodes', 'scancodes', 'scancode_idxs', 'scancode_nums']
                 for k, field in enumerate(fields):
@@ -703,6 +705,8 @@ if __name__ == '__main__':
 
     h_builder.add_line('/* Layer type */')
     h_builder.add_line('typedef struct {')
+    h_builder.add_line('    /* Number of keys */')
+    h_builder.add_line('    const int num_keys;')
     h_builder.add_line('    /* Key caps */')
     h_builder.add_line('    const char ** const keycaps;')
     h_builder.add_line('    /* Button matrix attributes */')

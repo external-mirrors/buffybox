@@ -13,6 +13,8 @@ static const char * const name_terminal_us = "terminal/us";
 
 /* Layer: Lowercase letters - generated from base */
 
+static const int num_keys_lower_terminal_us = 37;
+
 static const char * const keycaps_lower_terminal_us[] = { \
     "Ctrl", "Alt", LV_SYMBOL_UP, LV_SYMBOL_DOWN, LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, "\n", \
     "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "\n", \
@@ -67,6 +69,8 @@ static const int scancode_nums_lower_terminal_us[] = { \
 
 /* Layer: Uppercase letters - generated from upper */
 
+static const int num_keys_upper_terminal_us = 37;
+
 static const char * const keycaps_upper_terminal_us[] = { \
     "Ctrl", "Alt", "PgUp", "PgDn", "Home", "End", "\n", \
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "\n", \
@@ -120,6 +124,8 @@ static const int scancode_nums_upper_terminal_us[] = { \
 };
 
 /* Layer: Numbers / symbols - generated from numbers */
+
+static const int num_keys_numbers_terminal_us = 38;
 
 static const char * const keycaps_numbers_terminal_us[] = { \
     "Ctrl", "Alt", LV_SYMBOL_UP, LV_SYMBOL_DOWN, LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, "\n", \
@@ -179,6 +185,7 @@ static const int num_layers_terminal_us = 3;
 
 static const sq2lv_layer_t layers_terminal_us[] = {
     {
+        .num_keys = num_keys_lower_terminal_us,
         .keycaps = keycaps_lower_terminal_us,
         .attributes = attributes_lower_terminal_us,
         .num_switchers = num_switchers_lower_terminal_us,
@@ -190,6 +197,7 @@ static const sq2lv_layer_t layers_terminal_us[] = {
         .scancode_nums = scancode_nums_lower_terminal_us
     },
     {
+        .num_keys = num_keys_upper_terminal_us,
         .keycaps = keycaps_upper_terminal_us,
         .attributes = attributes_upper_terminal_us,
         .num_switchers = num_switchers_upper_terminal_us,
@@ -201,6 +209,7 @@ static const sq2lv_layer_t layers_terminal_us[] = {
         .scancode_nums = scancode_nums_upper_terminal_us
     },
     {
+        .num_keys = num_keys_numbers_terminal_us,
         .keycaps = keycaps_numbers_terminal_us,
         .attributes = attributes_numbers_terminal_us,
         .num_switchers = num_switchers_numbers_terminal_us,

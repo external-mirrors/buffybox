@@ -14,6 +14,8 @@ typedef enum {
 
 /* Layer type */
 typedef struct {
+    /* Number of keys */
+    const int num_keys;
     /* Key caps */
     const char ** const keycaps;
     /* Button matrix attributes */
