@@ -3,6 +3,8 @@ Buffyboard
 
 Buffyboard is a touch-enabled on-screen keyboard running on the Linux framebuffer. It's primarily intended for vampire hunting but you can also use it as a general purpose keyboard.
 
+Buffyboard uses [lvgl] for input processing and rendering. Key events are forwarded directly to the kernel via a uinput device. Since the latter emulates a hardware keyboard, the terminal keymap must match with Buffyboard's layout or else on-screen keys might not produce the correct result.
+
 # Status
 
 While partially usable, buffyboard currently still is a work in progress.
@@ -11,13 +13,14 @@ While partially usable, buffyboard currently still is a work in progress.
 
 - On-screen keyboard control via mouse, trackpad or touchscreen
 - Multi-layer keyboard layout including lowercase letters, uppercase letters, numbers and selected symbols (based on top three layers of [squeekboard's US terminal layout])
+- Key chords with one or more modifiers terminated by a single non-modifier (e.g. `CTRL-c`)
 
 ## To do
 
 - Show keyboard at the bottom of the screen (currently shows at the top)
+- Resize VT screen size to not overlap with keyboard
 - Support different screen rotations
 - Eliminate `libinput_multi.[ch]` once support for multiple input devices has been upstreamed to [lv_drivers] (see [lvgl/lv_drivers#151])
-- Make CTRL and ALT work in key chords (currently both of them only work as isolated keys which isn't very helpful)
 - Add remaining layers from [squeekboard's US terminal layout] (symbols and actions)
 - Warn about mismatches between on-screen keyboard layout and terminal keyboard layout
 - Add [squeekboard's FR terminal layout]
