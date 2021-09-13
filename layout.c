@@ -149,9 +149,12 @@ void bb_layout_switch_layout(lv_obj_t *keyboard, sq2lv_layout_id_t layout_id) {
     current_layout_id = layout_id;
 }
 
+bool bb_layout_is_layer_switcher(lv_obj_t *keyboard, uint16_t btn_id) {
+    return get_destination_layer_index_for_layer_switcher(keyboard, btn_id) >= 0;
+}
+
 bool bb_layout_switch_layer(lv_obj_t *keyboard, uint16_t btn_id) {
     int destination_layer_index = get_destination_layer_index_for_layer_switcher(keyboard, btn_id);
-
     if (destination_layer_index < 0 || destination_layer_index >= sq2lv_layouts[current_layout_id].num_layers) {
         return false;
     }

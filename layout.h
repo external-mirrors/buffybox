@@ -32,6 +32,15 @@
 void bb_layout_switch_layout(lv_obj_t *keyboard, sq2lv_layout_id_t layout_id);
 
 /**
+ * Check if a key acts as a layer switcher in the current layer.
+ *
+ * @param keyboard keyboard widget
+ * @param btn_id button index corresponding to the key
+ * @return true if a layer switch would happen if the key is pressed, false otherwise
+ */
+bool bb_layout_is_layer_switcher(lv_obj_t *keyboard, uint16_t btn_id);
+
+/**
  * Attempt to perform a layer switch after pressing a key in the current layer.
  *
  * @param keyboard keyboard widget

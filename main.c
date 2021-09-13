@@ -79,6 +79,13 @@ static void keyboard_value_changed_cb(lv_event_t *event);
  */
 static void emit_key_events(lv_obj_t *keyboard, uint16_t btn_id, bool key_down, bool key_up);
 
+/**
+ * Release any previously pressed modifier keys.
+ *
+ * @param keyboard keyboard widget
+ */
+static void pop_checked_modifier_keys(lv_obj_t *keyboard);
+
 
 /**
  * Static functions
@@ -96,13 +103,15 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
         return;
     }
 
-    if (bb_layout_switch_layer(obj, btn_id)) {
+    if (bb_layout_is_layer_switcher(obj, btn_id)) {
+        pop_checked_modifier_keys(keyboard);
+        bb_layout_switch_layer(obj, btn_id);
         return;
     }
 
     /* Note that the LV_BTNMATRIX_CTRL_CHECKED logic is inverted because LV_KEYBOARD_CTRL_BTN_FLAGS already
      * contains LV_BTNMATRIX_CTRL_CHECKED. As a result, pressing e.g. CTRL will _un_check the key. To account
-     * for this, we invert the meaning of "checked" below. */
+     * for this, we invert the meaning of "checked" here and elsewhere in the code. */
 
     bool is_modifier = bb_is_modifier(keyboard, btn_id);
     bool is_checked = !lv_btnmatrix_has_btn_ctrl(keyboard, btn_id, LV_BTNMATRIX_CTRL_CHECKED);
@@ -113,15 +122,7 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
 
     /* Pop any previously checked modifiers when a non-modifier key was pressed */
     if (!is_modifier) {
-        int num_modifiers = 0;
-        int *modifier_idxs = bb_get_modifier_indexes(keyboard, &num_modifiers);
-
-        for (int i = 0; i < num_modifiers; ++i) {
-            if (!lv_btnmatrix_has_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED)) {
-                emit_key_events(keyboard, modifier_idxs[i], false, true);
-                lv_btnmatrix_set_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED);
-            }
-        }
+        pop_checked_modifier_keys(keyboard);
     }
 }
 
@@ -140,6 +141,18 @@ static void emit_key_events(lv_obj_t *keyboard, uint16_t btn_id, bool key_down, 
         /* Emit key up events in backward order */
         for (int i = num_scancodes - 1; i >= 0; --i) {
             bb_uinput_device_emit_key_up(scancodes[i]);
+        }
+    }
+}
+
+static void pop_checked_modifier_keys(lv_obj_t *keyboard) {
+    int num_modifiers = 0;
+    int *modifier_idxs = bb_get_modifier_indexes(keyboard, &num_modifiers);
+
+    for (int i = 0; i < num_modifiers; ++i) {
+        if (!lv_btnmatrix_has_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED)) {
+            emit_key_events(keyboard, modifier_idxs[i], false, true);
+            lv_btnmatrix_set_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED);
         }
     }
 }
