@@ -96,5 +96,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [FontAwesome]: https://fontawesome.com/
 [squeekboard layouts]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards
 [squeek2lvgl]: https://gitlab.com/cherrypicker/squeek2lvgl]
+[lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
+[lv_sim_emscripten]: https://github.com/lvgl/lv_sim_emscripten/blob/master/mouse_cursor_icon.c
 [bakonyiferenc/fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master
