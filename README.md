@@ -17,7 +17,7 @@ While partially usable, buffyboard currently still is a work in progress.
 
 ## To do
 
-- Show keyboard at the bottom of the screen (currently shows at the top)
+- Show keyboard at the bottom of the screen instead of at the top (just need to set the offset once [lvgl/lv_drivers#164] is merged)
 - Resize VT screen size to not overlap with keyboard
 - Support different screen rotations
 - Eliminate `libinput_multi.[ch]` once support for multiple input devices has been upstreamed to [lv_drivers] (see [lvgl/lv_drivers#151])
@@ -92,6 +92,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
 [lv_drivers]: https://github.com/lvgl/lv_drivers
+[lvgl/lv_drivers#164]: https://github.com/lvgl/lv_drivers/pull/164
 [lvgl/lv_drivers#151]: https://github.com/lvgl/lv_drivers/issues/151
 [squeekboard's FR terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/fr.yaml
 [lvgl]: https://github.com/lvgl/lvgl

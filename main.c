@@ -178,7 +178,9 @@ int main(void)
     uint32_t ver_res;
 	fbdev_get_sizes(&hor_res, &ver_res);
 
-    ver_res /= 3; /* Make sure to not cover the whole screen */
+    /* Make sure to not cover the whole screen */
+    ver_res /= 3;
+    // fbdev_set_offset(0, 2 * ver_res);
 
     /* Prepare display buffer */
     const size_t buf_size = hor_res * ver_res / 10; /* At least 1/10 of the display size is recommended */
