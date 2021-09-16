@@ -24,6 +24,7 @@ While partially usable, buffyboard currently still is a work in progress.
 - Add remaining layers from [squeekboard's US terminal layout] (symbols and actions)
 - Warn about mismatches between on-screen keyboard layout and terminal keyboard layout
 - Add [squeekboard's FR terminal layout]
+- Use better / separate color for active modifiers (currently reuses checked color)
 - And, and, and ...
 
 # Development
