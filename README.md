@@ -14,6 +14,7 @@ While partially usable, buffyboard currently still is a work in progress.
 - On-screen keyboard control via mouse, trackpad or touchscreen
 - Multi-layer keyboard layout including lowercase letters, uppercase letters, numbers and selected symbols (based on top three layers of [squeekboard's US terminal layout])
 - Key chords with one or more modifiers terminated by a single non-modifier (e.g. `CTRL-c`)
+- Highlighting of active modifiers
 
 ## To do
 
@@ -24,7 +25,6 @@ While partially usable, buffyboard currently still is a work in progress.
 - Add remaining layers from [squeekboard's US terminal layout] (symbols and actions)
 - Warn about mismatches between on-screen keyboard layout and terminal keyboard layout
 - Add [squeekboard's FR terminal layout]
-- Use better / separate color for active modifiers (currently reuses checked color)
 - And, and, and ...
 
 # Development

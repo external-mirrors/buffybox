@@ -157,6 +157,39 @@ static void pop_checked_modifier_keys(lv_obj_t *keyboard) {
     }
 }
 
+static void keyboard_draw_part_begin_cb(lv_event_t *event) {
+    lv_obj_t *obj = lv_event_get_target(event);
+    lv_obj_draw_part_dsc_t *dsc = lv_event_get_param(event);
+
+    if (dsc->part != LV_PART_ITEMS) {
+        return;
+    }
+
+    if (lv_btnmatrix_get_selected_btn(obj) == dsc->id) { /* key is held down */
+        if (lv_btnmatrix_has_btn_ctrl(obj, dsc->id, LV_BTNMATRIX_CTRL_CHECKED)) {
+            if (lv_btnmatrix_has_btn_ctrl(obj, dsc->id, LV_BTNMATRIX_CTRL_CHECKABLE)) { /* inactive modifiers */
+                dsc->rect_dsc->bg_color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
+            } else { /* non-letters */
+                dsc->rect_dsc->bg_color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 3);
+            }
+        } else {
+            if (lv_btnmatrix_has_btn_ctrl(obj, dsc->id, LV_BTNMATRIX_CTRL_CHECKABLE)) { /* active modifiers */
+                dsc->rect_dsc->bg_color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
+            } else { /* letters */
+                dsc->rect_dsc->bg_color = lv_palette_lighten(LV_PALETTE_BLUE_GREY, 1);
+            }
+        }
+    } else { /* key is not held down */
+        if (lv_btnmatrix_has_btn_ctrl(obj, dsc->id, LV_BTNMATRIX_CTRL_CHECKED)) { /* inactive modifiers & non-letters */
+            dsc->rect_dsc->bg_color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 4);
+        } else if (lv_btnmatrix_has_btn_ctrl(obj, dsc->id, LV_BTNMATRIX_CTRL_CHECKABLE)) { /* active modifiers */
+            dsc->rect_dsc->bg_color = lv_palette_main(LV_PALETTE_TEAL);
+        } else { /* letters */
+            dsc->rect_dsc->bg_color = lv_palette_main(LV_PALETTE_BLUE_GREY);
+        }
+    }
+}
+
 
 /**
  * Main
@@ -255,6 +288,7 @@ int main(void)
     /* Set up keyboard event handlers */
     lv_obj_remove_event_cb(keyboard, lv_keyboard_def_event_cb);
     lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(keyboard, keyboard_draw_part_begin_cb, LV_EVENT_DRAW_PART_BEGIN, NULL);
 
     /* Apply default keyboard layout */
     bb_layout_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
