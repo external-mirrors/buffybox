@@ -93,7 +93,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 
 # Footnotes
 
-[^1]: If you still don't know what vampires have to do with all of this, the train of thought is: Linux frame**buffer** 👉 **buffy**board 👉 ... wait for it ... 👉 [90s TV show featuring Sarah Michelle Gellar] There you have it. I never claimed I was funny. 😅
+[^1]: If you still don't know what vampires have to do with all of this, the train of thought is: Linux frame**buffer** 👉 **buffy**board 👉 ... wait for it ... 👉 [90s TV show featuring Sarah Michelle Gellar]. There you have it. I never claimed I was funny. 😅
 
 [90s TV show featuring Sarah Michelle Gellar]: https://en.wikipedia.org/wiki/Buffy_the_Vampire_Slayer
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
