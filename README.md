@@ -1,7 +1,7 @@
 Buffyboard
 ==========
 
-Buffyboard is a touch-enabled on-screen keyboard running on the Linux framebuffer. It's primarily intended for vampire⃰ hunting but you can also use it as a general purpose keyboard.
+Buffyboard is a touch-enabled on-screen keyboard running on the Linux framebuffer. It's primarily intended for vampire ⃰ hunting but you can also use it as a general purpose keyboard.
 
 Buffyboard uses [lvgl] for input processing and rendering. Key events are forwarded directly to the kernel via a uinput device. Since the latter emulates a hardware keyboard, the terminal keymap must match with Buffyboard's layout or else on-screen keys might not produce the correct result.
 
