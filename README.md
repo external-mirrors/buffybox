@@ -15,11 +15,11 @@ While partially usable, buffyboard currently still is a work in progress.
 - Multi-layer keyboard layout including lowercase letters, uppercase letters, numbers and selected symbols (based on top three layers of [squeekboard's US terminal layout])
 - Key chords with one or more modifiers terminated by a single non-modifier (e.g. `CTRL-c`)
 - Highlighting of active modifiers
+- Automatic resizing (and later reset) of active VT to prevent overlap with keyboard
 
 ## To do
 
 - Show keyboard at the bottom of the screen instead of at the top (just need to set the offset once [lvgl/lv_drivers#164] is merged)
-- Resize VT screen size to not overlap with keyboard
 - Support different screen rotations
 - Eliminate `libinput_multi.[ch]` once support for multiple input devices has been upstreamed to [lv_drivers] (see [lvgl/lv_drivers#151])
 - Add remaining layers from [squeekboard's US terminal layout] (symbols and actions)

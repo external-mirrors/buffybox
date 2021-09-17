@@ -22,6 +22,7 @@
 #include "layout.h"
 #include "libinput_multi.h"
 #include "sq2lv_layouts.h"
+#include "terminal.h"
 #include "uinput_device.h"
 
 #include "lvgl/lvgl.h"
@@ -29,6 +30,7 @@
 #include "lv_drivers/indev/libinput_drv.h"
 
 #include <limits.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -47,6 +49,7 @@ LV_FONT_DECLARE(montserrat_extended_32);
  * Static variables
  */
 
+static bool resize_terminals = false;
 static lv_obj_t *keyboard = NULL;
 static lv_style_t style_text_normal;
 
@@ -54,6 +57,20 @@ static lv_style_t style_text_normal;
 /**
  * Static prototypes
  */
+
+/**
+ * Handle termination signals sent to the process.
+ *
+ * @param signum the signal's number
+ */
+static void sigaction_handler(int signum);
+
+/**
+ * Callback for the terminal resizing timer.
+ *
+ * @param timer the timer object
+ */
+static void terminal_resize_timer_cb(lv_timer_t *timer);
 
 /**
  * Set the UI theme.
@@ -90,6 +107,19 @@ static void pop_checked_modifier_keys(lv_obj_t *keyboard);
 /**
  * Static functions
  */
+
+static void sigaction_handler(int signum) {
+    if (resize_terminals) {
+        bb_terminal_reset_all();
+    }
+    exit(0);
+}
+
+static void terminal_resize_timer_cb(lv_timer_t *timer) {
+    if (resize_terminals) {
+        bb_terminal_shrink_current();
+    }
+}
 
 static void set_theme(bool is_dark) {
     lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_CYAN), is_dark, &montserrat_extended_32);
@@ -195,8 +225,21 @@ static void keyboard_draw_part_begin_cb(lv_event_t *event) {
  * Main
  */
 
-int main(void)
-{
+int main(void) {
+    /* Prepare for terminal resizing and reset */
+    resize_terminals = bb_terminal_init(2.0f / 3.0f);
+    if (resize_terminals) {
+        /* Clean up on termination */
+        struct sigaction action;
+        memset(&action, 0, sizeof(action));
+        action.sa_handler = sigaction_handler;
+        sigaction(SIGINT, &action, NULL);
+        sigaction(SIGTERM, &action, NULL);
+
+        /* Resize current terminal */
+        bb_terminal_shrink_current();
+    }
+
     /* Set up uinput device */
     if (!bb_uinput_device_init(sq2lv_unique_scancodes, sq2lv_num_unique_scancodes)) {
         return 1;
@@ -292,6 +335,9 @@ int main(void)
 
     /* Apply default keyboard layout */
     bb_layout_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
+
+    /* Start timer for periodically resizing terminals */
+    lv_timer_create(terminal_resize_timer_cb, 1000,  NULL);
 
     /* Run lvgl in "tickless" mode */
     while(1) {

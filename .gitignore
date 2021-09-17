@@ -1,2 +1,3 @@
-*.o
 buffyboard
+*.o
+.vscode

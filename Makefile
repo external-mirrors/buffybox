@@ -23,7 +23,7 @@ CFLAGS ?= -O3 -g0 -I$(LVGL_DIR)/ -Wall -Wshadow -Wundef -Wmissing-prototypes -Wn
 LDFLAGS ?= -lm -linput
 BIN = buffyboard
 
-MAINSRC = ./cursor.c ./layout.c ./libinput_multi.c ./main.c ./montserrat_extended_32.c ./sq2lv_layouts.c ./uinput_device.c
+MAINSRC = ./cursor.c ./layout.c ./libinput_multi.c ./main.c ./montserrat_extended_32.c ./sq2lv_layouts.c ./terminal.c ./uinput_device.c
 
 include $(LVGL_DIR)/lvgl/lvgl.mk
 include $(LVGL_DIR)/lv_drivers/lv_drivers.mk
