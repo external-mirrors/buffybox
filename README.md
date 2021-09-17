@@ -1,7 +1,7 @@
 Buffyboard
 ==========
 
-Buffyboard is a touch-enabled on-screen keyboard running on the Linux framebuffer. It's primarily intended for vampire ⃰ hunting but you can also use it as a general purpose keyboard.
+Buffyboard is a touch-enabled on-screen keyboard running on the Linux framebuffer. It's primarily intended for vampire ⃰  hunting but you can also use it as a general purpose keyboard.
 
 Buffyboard uses [lvgl] for input processing and rendering. Key events are forwarded directly to the kernel via a uinput device. Since the latter emulates a hardware keyboard, the terminal keymap must match with Buffyboard's layout or else on-screen keys might not produce the correct result.
 
@@ -93,7 +93,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 
 # Footnotes
 
-⃰ If you still don't know what vampires have to do with all of this, the train of thought is: Linux frame**buffer** 👉 **buffy**board 👉 [90s TV show featuring Sarah Michelle Gellar]. There you have it. I never claimed I was funny. 😅
+⃰  If you still don't know what vampires have to do with all of this, the train of thought is: Linux frame**buffer** 👉 **buffy**board 👉 [90s TV show featuring Sarah Michelle Gellar]. There you have it. I never claimed I was funny. 😅
 
 [90s TV show featuring Sarah Michelle Gellar]: https://en.wikipedia.org/wiki/Buffy_the_Vampire_Slayer
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
