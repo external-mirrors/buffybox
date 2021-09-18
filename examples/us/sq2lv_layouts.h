@@ -7,6 +7,8 @@
 
 #include "lvgl/lvgl.h"
 
+#define SQ2LV_SCANCODES_ENABLED 0
+
 /* Layout IDs, values can be used as indexes into the sq2lv_layouts array */
 typedef enum {
     SQ2LV_LAYOUT_US = 0

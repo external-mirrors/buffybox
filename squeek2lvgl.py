@@ -622,6 +622,8 @@ if __name__ == '__main__':
     h_builder = SourceFileBuilder()
     h_builder.add_include('lvgl/lvgl.h')
     h_builder.add_line()
+    h_builder.add_line(f'#define SQ2LV_SCANCODES_ENABLED {1 if args.generate_scancodes else 0}')
+    h_builder.add_line()
 
     layouts = []
     unique_scancodes = {}

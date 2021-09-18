@@ -1,6 +1,6 @@
 # squeek2lvgl
 
-squeek2lvgl is a Python script that makes it possible to use [squeekboard] keyboard layouts with [LVGL]'s keyboard widget. To achieve this, [squeekboard]'s YAML syntax for layout definitions is converted into a C file (with an accompanying header) that can then be added to an [LVGL] project.
+squeek2lvgl is a Python script and an accompanying C library that make it possible to use [squeekboard] keyboard layouts with [LVGL]'s keyboard widget. To achieve this, [squeekboard]'s YAML syntax for layout definitions is converted into C files that, together with the library C files, can then be added to an [LVGL] project.
 
 To access [squeekboard]'s layout files, squeek2lvgl shallowly clones the [squeekboard] git repository into a temporary directory and purges it before exiting.
 
@@ -38,6 +38,33 @@ $ pipenv run python squeek2lvgl.py --input us.yaml --output .
 
 When the process has finished, `sq2lv_layouts.h` and `sq2lv_layouts.c` will have been written into the current directory. Check the [examples] folder for further details about the generated files.
 
+To facilitate usage, a minimalist C API is available in [sq2lv.h] and [sq2lv.c].
+
+### Integrating into a project
+
+Similar to [LVGL] squeek2lvgl should be added into a project as a git submodule. The generated C files assume that you have integrated [LVGL] as a submodule in the `./lvgl` folder. The C library files in turn assume that you have imported squeek2lvgl as a submodule one folder above the location of the generated files.
+
+The following is an example directory hierarchy:
+
+```
+$ tree .
+.
+├── lvgl             # LVGL submodule
+│   ├── ...
+├── main.c           # Project's own source files
+├── ...
+├── sq2lv_layouts.c  # Layouts generated with squeek2lvgl
+├── sq2lv_layouts.h
+├── ...
+├── squeek2lvgl      # squeek2lvgl submodule
+│   ├── sq2lv.c      # squeek2lvgl library code
+│   ├── sq2lv.h
+│   ├── ...
+├── ...
+```
+
+Using the directory structure above, you can then add `sq2lv_layouts.c` and `squeek2lvgl/sq2lv.c` into your build process just like the rest of your project's sources.
+
 ## License
 
 squeek2lvgl is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -48,3 +75,5 @@ squeek2lvgl is licensed under the GNU General Public License as published by the
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard
 [squeekboard's US layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/us.yaml
 [examples]: ./examples
+[sq2lv.h]: ./sq2lv.h
+[sq2lv.c]: ./sq2lv.c
