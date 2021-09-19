@@ -9,7 +9,7 @@
  * Layout: US English (Terminal) - generated from terminal/us
  **/
 
-static const char * const name_terminal_us = "terminal/us";
+static const char * const name_terminal_us = "US English (Terminal)";
 
 /* Layer: Lowercase letters - generated from base */
 

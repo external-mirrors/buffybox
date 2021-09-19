@@ -8,7 +8,7 @@
  * Layout: US English - generated from us
  **/
 
-static const char * const name_us = "us";
+static const char * const name_us = "US English";
 
 /* Layer: Lowercase letters - generated from base */
 

@@ -643,7 +643,7 @@ if __name__ == '__main__':
 
             c_builder.add_section_comment(f'Layout: {layout_id_to_layout_name(layout_id)} - generated from {layout_id}')
             c_builder.add_line()
-            c_builder.add_line(f'static const char * const name_{layout_identifier} = "{layout_id}";')
+            c_builder.add_line(f'static const char * const name_{layout_identifier} = "{layout_id_to_layout_name(layout_id)}";')
             c_builder.add_line()
 
             layer_identifiers = []

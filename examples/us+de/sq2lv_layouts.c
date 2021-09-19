@@ -8,7 +8,7 @@
  * Layout: US English - generated from us
  **/
 
-static const char * const name_us = "us";
+static const char * const name_us = "US English";
 
 /* Layer: Lowercase letters - generated from base */
 
@@ -153,7 +153,7 @@ static const sq2lv_layer_t layers_us[] = {
  * Layout: German - generated from de
  **/
 
-static const char * const name_de = "de";
+static const char * const name_de = "German";
 
 /* Layer: Lowercase letters - generated from base */
 
