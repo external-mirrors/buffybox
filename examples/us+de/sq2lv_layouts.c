@@ -215,14 +215,14 @@ static const int modifier_idxs_upper_de[] = { \
      \
 };
 
-static const int num_switchers_upper_de = 2;
+static const int num_switchers_upper_de = 3;
 
 static const int switcher_idxs_upper_de[] = { \
-    19, 28 \
+    19, 28, 29 \
 };
 
 static const int switcher_dests_upper_de[] = { \
-    0, 2 \
+    0, 2, 3 \
 };
 
 /* Layer: Numbers / symbols - generated from numbers */
@@ -249,14 +249,14 @@ static const int modifier_idxs_numbers_de[] = { \
      \
 };
 
-static const int num_switchers_numbers_de = 1;
+static const int num_switchers_numbers_de = 2;
 
 static const int switcher_idxs_numbers_de[] = { \
-    28 \
+    28, 29 \
 };
 
 static const int switcher_dests_numbers_de[] = { \
-    0 \
+    0, 3 \
 };
 
 /* Layer: Special characters - generated from eschars */
