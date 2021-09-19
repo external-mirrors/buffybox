@@ -19,7 +19,7 @@ static const char * const keycaps_lower_us[] = { \
     "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "\n", \
     "a", "s", "d", "f", "g", "h", "j", "k", "l", "\n", \
     "ABC", "z", "x", "c", "v", "b", "n", "m", LV_SYMBOL_BACKSPACE, "\n", \
-    "1#", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
+    "123", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
 };
 
 static const lv_btnmatrix_ctrl_t attributes_lower_us[] = { \
@@ -53,7 +53,7 @@ static const char * const keycaps_upper_us[] = { \
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "\n", \
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "\n", \
     "abc", "Z", "X", "C", "V", "B", "N", "M", LV_SYMBOL_BACKSPACE, "\n", \
-    "1#", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
+    "123", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
 };
 
 static const lv_btnmatrix_ctrl_t attributes_upper_us[] = { \
@@ -87,7 +87,7 @@ static const char * const keycaps_numbers_us[] = { \
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\n", \
     "@", "#", "$", "%", "&", "-", "_", "+", "(", ")", "\n", \
     ",", "\"", "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
-    "abc", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
+    "ABC", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
 };
 
 static const lv_btnmatrix_ctrl_t attributes_numbers_us[] = { \

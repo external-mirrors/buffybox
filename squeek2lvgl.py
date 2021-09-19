@@ -304,6 +304,20 @@ def view_id_to_c_identifier(view_id):
     return layer_identifier_for_view_id[view_id] if view_id in layer_identifier_for_view_id else view_id
 
 
+ignored_keys = {
+    'preferences',
+    'show_actions',
+    'show_symbols'
+}
+
+def is_key_ignored(key):
+    """Return True if a key should be ignored or False otherwise.
+    
+    key -- the key in question
+    """
+    return key in ignored_keys
+
+
 keycap_for_key = {
     '\\': '\\\\',
     '"': '\\"',
@@ -314,21 +328,15 @@ keycap_for_key = {
     'BackSpace': 'LV_SYMBOL_BACKSPACE',
     'colon': ':',
     'period': '.',
-    'preferences': None,
     'Shift_L': {
         'base': 'ABC',
         'upper': 'abc'
     },
-    'show_actions': None,
     'show_eschars': {
         'de': 'äöü',
         'es': 'áéí',
-        'fr': 'àéô'
+        'fr': 'áàéô'
     },
-    'show_letters': 'abc',
-    'show_numbers': '1#',
-    'show_numbers_from_symbols': '1#',
-    'show_symbols': None,
     'space': ' ',
     'Return': 'LV_SYMBOL_OK',
 }
@@ -464,7 +472,7 @@ scancodes_for_keycap = {
     ' ': ['KEY_SPACE'],
     'ABC': [],
     'abc': [],
-    '1#': [],
+    '123': [],
     'PgUp': ['KEY_PAGEUP'],
     'PgDn': ['KEY_PAGEDOWN'],
     'Home': ['KEY_HOME'],
@@ -495,7 +503,8 @@ def keycap_to_scancodes(keycap):
     keycap -- keycap to produce
     """
     if keycap not in scancodes_for_keycap:
-        die(f'cannot determine scancodes for unknown keycap "{keycap}"')
+        warn(f'Cannot determine scancodes for unknown keycap "{keycap}"')
+        return []
     return scancodes_for_keycap[keycap]
 
 
@@ -537,7 +546,16 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, da
 
 
         for key in keys:
-            keycap = key_to_keycap(key, view_id, layout_id)
+            if is_key_ignored(key):
+                continue
+
+            keycap = None
+
+            if key in data_buttons and 'label' in data_buttons[key]:
+                keycap = data_buttons[key]['label']
+            else:
+                keycap = key_to_keycap(key, view_id, layout_id)
+
             if not keycap:
                 continue
 

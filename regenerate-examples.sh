@@ -25,9 +25,11 @@ pipenv run python squeek2lvgl.py \
     --surround-space-with-arrows
 
 pipenv run python squeek2lvgl.py \
-    --input us.yaml \
     --input de.yaml \
-    --output examples/us+de \
+    --input es.yaml \
+    --input fr.yaml \
+    --input us.yaml \
+    --output examples/de+es+fr+us \
     --surround-space-with-arrows
 
 pipenv run python squeek2lvgl.py \
