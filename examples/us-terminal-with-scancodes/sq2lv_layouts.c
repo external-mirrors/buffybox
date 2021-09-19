@@ -263,8 +263,11 @@ const sq2lv_layout_t sq2lv_layouts[] = {
     }
 };
 
-const char * const sq2lv_layout_names = 
+const char * const sq2lv_layout_names =
     "US English (Terminal)";
+
+const char * const sq2lv_layout_short_names =
+    "terminal/us";
 
 const int sq2lv_num_unique_scancodes = 57;
 

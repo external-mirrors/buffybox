@@ -363,6 +363,10 @@ const sq2lv_layout_t sq2lv_layouts[] = {
     }
 };
 
-const char * const sq2lv_layout_names = 
+const char * const sq2lv_layout_names =
     "US English" "\n"
     "German";
+
+const char * const sq2lv_layout_short_names =
+    "us" "\n"
+    "de";

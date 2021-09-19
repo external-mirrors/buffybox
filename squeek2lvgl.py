@@ -724,6 +724,7 @@ if __name__ == '__main__':
 
             layouts.append({
                 'name': layout_id_to_layout_name(layout_id),
+                'short_name': layout_id,
                 'identifier': layout_identifier
             })
 
@@ -813,7 +814,12 @@ if __name__ == '__main__':
 
     names = [layout['name'] for layout in layouts]
     names = '\n    ' + ' "\\n"\n    '.join([f'"{name}"' for name in names])
-    c_builder.add_line(f'const char * const sq2lv_layout_names = {names};')
+    c_builder.add_line(f'const char * const sq2lv_layout_names ={names};')
+    c_builder.add_line()
+
+    short_names = [layout['short_name'] for layout in layouts]
+    short_names = '\n    ' + ' "\\n"\n    '.join([f'"{short_name}"' for short_name in short_names])
+    c_builder.add_line(f'const char * const sq2lv_layout_short_names ={short_names};')
     c_builder.add_line()
 
     if args.generate_scancodes:
