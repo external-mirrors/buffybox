@@ -25,6 +25,12 @@ pipenv run python squeek2lvgl.py \
     --surround-space-with-arrows
 
 pipenv run python squeek2lvgl.py \
+    --input us.yaml \
+    --input de.yaml \
+    --output examples/us+de \
+    --surround-space-with-arrows
+
+pipenv run python squeek2lvgl.py \
     --input terminal/us.yaml \
     --output examples/us-terminal-with-scancodes \
     --generate-scancodes
