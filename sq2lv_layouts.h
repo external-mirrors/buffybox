@@ -1,11 +1,13 @@
 /**
- * Auto-generated with unsqu33kr
+ * Auto-generated with squeek2lvgl
  **/
 
 #ifndef SQ2LV_LAYOUTS_H
 #define SQ2LV_LAYOUTS_H
 
 #include "lvgl/lvgl.h"
+
+#define SQ2LV_SCANCODES_ENABLED 1
 
 /* Layout IDs, values can be used as indexes into the sq2lv_layouts array */
 typedef enum {
@@ -42,6 +44,10 @@ typedef struct {
 
 /* Layout type */
 typedef struct {
+    /* Layout name */
+    const char * const name;
+    /* Layout short name */
+    const char * const short_name;
     /* Total number of layers */
     const int num_layers;
     /* Layers array */
@@ -54,6 +60,7 @@ extern const sq2lv_layout_t sq2lv_layouts[];
 
 /* Layout names (suitable for use in lv_dropdown_t) */
 extern const char * const sq2lv_layout_names;
+extern const char * const sq2lv_layout_short_names;
 
 /* Unique scancodes from all layout (suitable for setting up uinput devices) */
 extern const int sq2lv_num_unique_scancodes;

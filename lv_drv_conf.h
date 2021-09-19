@@ -416,7 +416,7 @@
  *------------------------------------------------*/
 #if USE_LIBINPUT || USE_BSD_LIBINPUT || USE_EVDEV || USE_BSD_EVDEV
 #  ifndef USE_XKB
-#    define USE_XKB           1
+#    define USE_XKB           0
 #  endif
 
 #  if USE_XKB

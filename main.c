@@ -19,15 +19,17 @@
 
 
 #include "cursor.h"
-#include "layout.h"
 #include "libinput_multi.h"
 #include "sq2lv_layouts.h"
 #include "terminal.h"
 #include "uinput_device.h"
 
-#include "lvgl/lvgl.h"
 #include "lv_drivers/display/fbdev.h"
 #include "lv_drivers/indev/libinput_drv.h"
+
+#include "lvgl/lvgl.h"
+
+#include "squeek2lvgl/sq2lv.h"
 
 #include <limits.h>
 #include <signal.h>
@@ -89,19 +91,16 @@ static void keyboard_value_changed_cb(lv_event_t *event);
 /**
  * Emit key down and up events for a key.
  *
- * @param keyboard keyboard widget
  * @param btn_id button index corresponding to the key
  * @param key_down true if a key down event should be emitted
  * @param key_up true if a key up event should be emitted
  */
-static void emit_key_events(lv_obj_t *keyboard, uint16_t btn_id, bool key_down, bool key_up);
+static void emit_key_events(uint16_t btn_id, bool key_down, bool key_up);
 
 /**
  * Release any previously pressed modifier keys.
- *
- * @param keyboard keyboard widget
  */
-static void pop_checked_modifier_keys(lv_obj_t *keyboard);
+static void pop_checked_modifier_keys(void);
 
 
 /**
@@ -126,16 +125,16 @@ static void set_theme(bool is_dark) {
 }
 
 static void keyboard_value_changed_cb(lv_event_t *event) {
-    lv_obj_t *obj = lv_event_get_target(event);
+    lv_obj_t *kb = lv_event_get_target(event);
 
-    uint16_t btn_id = lv_btnmatrix_get_selected_btn(obj);
+    uint16_t btn_id = lv_btnmatrix_get_selected_btn(kb);
     if (btn_id == LV_BTNMATRIX_BTN_NONE) {
         return;
     }
 
-    if (bb_layout_is_layer_switcher(obj, btn_id)) {
-        pop_checked_modifier_keys(keyboard);
-        bb_layout_switch_layer(obj, btn_id);
+    if (sq2lv_is_layer_switcher(kb, btn_id)) {
+        pop_checked_modifier_keys();
+        sq2lv_switch_layer(kb, btn_id);
         return;
     }
 
@@ -143,22 +142,22 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
      * contains LV_BTNMATRIX_CTRL_CHECKED. As a result, pressing e.g. CTRL will _un_check the key. To account
      * for this, we invert the meaning of "checked" here and elsewhere in the code. */
 
-    bool is_modifier = bb_is_modifier(keyboard, btn_id);
+    bool is_modifier = sq2lv_is_modifier(keyboard, btn_id);
     bool is_checked = !lv_btnmatrix_has_btn_ctrl(keyboard, btn_id, LV_BTNMATRIX_CTRL_CHECKED);
 
     /* Emit key events. Suppress key up events for modifiers unless they were unchecked. For checked modifiers
      * the key up events are sent with the next non-modifier key press. */
-    emit_key_events(keyboard, btn_id, true, !is_modifier || !is_checked);
+    emit_key_events(btn_id, true, !is_modifier || !is_checked);
 
     /* Pop any previously checked modifiers when a non-modifier key was pressed */
     if (!is_modifier) {
-        pop_checked_modifier_keys(keyboard);
+        pop_checked_modifier_keys();
     }
 }
 
-static void emit_key_events(lv_obj_t *keyboard, uint16_t btn_id, bool key_down, bool key_up) {
+static void emit_key_events(uint16_t btn_id, bool key_down, bool key_up) {
     int num_scancodes = 0;
-    int *scancodes = bb_layout_get_scancodes(keyboard, btn_id, &num_scancodes);
+    int *scancodes = sq2lv_get_scancodes(keyboard, btn_id, &num_scancodes);
 
     if (key_down) {
         /* Emit key down events in forward order */
@@ -175,13 +174,13 @@ static void emit_key_events(lv_obj_t *keyboard, uint16_t btn_id, bool key_down, 
     }
 }
 
-static void pop_checked_modifier_keys(lv_obj_t *keyboard) {
+static void pop_checked_modifier_keys(void) {
     int num_modifiers = 0;
-    int *modifier_idxs = bb_get_modifier_indexes(keyboard, &num_modifiers);
+    int *modifier_idxs = sq2lv_get_modifier_indexes(keyboard, &num_modifiers);
 
     for (int i = 0; i < num_modifiers; ++i) {
         if (!lv_btnmatrix_has_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED)) {
-            emit_key_events(keyboard, modifier_idxs[i], false, true);
+            emit_key_events(modifier_idxs[i], false, true);
             lv_btnmatrix_set_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED);
         }
     }
@@ -316,7 +315,7 @@ int main(void) {
         touchscreen_indevs[i] = lv_indev_drv_register(&touchscreen_indev_drvs[i]);
     }
 
-    /* Initialise theme and  styles */
+    /* Initialise theme and styles */
     set_theme(true);
     lv_style_init(&style_text_normal);
     lv_style_set_text_font(&style_text_normal, &montserrat_extended_32);
@@ -334,7 +333,7 @@ int main(void) {
     lv_obj_add_event_cb(keyboard, keyboard_draw_part_begin_cb, LV_EVENT_DRAW_PART_BEGIN, NULL);
 
     /* Apply default keyboard layout */
-    bb_layout_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
+    sq2lv_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
 
     /* Start timer for periodically resizing terminals */
     lv_timer_create(terminal_resize_timer_cb, 1000,  NULL);
