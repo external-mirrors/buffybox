@@ -176,7 +176,7 @@ class SourceFileBuilder(object):
     def _add_header_comment(self):
         """Add the generator header comment and return the builder.
         """
-        self.add_lines(['/**', ' * Auto-generated with unsqu33kr', ' **/', ''])
+        self.add_lines(['/**', ' * Auto-generated with squeek2lvgl', ' **/', ''])
         return self
 
     def add_include(self, header):
