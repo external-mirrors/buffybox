@@ -9,6 +9,7 @@
  **/
 
 static const char * const name_us = "US English";
+static const char * const short_name_us = "us";
 
 /* Layer: Lowercase letters - generated from base */
 
@@ -159,6 +160,7 @@ const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English */
     {
         .name = name_us,
+        .short_name = short_name_us,
         .num_layers = num_layers_us,
         .layers = layers_us
     }

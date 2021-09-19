@@ -644,6 +644,7 @@ if __name__ == '__main__':
             c_builder.add_section_comment(f'Layout: {layout_id_to_layout_name(layout_id)} - generated from {layout_id}')
             c_builder.add_line()
             c_builder.add_line(f'static const char * const name_{layout_identifier} = "{layout_id_to_layout_name(layout_id)}";')
+            c_builder.add_line(f'static const char * const short_name_{layout_identifier} = "{layout_id}";')
             c_builder.add_line()
 
             layer_identifiers = []
@@ -768,6 +769,8 @@ if __name__ == '__main__':
     h_builder.add_line('typedef struct {')
     h_builder.add_line('    /* Layout name */')
     h_builder.add_line('    const char * const name;')
+    h_builder.add_line('    /* Layout short name */')
+    h_builder.add_line('    const char * const short_name;')
     h_builder.add_line('    /* Total number of layers */')
     h_builder.add_line('    const int num_layers;')
     h_builder.add_line('    /* Layers array */')
@@ -800,7 +803,7 @@ if __name__ == '__main__':
     for i, layout in enumerate(layouts):
         c_builder.add_line('    /* ' + layout['name'] + ' */')
         c_builder.add_line('    {')
-        fields = ['name', 'num_layers', 'layers']
+        fields = ['name', 'short_name', 'num_layers', 'layers']
         identifier = layout['identifier']
         for j, field in enumerate(fields):
             c_builder.add_line(f'        .{field} = {field}_{identifier}{comma_if_needed(fields, j)}')

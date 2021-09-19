@@ -9,6 +9,7 @@
  **/
 
 static const char * const name_us = "US English";
+static const char * const short_name_us = "us";
 
 /* Layer: Lowercase letters - generated from base */
 
@@ -154,6 +155,7 @@ static const sq2lv_layer_t layers_us[] = {
  **/
 
 static const char * const name_de = "German";
+static const char * const short_name_de = "de";
 
 /* Layer: Lowercase letters - generated from base */
 
@@ -348,12 +350,14 @@ const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English */
     {
         .name = name_us,
+        .short_name = short_name_us,
         .num_layers = num_layers_us,
         .layers = layers_us
     },
     /* German */
     {
         .name = name_de,
+        .short_name = short_name_de,
         .num_layers = num_layers_de,
         .layers = layers_de
     }

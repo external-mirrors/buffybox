@@ -10,6 +10,7 @@
  **/
 
 static const char * const name_terminal_us = "US English (Terminal)";
+static const char * const short_name_terminal_us = "terminal/us";
 
 /* Layer: Lowercase letters - generated from base */
 
@@ -256,6 +257,7 @@ const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English (Terminal) */
     {
         .name = name_terminal_us,
+        .short_name = short_name_terminal_us,
         .num_layers = num_layers_terminal_us,
         .layers = layers_terminal_us
     }
