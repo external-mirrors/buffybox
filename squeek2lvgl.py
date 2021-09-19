@@ -786,6 +786,7 @@ if __name__ == '__main__':
 
     h_builder.add_line('/* Layout names (suitable for use in lv_dropdown_t) */')
     h_builder.add_line('extern const char * const sq2lv_layout_names;') 
+    h_builder.add_line('extern const char * const sq2lv_layout_short_names;') 
     h_builder.add_line()
 
     if args.generate_scancodes:
