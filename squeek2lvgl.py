@@ -766,6 +766,8 @@ if __name__ == '__main__':
 
     h_builder.add_line('/* Layout type */')
     h_builder.add_line('typedef struct {')
+    h_builder.add_line('    /* Layout name */')
+    h_builder.add_line('    const char * const name;')
     h_builder.add_line('    /* Total number of layers */')
     h_builder.add_line('    const int num_layers;')
     h_builder.add_line('    /* Layers array */')
@@ -798,8 +800,10 @@ if __name__ == '__main__':
     for i, layout in enumerate(layouts):
         c_builder.add_line('    /* ' + layout['name'] + ' */')
         c_builder.add_line('    {')
-        c_builder.add_line('        .num_layers = num_layers_' + layout['identifier'] + ',')
-        c_builder.add_line('        .layers = layers_' + layout['identifier'])
+        fields = ['name', 'num_layers', 'layers']
+        identifier = layout['identifier']
+        for j, field in enumerate(fields):
+            c_builder.add_line(f'        .{field} = {field}_{identifier}{comma_if_needed(fields, j)}')
         c_builder.add_line('    }' + comma_if_needed(layouts, i))
     c_builder.add_line('};')
     c_builder.add_line()

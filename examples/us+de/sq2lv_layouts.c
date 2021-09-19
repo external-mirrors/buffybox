@@ -347,11 +347,13 @@ const int sq2lv_num_layouts = 2;
 const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English */
     {
+        .name = name_us,
         .num_layers = num_layers_us,
         .layers = layers_us
     },
     /* German */
     {
+        .name = name_de,
         .num_layers = num_layers_de,
         .layers = layers_de
     }

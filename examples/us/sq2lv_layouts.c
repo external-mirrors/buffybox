@@ -158,6 +158,7 @@ const int sq2lv_num_layouts = 1;
 const sq2lv_layout_t sq2lv_layouts[] = {
     /* US English */
     {
+        .name = name_us,
         .num_layers = num_layers_us,
         .layers = layers_us
     }

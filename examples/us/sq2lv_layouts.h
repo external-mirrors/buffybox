@@ -36,6 +36,8 @@ typedef struct {
 
 /* Layout type */
 typedef struct {
+    /* Layout name */
+    const char * const name;
     /* Total number of layers */
     const int num_layers;
     /* Layers array */
