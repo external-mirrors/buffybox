@@ -332,11 +332,6 @@ keycap_for_key = {
         'base': 'ABC',
         'upper': 'abc'
     },
-    'show_eschars': {
-        'de': 'äöü',
-        'es': 'áéí',
-        'fr': 'áàéô'
-    },
     'space': ' ',
     'Return': 'LV_SYMBOL_OK',
 }
@@ -368,19 +363,24 @@ def key_is_modifier(key, data_buttons):
     return key in data_buttons and 'modifier' in data_buttons[key]
 
 
-def key_to_attributes(key, data_buttons):
+def key_to_attributes(key, is_locked, is_lockable, data_buttons):
     """Return the LVGL button attributes for a key.
     
     key -- the key in question
+    is_locked - whether the key is locked  in the current view
+    is_lockable - whether the key can be locked in the current view
     data_buttons -- the "buttons" object from the layout's YAML file
     """
     attributes = []
 
-    if key in data_buttons and key not in ['period', 'colon', '"']:
-        attributes.append('LV_KEYBOARD_CTRL_BTN_FLAGS')
-
     if key_is_modifier(key, data_buttons):
-        attributes.append('LV_BTNMATRIX_CTRL_CHECKABLE')
+        attributes.append('SQ2LV_CTRL_MOD_INACTIVE')
+    elif is_locked:
+        attributes.append('SQ2LV_CTRL_MOD_ACTIVE')
+    elif is_lockable:
+        attributes.append('SQ2LV_CTRL_MOD_INACTIVE')
+    elif key in data_buttons and key not in ['"', 'colon', 'period', 'space'] or key in ['←', '→']:
+        attributes.append('SQ2LV_CTRL_NON_CHAR')
 
     if key not in data_buttons or key in ['period', 'colon', '"']:
         attributes.append('2')
@@ -560,10 +560,12 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, da
                 continue
 
             keycaps_in_row.append(keycap_to_c_value(keycap))
-            attrs_in_row.append(key_to_attributes(key, data_buttons))
 
             if key_is_modifier(key, data_buttons):
                 modifier_idxs.append(idx)
+
+            is_locked = False
+            is_lockable = False
 
             if key in data_buttons and 'action' in data_buttons[key]:
                 action = data_buttons[key]['action']
@@ -574,11 +576,15 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, da
                 elif 'locking' in action and 'lock_view' in action['locking'] and 'unlock_view' in action['locking']:
                     if action['locking']['lock_view'] == view_id:
                         dest = action['locking']['unlock_view']
+                        is_locked = True
                     else:
                         dest = action['locking']['lock_view']
+                        is_lockable = True
                 if dest:
                     switcher_idxs.append(idx)
                     switcher_dests.append(dest)
+
+            attrs_in_row.append(key_to_attributes(key, is_locked, is_lockable, data_buttons))
 
             if args.generate_scancodes:
                 scancodes_in_row.append(keycap_to_scancodes(keycap))
@@ -641,6 +647,11 @@ if __name__ == '__main__':
     h_builder.add_include('lvgl/lvgl.h')
     h_builder.add_line()
     h_builder.add_line(f'#define SQ2LV_SCANCODES_ENABLED {1 if args.generate_scancodes else 0}')
+    h_builder.add_line()
+    h_builder.add_subsection_comment('Key attributes')
+    h_builder.add_line('#define SQ2LV_CTRL_NON_CHAR     (LV_BTNMATRIX_CTRL_NO_REPEAT | LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKED)')
+    h_builder.add_line('#define SQ2LV_CTRL_MOD_ACTIVE   (LV_BTNMATRIX_CTRL_NO_REPEAT | LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE)')
+    h_builder.add_line('#define SQ2LV_CTRL_MOD_INACTIVE (LV_BTNMATRIX_CTRL_NO_REPEAT | LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE | LV_BTNMATRIX_CTRL_CHECKED)')
     h_builder.add_line()
 
     layouts = []
@@ -760,7 +771,7 @@ if __name__ == '__main__':
     h_builder.add_line('    const int num_keys;')
     h_builder.add_line('    /* Key caps */')
     h_builder.add_line('    const char ** const keycaps;')
-    h_builder.add_line('    /* Button matrix attributes */')
+    h_builder.add_line('    /* Key attributes */')
     h_builder.add_line('    const lv_btnmatrix_ctrl_t * const attributes;')
     h_builder.add_line('    /* Number of modifier keys */')
     h_builder.add_line('    const int num_modifiers;')

@@ -25,8 +25,8 @@ static const char * const keycaps_lower_us[] = { \
 static const lv_btnmatrix_ctrl_t attributes_lower_us[] = { \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+    SQ2LV_CTRL_MOD_INACTIVE | 3, 2, 2, 2, 2, 2, 2, 2, SQ2LV_CTRL_NON_CHAR | 3, \
+    SQ2LV_CTRL_NON_CHAR | 3, SQ2LV_CTRL_NON_CHAR | 2, 7, SQ2LV_CTRL_NON_CHAR | 2, 2, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
 static const int num_modifiers_lower_us = 0;
@@ -59,8 +59,8 @@ static const char * const keycaps_upper_us[] = { \
 static const lv_btnmatrix_ctrl_t attributes_upper_us[] = { \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+    SQ2LV_CTRL_MOD_ACTIVE | 3, 2, 2, 2, 2, 2, 2, 2, SQ2LV_CTRL_NON_CHAR | 3, \
+    SQ2LV_CTRL_NON_CHAR | 3, SQ2LV_CTRL_NON_CHAR | 2, 7, SQ2LV_CTRL_NON_CHAR | 2, 2, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
 static const int num_modifiers_upper_us = 0;
@@ -93,8 +93,8 @@ static const char * const keycaps_numbers_us[] = { \
 static const lv_btnmatrix_ctrl_t attributes_numbers_us[] = { \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
-    2, 2, 2, 2, 2, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3, \
-    LV_KEYBOARD_CTRL_BTN_FLAGS | 3, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 7, 2, 2, LV_KEYBOARD_CTRL_BTN_FLAGS | 3 \
+    2, 2, 2, 2, 2, 2, 2, SQ2LV_CTRL_NON_CHAR | 3, \
+    SQ2LV_CTRL_NON_CHAR | 3, SQ2LV_CTRL_NON_CHAR | 2, 7, SQ2LV_CTRL_NON_CHAR | 2, 2, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
 static const int num_modifiers_numbers_us = 0;
