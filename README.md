@@ -19,7 +19,6 @@ While partially usable, buffyboard currently still is a work in progress.
 
 ## To do
 
-- Show keyboard at the bottom of the screen instead of at the top (just need to set the offset once [lvgl/lv_drivers#164] is merged)
 - Support different screen rotations
 - Eliminate `libinput_multi.[ch]` once support for multiple input devices has been upstreamed to [lv_drivers] (see [lvgl/lv_drivers#151] and [lvgl/lv_drivers#165])
 - Add remaining layers from [squeekboard's US terminal layout] (symbols and actions)
@@ -98,7 +97,6 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [**Buffy** the Vampire Slayer]: https://en.wikipedia.org/wiki/Buffy_the_Vampire_Slayer
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
 [lv_drivers]: https://github.com/lvgl/lv_drivers
-[lvgl/lv_drivers#164]: https://github.com/lvgl/lv_drivers/pull/164
 [lvgl/lv_drivers#151]: https://github.com/lvgl/lv_drivers/issues/151
 [lvgl/lv_drivers#165]: https://github.com/lvgl/lv_drivers/pull/165
 [squeekboard's FR terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/fr.yaml
