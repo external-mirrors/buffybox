@@ -190,8 +190,8 @@ void libinput_multi_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
       case LIBINPUT_EVENT_TOUCH_MOTION:
       case LIBINPUT_EVENT_TOUCH_DOWN: {
         touch_event = libinput_event_get_touch_event(event);
-        lv_coord_t y = libinput_event_touch_get_y_transformed(touch_event, full_display_height);
-        if (y < display_y_offset) {
+        lv_coord_t y = libinput_event_touch_get_y_transformed(touch_event, full_display_height) - display_y_offset;
+        if (y < 0) {
           break; /* ignore touches that are out of bounds */
         }
         most_recent_touch_point.x = libinput_event_touch_get_x_transformed(touch_event, LV_HOR_RES);
