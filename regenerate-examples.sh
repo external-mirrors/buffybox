@@ -26,10 +26,15 @@ pipenv run python squeek2lvgl.py \
 
 pipenv run python squeek2lvgl.py \
     --input de.yaml \
+    --output examples/de-with-custom-shift-keycap \
+    --surround-space-with-arrows \
+    --shift-keycap ABC
+
+pipenv run python squeek2lvgl.py \
     --input es.yaml \
     --input fr.yaml \
     --input us.yaml \
-    --output examples/de+es+fr+us \
+    --output examples/es+fr+us \
     --surround-space-with-arrows
 
 pipenv run python squeek2lvgl.py \

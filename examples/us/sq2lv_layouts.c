@@ -4,6 +4,8 @@
 
 #include "sq2lv_layouts.h"
 
+#define SQ2LV_SYMBOL_SHIFT "Shift"
+
 /**
  * Layout: US English - generated from us
  **/
@@ -18,7 +20,7 @@ static const int num_keys_lower_us = 34;
 static const char * const keycaps_lower_us[] = { \
     "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "\n", \
     "a", "s", "d", "f", "g", "h", "j", "k", "l", "\n", \
-    "ABC", "z", "x", "c", "v", "b", "n", "m", LV_SYMBOL_BACKSPACE, "\n", \
+    SQ2LV_SYMBOL_SHIFT, "z", "x", "c", "v", "b", "n", "m", LV_SYMBOL_BACKSPACE, "\n", \
     "123", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
 };
 
@@ -52,7 +54,7 @@ static const int num_keys_upper_us = 34;
 static const char * const keycaps_upper_us[] = { \
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "\n", \
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "\n", \
-    "abc", "Z", "X", "C", "V", "B", "N", "M", LV_SYMBOL_BACKSPACE, "\n", \
+    SQ2LV_SYMBOL_SHIFT, "Z", "X", "C", "V", "B", "N", "M", LV_SYMBOL_BACKSPACE, "\n", \
     "123", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
 };
 

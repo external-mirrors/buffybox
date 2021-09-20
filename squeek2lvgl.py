@@ -63,6 +63,8 @@ def parse_arguments():
     parser.add_argument('--input', dest='input', action='append', required=True, help='squeekboard layout to '
                         + 'use as input for generation. Has to be a YAML file path relative to data/keyboards. '
                         + 'Can be specified multiple times.')
+    parser.add_argument('--shift-keycap', dest='shift_keycap', type=str, required=False, help='key caption for '
+                        + 'the Shift key. Defaults to "Shift".')
     parser.add_argument('--surround-space-with-arrows', action='store_true', dest='arrows_around_space',
                         help='insert left / right arrow before / after space key')
     parser.add_argument('--generate-scancodes', action='store_true', dest='generate_scancodes', help='also '
@@ -328,30 +330,18 @@ keycap_for_key = {
     'BackSpace': 'LV_SYMBOL_BACKSPACE',
     'colon': ':',
     'period': '.',
-    'Shift_L': {
-        'base': 'ABC',
-        'upper': 'abc'
-    },
+    'Shift_L': 'SQ2LV_SYMBOL_SHIFT',
     'space': ' ',
     'Return': 'LV_SYMBOL_OK',
 }
 
-def key_to_keycap(key, view_id, layout_id):
+def key_to_keycap(args, key):
     """Return the keycap for a key
- 
+    
+    args -- commandline arguments
     key -- the key
-    view_id -- ID of the view the key appears on
-    layout_id -- ID of the layout the view is part of
     """
-    keycap = keycap_for_key[key] if key in keycap_for_key else key
-    if isinstance(keycap, dict):
-        if view_id in keycap:
-            keycap = keycap[view_id]
-        elif layout_id in keycap:
-            keycap = keycap[layout_id]
-        else:
-            keycap = None
-    return keycap
+    return keycap_for_key[key] if key in keycap_for_key else key
 
 
 def key_is_modifier(key, data_buttons):
@@ -395,7 +385,7 @@ def key_to_attributes(key, is_locked, is_lockable, data_buttons):
 def keycap_to_c_value(keycap):
     """Return the right-hand side C value for a keycap
     """
-    return keycap if keycap.startswith('LV_') else f'"{keycap}"'
+    return keycap if keycap.startswith('LV_') or keycap.startswith('SQ2LV_') else f'"{keycap}"'
 
 
 scancodes_for_keycap = {
@@ -497,23 +487,25 @@ scancodes_for_keycap = {
     '.': ['KEY_DOT']
 }
 
-def keycap_to_scancodes(keycap):
+def keycap_to_scancodes(args, keycap):
     """Return the scancodes needed to produce a keycap
     
+    args -- commandline arguments
     keycap -- keycap to produce
     """
+    if keycap == 'SQ2LV_SYMBOL_SHIFT':
+        return []
     if keycap not in scancodes_for_keycap:
         warn(f'Cannot determine scancodes for unknown keycap "{keycap}"')
         return []
     return scancodes_for_keycap[keycap]
 
 
-def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, data_views, data_buttons):
+def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, data_buttons):
     """Return keycaps, LVGL button attributes, modifier key indexes, layer switching key indexes,
     layer switching key destinations and scancodes for a view
     
-    args -- Commandline arguments
-    layout_id -- ID of the layout
+    args -- commandline arguments
     view_id -- ID of the view
     data_views -- the "views" object from the layout's YAML file
     data_buttons -- the "buttons" object from the layout's YAML file
@@ -554,7 +546,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, da
             if key in data_buttons and 'label' in data_buttons[key]:
                 keycap = data_buttons[key]['label']
             else:
-                keycap = key_to_keycap(key, view_id, layout_id)
+                keycap = key_to_keycap(args, key)
 
             if not keycap:
                 continue
@@ -587,7 +579,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, layout_id, view_id, da
             attrs_in_row.append(key_to_attributes(key, is_locked, is_lockable, data_buttons))
 
             if args.generate_scancodes:
-                scancodes_in_row.append(keycap_to_scancodes(keycap))
+                scancodes_in_row.append(keycap_to_scancodes(args, keycap))
 
             idx += 1
 
@@ -643,6 +635,10 @@ if __name__ == '__main__':
         c_builder.add_system_include('linux/input.h')
     c_builder.add_line()
 
+    shift_keycap = args.shift_keycap if args.shift_keycap else 'Shift'
+    c_builder.add_line(f'#define SQ2LV_SYMBOL_SHIFT "{shift_keycap}"')
+    c_builder.add_line()
+
     h_builder = SourceFileBuilder()
     h_builder.add_include('lvgl/lvgl.h')
     h_builder.add_line()
@@ -693,7 +689,7 @@ if __name__ == '__main__':
                 c_builder.add_line()
  
                 keycaps, attrs, modifier_idxs, switcher_idxs, switcher_dests, scancodes = get_keycaps_attrs_modifiers_switchers_scancodes(
-                    args, layout_id, view_id, data_views, data_buttons)
+                    args, view_id, data_views, data_buttons)
 
                 for dest in switcher_dests:
                     if dest not in view_ids:

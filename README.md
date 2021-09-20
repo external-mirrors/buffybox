@@ -16,7 +16,7 @@ Afterwards you can execute the script with `pipenv run`. Use the `-h` / `--help`
 
 ```
 $ pipenv run python squeek2lvgl.py --help
-usage: squeek2lvgl.py [-h] --input INPUT [--surround-space-with-arrows] [--generate-scancodes] --output OUTPUT
+usage: squeek2lvgl.py [-h] --input INPUT [--shift-keycap SHIFT_KEYCAP] [--surround-space-with-arrows] [--generate-scancodes] --output OUTPUT
 
 Convert squeekboard layouts to LVGL-compatible C code.
 
@@ -24,6 +24,8 @@ optional arguments:
   -h, --help            show this help message and exit
   --input INPUT         squeekboard layout to use as input for generation. Has to be a YAML file path relative to data/keyboards. Can be specified
                         multiple times.
+  --shift-keycap SHIFT_KEYCAP
+                        key caption for the Shift key. Defaults to "Shift".
   --surround-space-with-arrows
                         insert left / right arrow before / after space key
   --generate-scancodes  also generate scancode tables (only works for US layout currently)
