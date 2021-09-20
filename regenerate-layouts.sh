@@ -20,4 +20,8 @@
 
 cd squeek2lvgl
 pipenv install
-pipenv run python squeek2lvgl.py --input terminal/us.yaml --output .. --generate-scancodes
+pipenv run python squeek2lvgl.py \
+    --input terminal/us.yaml \
+    --output .. \
+    --generate-scancodes \
+    --shift-keycap '\xef\x8d\x9b'

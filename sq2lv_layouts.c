@@ -5,6 +5,8 @@
 #include "sq2lv_layouts.h"
 #include <linux/input.h>
 
+#define SQ2LV_SYMBOL_SHIFT "\xef\x8d\x9b"
+
 /**
  * Layout: US English (Terminal) - generated from terminal/us
  **/
@@ -20,7 +22,7 @@ static const char * const keycaps_lower_terminal_us[] = { \
     "Ctrl", "Alt", LV_SYMBOL_UP, LV_SYMBOL_DOWN, LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, "\n", \
     "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "\n", \
     "a", "s", "d", "f", "g", "h", "j", "k", "l", "\n", \
-    "ABC", "z", "x", "c", "v", "b", "n", "m", LV_SYMBOL_BACKSPACE, "\n", \
+    SQ2LV_SYMBOL_SHIFT, "z", "x", "c", "v", "b", "n", "m", LV_SYMBOL_BACKSPACE, "\n", \
     "123", " ", LV_SYMBOL_OK, "" \
 };
 
@@ -82,7 +84,7 @@ static const char * const keycaps_upper_terminal_us[] = { \
     "Ctrl", "Alt", "PgUp", "PgDn", "Home", "End", "\n", \
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "\n", \
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "\n", \
-    "abc", "Z", "X", "C", "V", "B", "N", "M", LV_SYMBOL_BACKSPACE, "\n", \
+    SQ2LV_SYMBOL_SHIFT, "Z", "X", "C", "V", "B", "N", "M", LV_SYMBOL_BACKSPACE, "\n", \
     "123", " ", LV_SYMBOL_OK, "" \
 };
 
