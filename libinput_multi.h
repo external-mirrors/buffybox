@@ -41,6 +41,8 @@ extern "C" {
  * GLOBAL PROTOTYPES
  **********************/
 
+void libinput_multi_init_display(lv_coord_t full_height, lv_coord_t y_offset);
+
 /**
  * initialise a driver with fresh state data
  * @param indev_drv driver object

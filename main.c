@@ -256,12 +256,14 @@ int main(void) {
 
     /* Query display size */
     uint32_t hor_res;
-    uint32_t ver_res;
-	fbdev_get_sizes(&hor_res, &ver_res);
+    uint32_t ver_res_full;
+    fbdev_get_sizes(&hor_res, &ver_res_full);
 
     /* Position display at the bottom of the screen */
-    ver_res /= 3;
-    fbdev_set_offset(0, 2 * ver_res);
+    uint32_t ver_res = ver_res_full / 3;
+    uint32_t ver_off = 2 * ver_res;
+    fbdev_set_offset(0, 2 * ver_off);
+    libinput_multi_init_display(ver_res_full, ver_off);
 
     /* Prepare display buffer */
     const size_t buf_size = hor_res * ver_res / 10; /* At least 1/10 of the display size is recommended */

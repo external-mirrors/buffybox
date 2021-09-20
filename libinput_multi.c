@@ -55,6 +55,9 @@ static const int timeout = 0; // do not block
 static const nfds_t nfds = 1;
 static lv_point_t most_recent_touch_point = { .x = 0, .y = 0};
 
+static lv_coord_t full_display_height;
+static lv_coord_t display_y_offset;
+
 static const struct libinput_interface interface = {
   .open_restricted = open_restricted,
   .close_restricted = close_restricted,
@@ -106,6 +109,11 @@ bool libinput_multi_set_file(lv_indev_drv_t * indev_drv, char* dev_name)
   state->libinput_key_val = 0;
 
   return true;
+}
+
+void libinput_multi_init_display(lv_coord_t full_height, lv_coord_t y_offset) {
+  full_display_height = full_height;
+  display_y_offset = y_offset;
 }
 
 /**
@@ -164,7 +172,6 @@ void libinput_multi_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
   struct libinput_event *event;
   struct libinput_event_touch *touch_event = NULL;
   struct libinput_event_pointer *pointer_event = NULL;
-  struct libinput_event_keyboard *keyboard_event = NULL;
   int rc = 0;
 
   rc = poll(state->fds, nfds, timeout);
@@ -181,12 +188,17 @@ void libinput_multi_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
     enum libinput_event_type type = libinput_event_get_type(event);
     switch (type) {
       case LIBINPUT_EVENT_TOUCH_MOTION:
-      case LIBINPUT_EVENT_TOUCH_DOWN:
+      case LIBINPUT_EVENT_TOUCH_DOWN: {
+        lv_coord_t y = libinput_event_touch_get_y_transformed(touch_event, full_display_height);
+        if (y < display_y_offset) {
+          break; /* ignore touches that are out of bounds */
+        }
         touch_event = libinput_event_get_touch_event(event);
         most_recent_touch_point.x = libinput_event_touch_get_x_transformed(touch_event, LV_HOR_RES);
-        most_recent_touch_point.y = libinput_event_touch_get_y_transformed(touch_event, LV_VER_RES);
+        most_recent_touch_point.y = y;
         state->button = LV_INDEV_STATE_PR;
         break;
+      }
       case LIBINPUT_EVENT_TOUCH_UP:
         state->button = LV_INDEV_STATE_REL;
         break;
