@@ -63,7 +63,7 @@ $ npx lv_font_conv --bpp 4 --size 32 --no-compress -o montserrat_extended_32.c -
       --range '0xF35B'
 ```
 
-The following is a summary of the meaning of the different unicode ranges used above:
+The following is a summary of the meaning of the different unicode ranges used above
 
 - [Montserrat]
   - Basic Latin (`0x0020-0x007F`)
