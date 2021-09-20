@@ -262,7 +262,7 @@ int main(void) {
     /* Position display at the bottom of the screen */
     uint32_t ver_res = ver_res_full / 3;
     uint32_t ver_off = 2 * ver_res;
-    fbdev_set_offset(0, 2 * ver_off);
+    fbdev_set_offset(0, ver_off);
     libinput_multi_init_display(ver_res_full, ver_off);
 
     /* Prepare display buffer */
