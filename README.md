@@ -23,6 +23,8 @@ Here are a few highlights of what already works:
 - Highlighting of active modifiers
 - Automatic resizing (and later reset) of active VT to prevent overlap with keyboard
 
+For a growing collection of demo videos, see the [wiki].
+
 ## Upstreaming
 
 Over the course of implementing buffyboard, suitable fixes and features have been upstreamed to the [lvgl] and [lv_drivers] repositories. The benefit of this goes both ways. Downstream we can rely on the features being maintained in the future and upstream they can make the features available to the larger audience of [LVGL] users.
@@ -134,3 +136,4 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master
 [v1 milestone]: https://gitlab.com/cherrypicker/buffyboard/-/milestones/1
+[wiki]: https://gitlab.com/cherrypicker/buffyboard/-/wikis/home
