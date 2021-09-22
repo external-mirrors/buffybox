@@ -136,7 +136,7 @@ void sq2lv_switch_layout(lv_obj_t *keyboard, sq2lv_layout_id_t layout_id) {
     /* Assign layers */
     for (int i = 0; i < sq2lv_layouts[layout_id].num_layers; ++i) {
         lv_keyboard_set_map(keyboard, layer_index_to_keyboard_mode(i),
-            sq2lv_layouts[layout_id].layers[i].keycaps,
+            (const char **)sq2lv_layouts[layout_id].layers[i].keycaps,
             sq2lv_layouts[layout_id].layers[i].attributes);
     }
 
