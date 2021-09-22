@@ -33,9 +33,7 @@ static const lv_btnmatrix_ctrl_t attributes_lower_us[] = { \
 
 static const int num_modifiers_lower_us = 0;
 
-static const int modifier_idxs_lower_us[] = { \
-     \
-};
+static const int * const modifier_idxs_lower_us = NULL;
 
 static const int num_switchers_lower_us = 2;
 
@@ -67,9 +65,7 @@ static const lv_btnmatrix_ctrl_t attributes_upper_us[] = { \
 
 static const int num_modifiers_upper_us = 0;
 
-static const int modifier_idxs_upper_us[] = { \
-     \
-};
+static const int * const modifier_idxs_upper_us = NULL;
 
 static const int num_switchers_upper_us = 2;
 
@@ -101,9 +97,7 @@ static const lv_btnmatrix_ctrl_t attributes_numbers_us[] = { \
 
 static const int num_modifiers_numbers_us = 0;
 
-static const int modifier_idxs_numbers_us[] = { \
-     \
-};
+static const int * const modifier_idxs_numbers_us = NULL;
 
 static const int num_switchers_numbers_us = 1;
 

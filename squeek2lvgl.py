@@ -224,6 +224,11 @@ class SourceFileBuilder(object):
         array_terminator -- element to append to the last row
         """
         prefix = 'static ' if static else ''
+
+        if not values or not values[0]:
+            self.add_line(f'{prefix}{type} * const {identifier} = NULL;')
+            return self
+
         self.add_line(f'{prefix}{type} {identifier}[] = ' + '{ \\')
         for i, values_in_row in enumerate(values):
             elements = values_in_row
@@ -234,6 +239,7 @@ class SourceFileBuilder(object):
             joined = ', '.join([f'{e}' for e in elements])
             self.add_line(f'    {joined}{comma_if_needed(values, i)} \\')
         self.add_line('};')
+
         return self
 
     def add_flat_array(self, static, type, identifier, values, array_terminator):
