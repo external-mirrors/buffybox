@@ -766,7 +766,7 @@ if __name__ == '__main__':
     h_builder.add_line('    /* Number of keys */')
     h_builder.add_line('    const int num_keys;')
     h_builder.add_line('    /* Key caps */')
-    h_builder.add_line('    const char ** const keycaps;')
+    h_builder.add_line('    const char * const * const keycaps;')
     h_builder.add_line('    /* Key attributes */')
     h_builder.add_line('    const lv_btnmatrix_ctrl_t * const attributes;')
     h_builder.add_line('    /* Number of modifier keys */')
