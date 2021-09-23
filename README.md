@@ -52,10 +52,12 @@ For development and testing you can run the app in a VT. Unless your user accoun
 
 ```
 $ meson _build
-$ meson compile -C _build # With meson <0.55 use ninja -C _build instead
+$ meson compile -C _build
 $ sudo chvt 2
 $ sudo ./_build/buffyboard
 ```
+
+With meson <0.55 use `ninja` instead of `meson compile`.
 
 ## Fonts
 
