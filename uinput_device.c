@@ -84,7 +84,7 @@ static bool uinput_device_synchronise() {
  * Public functions
  */
 
-bool bb_uinput_device_init(int * const scancodes, int num_scancodes) {
+bool bb_uinput_device_init(const int * const scancodes, int num_scancodes) {
     fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 	if (fd < 0) {
 		perror("Could not open /dev/uinput");

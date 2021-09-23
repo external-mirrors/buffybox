@@ -51,9 +51,11 @@ Below is a summary of contributions upstreamed thus far.
 For development and testing you can run the app in a VT. Unless your user account has special privileges, `sudo` will be needed to access input device files.
 
 ```
-$ make
+$ meson _build
+$ meson compile -C _build # Meson 0.55 and above
+$ ninja -C _build         # Meson <0.55
 $ sudo chvt 2
-$ sudo ./buffyboard
+$ sudo ./_build/buffyboard
 ```
 
 ## Fonts

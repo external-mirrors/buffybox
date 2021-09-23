@@ -196,7 +196,7 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
 
 static void emit_key_events(uint16_t btn_id, bool key_down, bool key_up) {
     int num_scancodes = 0;
-    int *scancodes = sq2lv_get_scancodes(keyboard, btn_id, &num_scancodes);
+    const int *scancodes = sq2lv_get_scancodes(keyboard, btn_id, &num_scancodes);
 
     if (key_down) {
         /* Emit key down events in forward order */
@@ -215,7 +215,7 @@ static void emit_key_events(uint16_t btn_id, bool key_down, bool key_up) {
 
 static void pop_checked_modifier_keys(void) {
     int num_modifiers = 0;
-    int *modifier_idxs = sq2lv_get_modifier_indexes(keyboard, &num_modifiers);
+    const int *modifier_idxs = sq2lv_get_modifier_indexes(keyboard, &num_modifiers);
 
     for (int i = 0; i < num_modifiers; ++i) {
         if (!lv_btnmatrix_has_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED)) {
@@ -310,7 +310,6 @@ int main(void) {
     #define MAX_TOUCHSCREENS 1
     char *touchscreens[MAX_TOUCHSCREENS] = { NULL };
     lv_indev_drv_t touchscreen_indev_drvs[MAX_TOUCHSCREENS];
-    lv_indev_t *touchscreen_indevs[MAX_TOUCHSCREENS] = { NULL };
     size_t num_touchscreens = libinput_find_devs(LIBINPUT_CAPABILITY_TOUCH, touchscreens, MAX_TOUCHSCREENS, false);
     for (int i = 0; i < num_touchscreens; ++i) {
         printf("Connecting touchscreen device %s\n", touchscreens[i]);
@@ -320,7 +319,7 @@ int main(void) {
         touchscreen_indev_drvs[i].long_press_repeat_time = USHRT_MAX;
         libinput_multi_init_driver(&touchscreen_indev_drvs[i]);
         libinput_multi_set_file(&touchscreen_indev_drvs[i], touchscreens[i]);
-        touchscreen_indevs[i] = lv_indev_drv_register(&touchscreen_indev_drvs[i]);
+        lv_indev_drv_register(&touchscreen_indev_drvs[i]);
     }
 
     /* Initialise theme and styles */

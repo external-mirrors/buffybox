@@ -30,7 +30,7 @@
  * @param num_scancodes number of scancodes the device can emit
  * @return true if creating the device was successful, false otherwise
  */
-bool bb_uinput_device_init(int * const scancodes, int num_scancodes);
+bool bb_uinput_device_init(const int * const scancodes, int num_scancodes);
 
 /**
  * Emit a key down event
