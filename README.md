@@ -52,8 +52,7 @@ For development and testing you can run the app in a VT. Unless your user accoun
 
 ```
 $ meson _build
-$ meson compile -C _build # Meson 0.55 and above
-$ ninja -C _build         # Meson <0.55
+$ meson compile -C _build # With meson <0.55 use ninja -C _build instead
 $ sudo chvt 2
 $ sudo ./_build/buffyboard
 ```
