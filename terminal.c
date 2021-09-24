@@ -41,6 +41,7 @@ static int current_vt = -1;
 static bool resized_vts[MAX_NR_CONSOLES];
 static float height_factor = 1;
 
+
 /**
  * Static prototypes
  */
