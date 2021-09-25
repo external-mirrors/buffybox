@@ -25,7 +25,7 @@
  * Static variables
  */
 
-static sq2lv_layout_id_t current_layout_id = -1;
+static sq2lv_layout_id_t current_layout_id = SQ2LV_LAYOUT_NONE;
 
 
 /**
@@ -127,6 +127,15 @@ static int get_destination_layer_index_for_layer_switcher(lv_obj_t *keyboard, ui
 /**
  * Public functions
  */
+
+sq2lv_layout_id_t find_layout_with_short_name(const char *name) {
+    for (int i = 0; i < sq2lv_num_layouts; ++i) {
+        if (strcmp(sq2lv_layouts[i].short_name, name) == 0) {
+            return i;
+        }
+    }
+    return SQ2LV_LAYOUT_NONE;
+}
 
 void sq2lv_switch_layout(lv_obj_t *keyboard, sq2lv_layout_id_t layout_id) {
     if (layout_id < 0 || layout_id >= sq2lv_num_layouts) {

@@ -24,6 +24,14 @@
 #include "../sq2lv_layouts.h"
 
 /**
+ * Find the first layout with a given short name.
+ *
+ * @param name layout short name
+ * @return ID of the first matching layout or SQ2LV_LAYOUT_NONE if no layout matched
+ */
+sq2lv_layout_id_t find_layout_with_short_name(const char *name);
+
+/**
  * Apply a layout to a keyboard.
  *
  * @param keyboard keyboard widget

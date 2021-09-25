@@ -16,6 +16,7 @@
 
 /* Layout IDs, values can be used as indexes into the sq2lv_layouts array */
 typedef enum {
+    SQ2LV_LAYOUT_NONE = -1,
     SQ2LV_LAYOUT_DE = 0
 } sq2lv_layout_id_t;
 

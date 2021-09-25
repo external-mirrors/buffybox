@@ -761,6 +761,7 @@ if __name__ == '__main__':
 
     h_builder.add_line('/* Layout IDs, values can be used as indexes into the sq2lv_layouts array */')
     h_builder.add_line('typedef enum {')
+    h_builder.add_line('    SQ2LV_LAYOUT_NONE = -1,')
     for i, layout in enumerate(layouts):
         identifier = layout['identifier'].upper()
         h_builder.add_line(f'    SQ2LV_LAYOUT_{identifier} = {i}{comma_if_needed(layouts, i)}')
