@@ -29,7 +29,7 @@
  * @param name layout short name
  * @return ID of the first matching layout or SQ2LV_LAYOUT_NONE if no layout matched
  */
-sq2lv_layout_id_t find_layout_with_short_name(const char *name);
+sq2lv_layout_id_t sq2lv_find_layout_with_short_name(const char *name);
 
 /**
  * Apply a layout to a keyboard.

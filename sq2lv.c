@@ -128,7 +128,7 @@ static int get_destination_layer_index_for_layer_switcher(lv_obj_t *keyboard, ui
  * Public functions
  */
 
-sq2lv_layout_id_t find_layout_with_short_name(const char *name) {
+sq2lv_layout_id_t sq2lv_find_layout_with_short_name(const char *name) {
     for (int i = 0; i < sq2lv_num_layouts; ++i) {
         if (strcmp(sq2lv_layouts[i].short_name, name) == 0) {
             return i;
