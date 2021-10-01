@@ -377,8 +377,10 @@ def key_to_attributes(key, is_locked, is_lockable, data_buttons):
         attributes.append('SQ2LV_CTRL_MOD_INACTIVE')
     elif key in data_buttons and key not in ['"', 'colon', 'period', 'space'] or key in ['←', '→']:
         attributes.append('SQ2LV_CTRL_NON_CHAR')
+    elif key not in ['space']:
+        attributes.append('LV_BTNMATRIX_CTRL_POPOVER')
 
-    if key not in data_buttons or key in ['period', 'colon', '"']:
+    if key not in data_buttons or key in ['"', 'colon', 'period']:
         attributes.append('2')
     elif key == 'space':
         attributes.append('7')
