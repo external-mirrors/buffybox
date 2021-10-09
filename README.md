@@ -131,7 +131,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
 [feat(disp): Enable rendering to display subsection]: https://github.com/lvgl/lvgl/pull/2583
-[feat(keyboard): add user-defined modes]: https://github.com/lvgl/lvgl/pull/2651/files
+[feat(keyboard): add user-defined modes]: https://github.com/lvgl/lvgl/pull/2651
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
 [lv_drivers]: https://github.com/lvgl/lv_drivers
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
