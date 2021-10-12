@@ -478,7 +478,7 @@ scancodes_for_keycap = {
     '*': ['KEY_LEFTSHIFT', 'KEY_8'],
     '#': ['KEY_LEFTSHIFT', 'KEY_3'],
     '$': ['KEY_LEFTSHIFT', 'KEY_4'],
-    '/': ['KEY_LEFTSHIFT', 'KEY_QUESTION'],
+    '/': ['KEY_SLASH'],
     '&': ['KEY_LEFTSHIFT', 'KEY_7'],
     '-': ['KEY_MINUS'],
     '_': ['KEY_LEFTSHIFT', 'KEY_MINUS'],
@@ -491,7 +491,7 @@ scancodes_for_keycap = {
     ':': ['KEY_LEFTSHIFT', 'KEY_SEMICOLON'],
     ';': ['KEY_SEMICOLON'],
     '!': ['KEY_LEFTSHIFT', 'KEY_1'],
-    '?': ['KEY_QUESTION'],
+    '?': ['KEY_LEFTSHIFT', 'KEY_SLASH'],
     '.': ['KEY_DOT']
 }
 
