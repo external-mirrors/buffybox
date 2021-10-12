@@ -328,6 +328,7 @@ def is_key_ignored(key):
 
 keycap_for_key = {
     '\\': '\\\\',
+    '"': '\\"',
     '↑': 'LV_SYMBOL_UP',
     '↓': 'LV_SYMBOL_DOWN',
     '←': 'LV_SYMBOL_LEFT',
@@ -489,7 +490,7 @@ scancodes_for_keycap = {
     '(': ['KEY_LEFTSHIFT', 'KEY_9'],
     ')': ['KEY_LEFTSHIFT', 'KEY_0'],
     ',': ['KEY_COMMA'],
-    '"': ['KEY_LEFTSHIFT', 'KEY_APOSTROPHE'],
+    '\\"': ['KEY_LEFTSHIFT', 'KEY_APOSTROPHE'],
     '\'': ['KEY_APOSTROPHE'],
     ':': ['KEY_LEFTSHIFT', 'KEY_SEMICOLON'],
     ';': ['KEY_SEMICOLON'],

@@ -84,7 +84,7 @@ static const int num_keys_numbers_us = 35;
 static const char * const keycaps_numbers_us[] = { \
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\n", \
     "@", "#", "$", "%", "&", "-", "_", "+", "(", ")", "\n", \
-    "*/=", ",", """, "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
+    "*/=", ",", "\"", "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
     "ABC", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
 };
 
