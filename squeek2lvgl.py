@@ -338,6 +338,10 @@ keycap_for_key = {
     'Shift_L': 'SQ2LV_SYMBOL_SHIFT',
     'space': ' ',
     'Return': 'LV_SYMBOL_OK',
+    'Up': 'LV_SYMBOL_UP',
+    'Left': 'LV_SYMBOL_LEFT',
+    'Down': 'LV_SYMBOL_DOWN',
+    'Right': 'LV_SYMBOL_RIGHT'
 }
 
 def key_to_keycap(args, key):
@@ -374,7 +378,7 @@ def key_to_attributes(key, is_locked, is_lockable, data_buttons):
         attributes.append('SQ2LV_CTRL_MOD_ACTIVE')
     elif is_lockable:
         attributes.append('SQ2LV_CTRL_MOD_INACTIVE')
-    elif key in data_buttons and key not in ['"', 'colon', 'period', 'space'] or key in ['←', '→']:
+    elif key in data_buttons and key not in ['"', 'colon', 'period', 'space'] or key in ['↑', '←', '↓', '→']:
         attributes.append('SQ2LV_CTRL_NON_CHAR')
     elif key not in ['space']:
         attributes.append('LV_BTNMATRIX_CTRL_POPOVER')
@@ -601,7 +605,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
 
             keycap = None
 
-            if key in data_buttons and 'label' in data_buttons[key]:
+            if key in data_buttons and 'label' in data_buttons[key] and key not in ['Up', 'Left', 'Down', 'Right']:
                 keycap = data_buttons[key]['label']
             else:
                 keycap = key_to_keycap(args, key)
