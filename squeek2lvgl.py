@@ -286,7 +286,9 @@ layer_name_for_view_id = {
     'base': 'Lowercase letters',
     'upper': 'Uppercase letters',
     'numbers': 'Numbers / symbols',
-    'eschars': 'Special characters'
+    'eschars': 'Special characters',
+    'symbols': 'Symbols',
+    'actions': 'Actions'
 }
 
 def view_id_to_layer_name(view_id):
@@ -313,9 +315,7 @@ def view_id_to_c_identifier(view_id):
 
 
 ignored_keys = {
-    'preferences',
-    'show_actions',
-    'show_symbols'
+    'preferences'
 }
 
 def is_key_ignored(key):
@@ -492,16 +492,67 @@ scancodes_for_keycap = {
     ';': ['KEY_SEMICOLON'],
     '!': ['KEY_LEFTSHIFT', 'KEY_1'],
     '?': ['KEY_LEFTSHIFT', 'KEY_SLASH'],
-    '.': ['KEY_DOT']
+    '.': ['KEY_DOT'],
+    '~': ['KEY_LEFTSHIFT', 'KEY_GRAVE'],
+    '`': ['KEY_GRAVE'],
+    '|': ['KEY_LEFTSHIFT', 'KEY_BACKSLASH'],
+    # '·': [],
+    # '√': [],
+    # 'π': [],
+    # 'τ': [],
+    # '÷': [],
+    # '×': [],
+    # '¶': [],
+    # '©': [],
+    # '®': [],
+    # '£': [],
+    # '€': [],
+    # '¥': [],
+    '\\\\': ['KEY_BACKSLASH'],
+    '^': ['KEY_LEFTSHIFT', 'KEY_6'],
+    # '°': [],
+    '@': ['KEY_LEFTSHIFT', 'KEY_2'],
+    '{': ['KEY_LEFTSHIFT', 'KEY_LEFTBRACE'],
+    '}': ['KEY_LEFTSHIFT', 'KEY_RIGHTBRACE'],
+    '%': ['KEY_LEFTSHIFT', 'KEY_5'],
+    '<': ['KEY_LEFTSHIFT', 'KEY_COMMA'],
+    '>': ['KEY_LEFTSHIFT', 'KEY_DOT'],
+    '=': ['KEY_EQUAL'],
+    '[': ['KEY_LEFTBRACE'],
+    ']': ['KEY_RIGHTBRACE'],
+    'F1': ['KEY_F1'],
+    'F2': ['KEY_F2'],
+    'F3': ['KEY_F3'],
+    'F4': ['KEY_F4'],
+    'F5': ['KEY_F5'],
+    'F6': ['KEY_F6'],
+    'F7': ['KEY_F7'],
+    'F8': ['KEY_F8'],
+    'F9': ['KEY_F9'],
+    'F10': ['KEY_F10'],
+    'F11': ['KEY_F11'],
+    'F12': ['KEY_F12'],
+    'Esc': ['KEY_ESC'],
+    'Tab': ['KEY_TAB'],
+    'Pause': ['KEY_PAUSE'],
+    'Insert': ['KEY_INSERT'],
+    'Del': ['KEY_DELETE'],
+    'Menu': ['KEY_COMPOSE'],
+    'Break': ['KEY_BREAK'],
+    '↑': ['KEY_UP'],
+    '←': ['KEY_LEFT'],
+    '↓': ['KEY_DOWN'],
+    '→': ['KEY_RIGHT']
 }
 
-def keycap_to_scancodes(args, keycap):
+def keycap_to_scancodes(args, keycap, is_switcher):
     """Return the scancodes needed to produce a keycap
     
     args -- commandline arguments
     keycap -- keycap to produce
+    is_switcher -- whether the key is a layer switcher
     """
-    if keycap == 'SQ2LV_SYMBOL_SHIFT':
+    if is_switcher:
         return []
     if keycap not in scancodes_for_keycap:
         warn(f'Cannot determine scancodes for unknown keycap "{keycap}"')
@@ -566,6 +617,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
 
             is_locked = False
             is_lockable = False
+            is_switcher = False
 
             if key in data_buttons and 'action' in data_buttons[key]:
                 action = data_buttons[key]['action']
@@ -583,11 +635,12 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
                 if dest:
                     switcher_idxs.append(idx)
                     switcher_dests.append(dest)
+                    is_switcher = True
 
             attrs_in_row.append(key_to_attributes(key, is_locked, is_lockable, data_buttons))
 
             if args.generate_scancodes:
-                scancodes_in_row.append(keycap_to_scancodes(args, keycap))
+                scancodes_in_row.append(keycap_to_scancodes(args, keycap, is_switcher))
 
             idx += 1
 

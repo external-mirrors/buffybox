@@ -80,6 +80,14 @@ static lv_keyboard_mode_t layer_index_to_keyboard_mode(int layer_index) {
             return LV_KEYBOARD_MODE_SPECIAL;
         case 3:
             return LV_KEYBOARD_MODE_NUMBER;
+        case 4:
+            return LV_KEYBOARD_MODE_USER_1;
+        case 5:
+            return LV_KEYBOARD_MODE_USER_2;
+        case 6:
+            return LV_KEYBOARD_MODE_USER_3;
+        case 7:
+            return LV_KEYBOARD_MODE_USER_4;
         default:
             return -1;
     }
@@ -95,6 +103,14 @@ static int keyboard_mode_to_layer_index(lv_keyboard_mode_t keyboard_mode) {
             return 2;
         case LV_KEYBOARD_MODE_NUMBER:
             return 3;
+        case LV_KEYBOARD_MODE_USER_1:
+            return 4;
+        case LV_KEYBOARD_MODE_USER_2:
+            return 5;
+        case LV_KEYBOARD_MODE_USER_3:
+            return 6;
+        case LV_KEYBOARD_MODE_USER_4:
+            return 7;
         default:
             return -1;
     }
