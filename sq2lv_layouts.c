@@ -270,8 +270,8 @@ static const char * const keycaps_actions_terminal_us[] = { \
     "Ctrl", "Alt", "PgUp", "PgDn", "Home", "End", "\n", \
     "F1", "F2", "F3", "F4", "F5", "F6", "\n", \
     "F7", "F8", "F9", "F10", "F11", "F12", "\n", \
-    "Esc", "Tab", "Pause", "Insert", "↑", "Del", "\n", \
-    "ABC", "Menu", "Break", "←", "↓", "→", "" \
+    "Esc", "Tab", "Pause", "Insert", LV_SYMBOL_UP, "Del", "\n", \
+    "ABC", "Menu", "Break", LV_SYMBOL_LEFT, LV_SYMBOL_DOWN, LV_SYMBOL_RIGHT, "" \
 };
 
 static const lv_btnmatrix_ctrl_t attributes_actions_terminal_us[] = { \
