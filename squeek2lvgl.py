@@ -607,7 +607,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
             keycap = None
 
             if key in data_buttons and 'label' in data_buttons[key] and key not in ['Up', 'Left', 'Down', 'Right']:
-                keycap = data_buttons[key]['label']
+                keycap = data_buttons[key]['label'].replace('\\', '\\\\')
             else:
                 keycap = key_to_keycap(args, key)
 
