@@ -44,7 +44,7 @@
  * Custom fonts
  */
 
-LV_FONT_DECLARE(montserrat_extended_32);
+LV_FONT_DECLARE(font_32);
 
 
 /**
@@ -128,7 +128,7 @@ static void terminal_resize_timer_cb(lv_timer_t *timer) {
 }
 
 static void set_theme(bool is_dark) {
-    lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_CYAN), is_dark, &montserrat_extended_32);
+    lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_CYAN), is_dark, &font_32);
 }
 
 static void keyboard_draw_part_begin_cb(lv_event_t *event) {
@@ -325,7 +325,7 @@ int main(void) {
     /* Initialise theme and styles */
     set_theme(true);
     lv_style_init(&style_text_normal);
-    lv_style_set_text_font(&style_text_normal, &montserrat_extended_32);
+    lv_style_set_text_font(&style_text_normal, &font_32);
 
     /* Add keyboard */
     keyboard = lv_keyboard_create(lv_scr_act());
