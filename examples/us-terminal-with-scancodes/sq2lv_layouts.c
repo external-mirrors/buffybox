@@ -146,7 +146,7 @@ static const char * const keycaps_numbers_terminal_us[] = { \
     "Ctrl", "Alt", LV_SYMBOL_UP, LV_SYMBOL_DOWN, LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, "\n", \
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\n", \
     "*", "#", "$", "/", "&", "-", "_", "+", "(", ")", "\n", \
-    "τ=\", ",", "\"", "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
+    "τ=\", ",", """, "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
     "ABC", " ", ".", LV_SYMBOL_OK, "" \
 };
 

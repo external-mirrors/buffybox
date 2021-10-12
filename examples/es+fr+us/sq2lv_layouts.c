@@ -84,7 +84,7 @@ static const int num_keys_numbers_es = 37;
 static const char * const keycaps_numbers_es[] = { \
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\n", \
     "@", "#", "€", "%", "&", "-", "_", "+", "(", ")", "\n", \
-    "*/=", ",", "\"", "'", ":", ";", "!", "=", LV_SYMBOL_BACKSPACE, "\n", \
+    "*/=", ",", """, "'", ":", ";", "!", "=", LV_SYMBOL_BACKSPACE, "\n", \
     "abc", "áÁ", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, "?", ".", LV_SYMBOL_OK, "" \
 };
 
@@ -308,7 +308,7 @@ static const int num_keys_numbers_fr = 35;
 static const char * const keycaps_numbers_fr[] = { \
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\n", \
     "@", "#", "€", "%", "&", "-", "_", "+", "(", ")", "\n", \
-    "*/=", ",", "\"", "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
+    "*/=", ",", """, "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
     "abc", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, "âÂ", LV_SYMBOL_OK, "" \
 };
 
@@ -532,7 +532,7 @@ static const int num_keys_numbers_us = 35;
 static const char * const keycaps_numbers_us[] = { \
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "\n", \
     "@", "#", "$", "%", "&", "-", "_", "+", "(", ")", "\n", \
-    "*/=", ",", "\"", "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
+    "*/=", ",", """, "'", ":", ";", "!", "?", LV_SYMBOL_BACKSPACE, "\n", \
     "ABC", LV_SYMBOL_LEFT, " ", LV_SYMBOL_RIGHT, ".", LV_SYMBOL_OK, "" \
 };
 
