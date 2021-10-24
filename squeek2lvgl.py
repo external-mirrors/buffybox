@@ -18,6 +18,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+from typing import Set
 import git
 import os
 import sys
@@ -346,7 +347,7 @@ keycap_for_key = {
 }
 
 def key_to_keycap(args, key):
-    """Return the keycap for a key
+    """Return the keycap for a key.
     
     args -- commandline arguments
     key -- the key
@@ -355,12 +356,37 @@ def key_to_keycap(args, key):
 
 
 def key_is_modifier(key, data_buttons):
-    """Return true if a key acts as a modifier..
+    """Return true if a key acts as a modifier.
 
     key -- the key in question
     data_buttons -- the "buttons" object from the layout's YAML file
     """
     return key in data_buttons and 'modifier' in data_buttons[key]
+
+
+repeatable_keys = {
+    'BackSpace',
+    'Del',
+    'PgUp',
+    'PgDn',
+    'Return',
+    'space',
+    '↑',
+    '←',
+    '↓',
+    '→',
+    'Up',
+    'Left',
+    'Down',
+    'Right'
+}
+
+def key_can_repeat(key):
+    """Return True if a key can repeatedly emit while being held down.
+
+    key -- the key
+    """
+    return key in repeatable_keys
 
 
 def key_to_attributes(key, is_locked, is_lockable, data_buttons):
@@ -383,6 +409,9 @@ def key_to_attributes(key, is_locked, is_lockable, data_buttons):
         attributes.append('SQ2LV_CTRL_NON_CHAR')
     elif key not in ['space']:
         attributes.append('LV_BTNMATRIX_CTRL_POPOVER')
+
+    if not key_can_repeat(key):
+        attributes.append('LV_BTNMATRIX_CTRL_NO_REPEAT')
 
     if key not in data_buttons or key in ['"', 'colon', 'period']:
         attributes.append('2')
@@ -710,9 +739,9 @@ if __name__ == '__main__':
     h_builder.add_line(f'#define SQ2LV_SCANCODES_ENABLED {1 if args.generate_scancodes else 0}')
     h_builder.add_line()
     h_builder.add_subsection_comment('Key attributes')
-    h_builder.add_line('#define SQ2LV_CTRL_NON_CHAR     (LV_BTNMATRIX_CTRL_NO_REPEAT | LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKED)')
-    h_builder.add_line('#define SQ2LV_CTRL_MOD_ACTIVE   (LV_BTNMATRIX_CTRL_NO_REPEAT | LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE)')
-    h_builder.add_line('#define SQ2LV_CTRL_MOD_INACTIVE (LV_BTNMATRIX_CTRL_NO_REPEAT | LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE | LV_BTNMATRIX_CTRL_CHECKED)')
+    h_builder.add_line('#define SQ2LV_CTRL_NON_CHAR     (LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKED)')
+    h_builder.add_line('#define SQ2LV_CTRL_MOD_ACTIVE   (LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE)')
+    h_builder.add_line('#define SQ2LV_CTRL_MOD_INACTIVE (LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE | LV_BTNMATRIX_CTRL_CHECKED)')
     h_builder.add_line()
 
     layouts = []
