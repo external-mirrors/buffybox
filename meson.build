@@ -27,8 +27,8 @@ project(
 buffyboard_sources = [
   'cursor.c',
   'font_32.c',
+  'indev.c',
   'main.c',
-  'libinput_multi.c',
   'sq2lv_layouts.c',
   'terminal.c',
   'uinput_device.c',

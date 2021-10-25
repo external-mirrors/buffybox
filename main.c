@@ -18,8 +18,7 @@
  */
 
 
-#include "cursor.h"
-#include "libinput_multi.h"
+#include "indev.h"
 #include "sq2lv_layouts.h"
 #include "terminal.h"
 #include "uinput_device.h"
@@ -254,16 +253,12 @@ int main(void) {
     lv_init(); 
     fbdev_init();
 
-    /* Query display size */
+    /* Query display size / compute offset */
     uint32_t hor_res;
-    uint32_t ver_res_full;
-    fbdev_get_sizes(&hor_res, &ver_res_full);
-
-    /* Position display at the bottom of the screen */
-    uint32_t ver_res = ver_res_full / 3;
-    uint32_t ver_off = 2 * ver_res;
-    fbdev_set_offset(0, ver_off);
-    libinput_multi_init_display(ver_res_full, ver_off);
+    uint32_t ver_res_phys;
+    fbdev_get_sizes(&hor_res, &ver_res_phys);
+    uint32_t ver_res = ver_res_phys / 3;
+    uint32_t offset_y = 2 * ver_res;
 
     /* Prepare display buffer */
     const size_t buf_size = hor_res * ver_res / 10; /* At least 1/10 of the display size is recommended */
@@ -278,47 +273,15 @@ int main(void) {
     disp_drv.flush_cb = fbdev_flush;
     disp_drv.hor_res = hor_res;
     disp_drv.ver_res = ver_res;
+    disp_drv.physical_hor_res = hor_res;
+    disp_drv.physical_ver_res = ver_res_phys;
+    disp_drv.offset_x = 0;
+    disp_drv.offset_y = offset_y;
     lv_disp_drv_register(&disp_drv);
 
-    /* Connect mice and trackpads */
-    #define MAX_POINTER_DEVICES 4
-    char *pointer_devices[MAX_POINTER_DEVICES] = { NULL, NULL, NULL, NULL };
-    lv_indev_drv_t pointer_indev_drvs[MAX_POINTER_DEVICES];
-    lv_indev_t *pointer_indevs[MAX_POINTER_DEVICES] = { NULL, NULL, NULL, NULL };
-    size_t num_pointer_devices = libinput_find_devs(LIBINPUT_CAPABILITY_POINTER, pointer_devices, MAX_POINTER_DEVICES, false);
-    for (int i = 0; i < num_pointer_devices; ++i) {
-        printf("Connecting pointer device %s\n", pointer_devices[i]);
-        lv_indev_drv_init(&pointer_indev_drvs[i]);
-        pointer_indev_drvs[i].type = LV_INDEV_TYPE_POINTER;
-        pointer_indev_drvs[i].read_cb = libinput_multi_read;
-        libinput_multi_init_driver(&pointer_indev_drvs[i]);
-        libinput_multi_set_file(&pointer_indev_drvs[i], pointer_devices[i]);
-        pointer_indevs[i] = lv_indev_drv_register(&pointer_indev_drvs[i]);
-    }
-
-    /* Set mouse cursor */
-    if (num_pointer_devices > 0) {
-        lv_obj_t *cursor_obj = lv_img_create(lv_scr_act());
-        lv_img_set_src(cursor_obj, &bb_cursor_img_dsc);
-        for (int i = 0; i < num_pointer_devices; ++i) {
-            lv_indev_set_cursor(pointer_indevs[i], cursor_obj);
-        }
-    }
-
-    /* Connect touchscreens */
-    #define MAX_TOUCHSCREENS 1
-    char *touchscreens[MAX_TOUCHSCREENS] = { NULL };
-    lv_indev_drv_t touchscreen_indev_drvs[MAX_TOUCHSCREENS];
-    size_t num_touchscreens = libinput_find_devs(LIBINPUT_CAPABILITY_TOUCH, touchscreens, MAX_TOUCHSCREENS, false);
-    for (int i = 0; i < num_touchscreens; ++i) {
-        printf("Connecting touchscreen device %s\n", touchscreens[i]);
-        lv_indev_drv_init(&touchscreen_indev_drvs[i]);
-        touchscreen_indev_drvs[i].type = LV_INDEV_TYPE_POINTER;
-        touchscreen_indev_drvs[i].read_cb = libinput_multi_read;
-        libinput_multi_init_driver(&touchscreen_indev_drvs[i]);
-        libinput_multi_set_file(&touchscreen_indev_drvs[i], touchscreens[i]);
-        lv_indev_drv_register(&touchscreen_indev_drvs[i]);
-    }
+    /* Connect input devices */
+    bb_indev_auto_connect();
+    bb_indev_set_up_mouse_cursor();
 
     /* Initialise theme and styles */
     set_theme(true);
