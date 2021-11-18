@@ -50,5 +50,6 @@ executable(
     dependency('libinput'),
     meson.get_compiler('c').find_library('m', required: false),
     dependency('xkbcommon'),
-  ]
+  ],
+  install: true
 )
