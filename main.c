@@ -60,6 +60,16 @@ static lv_style_t style_text_normal;
  */
 
 /**
+ * Compute the denominator of the keyboard height factor. The keyboard height is calculated
+ * by dividing the display height by the denominator.
+ *
+ * @param width display width
+ * @param height display height
+ * @return denominator
+ */
+static int keyboard_height_denominator(lv_coord_t width, lv_coord_t height);
+
+/**
  * Handle termination signals sent to the process.
  *
  * @param signum the signal's number
@@ -112,6 +122,10 @@ static void pop_checked_modifier_keys(void);
 /**
  * Static functions
  */
+
+static int keyboard_height_denominator(lv_coord_t width, lv_coord_t height) {
+    return (height > width) ? 3 : 2;
+}
 
 static void sigaction_handler(int signum) {
     if (resize_terminals) {
@@ -249,34 +263,52 @@ int main(void) {
         return 1;
     }
 
-    /* Initialise lvgl and framebuffer driver */
-    lv_init(); 
+    /* Initialise lvgl */
+    lv_init();
+
+    /* Initialise framebuffer driver and query display size */
     fbdev_init();
-
-    /* Query display size / compute offset */
-    uint32_t hor_res;
+    uint32_t hor_res_phys;
     uint32_t ver_res_phys;
-    fbdev_get_sizes(&hor_res, &ver_res_phys);
-    uint32_t ver_res = ver_res_phys / 3;
-    uint32_t offset_y = 2 * ver_res;
-
-    /* Prepare display buffer */
-    const size_t buf_size = hor_res * ver_res / 10; /* At least 1/10 of the display size is recommended */
-    lv_disp_draw_buf_t disp_buf;
-    lv_color_t *buf = (lv_color_t *)malloc(buf_size * sizeof(lv_color_t));
-    lv_disp_draw_buf_init(&disp_buf, buf, NULL, buf_size);    
+    fbdev_get_sizes(&hor_res_phys, &ver_res_phys);
 
     /* Initialise display driver */
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
-    disp_drv.draw_buf = &disp_buf;
     disp_drv.flush_cb = fbdev_flush;
-    disp_drv.hor_res = hor_res;
-    disp_drv.ver_res = ver_res;
-    disp_drv.physical_hor_res = hor_res;
+    disp_drv.rotated = LV_DISP_ROT_NONE;
+    disp_drv.sw_rotate = true;
+    disp_drv.physical_hor_res = hor_res_phys;
     disp_drv.physical_ver_res = ver_res_phys;
-    disp_drv.offset_x = 0;
-    disp_drv.offset_y = offset_y;
+    switch (disp_drv.rotated) {
+        case LV_DISP_ROT_NONE:
+        case LV_DISP_ROT_180: {
+            lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
+            disp_drv.hor_res = hor_res_phys;
+            disp_drv.ver_res = ver_res_phys / denom;
+            disp_drv.offset_x = 0;
+            disp_drv.offset_y = (disp_drv.rotated == LV_DISP_ROT_NONE) ? (denom - 1) * ver_res_phys / denom : 0;
+            break;
+        }
+        case LV_DISP_ROT_90:
+        case LV_DISP_ROT_270: {
+            lv_coord_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
+            disp_drv.hor_res = hor_res_phys / denom;
+            disp_drv.ver_res = ver_res_phys;
+            disp_drv.offset_x = (disp_drv.rotated == LV_DISP_ROT_90) ? (denom - 1) * hor_res_phys / denom : 0;
+            disp_drv.offset_y = 0;
+            break;
+        }
+    }
+
+    /* Prepare display buffer */
+    const size_t buf_size = disp_drv.hor_res * disp_drv.ver_res / 10; /* At least 1/10 of the display size is recommended */
+    lv_disp_draw_buf_t disp_buf;
+    lv_color_t *buf = (lv_color_t *)malloc(buf_size * sizeof(lv_color_t));
+    lv_disp_draw_buf_init(&disp_buf, buf, NULL, buf_size);
+    disp_drv.draw_buf = &disp_buf;
+
+    /* Register display driver */
     lv_disp_drv_register(&disp_drv);
 
     /* Connect input devices */
@@ -292,7 +324,7 @@ int main(void) {
     keyboard = lv_keyboard_create(lv_scr_act());
     // lv_btnmatrix_set_popovers(keyboard, true);
     lv_obj_set_pos(keyboard, 0, 0);
-    lv_obj_set_size(keyboard, hor_res, ver_res);
+    lv_obj_set_size(keyboard, LV_HOR_RES, LV_VER_RES);
     lv_obj_add_style(keyboard, &style_text_normal, 0);
 
     /* Set up keyboard event handlers */
