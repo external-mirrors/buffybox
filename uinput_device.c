@@ -64,8 +64,8 @@ static bool uinput_device_emit(int type, int code, int value) {
     event.type = type;
     event.code = code;
     event.value = value;
-    event.time.tv_sec = 0;
-    event.time.tv_usec = 0;
+    event.input_event_sec = 0;
+    event.input_event_usec = 0;
 
     if (write(fd, &event, sizeof(event)) != sizeof(event)) {
         perror("Could not emit event");
