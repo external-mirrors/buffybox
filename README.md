@@ -33,12 +33,13 @@ Below is a summary of contributions upstreamed thus far.
 
 ### lvgl
 
-- [feat(disp): Enable rendering to display subsection] (⏳ in review)
-- [feat(keyboard): add user-defined modes]: (⏳ in review)
+- [feat(disp): Enable rendering to display subsection] (✅ merged)
+- [feat(keyboard): add user-defined modes]: (✅ merged)
 
 ### lv_drivers
 
 - [Make it possible to set the variable offset for fbdev] (✅ merged)
+- [fix(libinput): read display dimensions from driver] (✅ merged)
 
 # Development
 
@@ -136,6 +137,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
 [feat(disp): Enable rendering to display subsection]: https://github.com/lvgl/lvgl/pull/2583
 [feat(keyboard): add user-defined modes]: https://github.com/lvgl/lvgl/pull/2651
+[fix(libinput): read display dimensions from driver]: https://github.com/lvgl/lv_drivers/pull/192
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
 [lv_drivers]: https://github.com/lvgl/lv_drivers
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
