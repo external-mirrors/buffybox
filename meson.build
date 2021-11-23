@@ -19,12 +19,15 @@
 project(
   'buffyboard',
   'c',
-  version: '0.0.0',
+  version: '0.1.0',
   default_options: 'warning_level=1',
   meson_version: '>=0.53.0'
 )
 
+add_project_arguments('-DBB_VERSION="@0@"'.format(meson.project_version()), language: ['c'])
+
 buffyboard_sources = [
+  'command_line.c',
   'cursor.c',
   'font_32.c',
   'indev.c',

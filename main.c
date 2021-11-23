@@ -18,6 +18,7 @@
  */
 
 
+#include "command_line.h"
 #include "indev.h"
 #include "sq2lv_layouts.h"
 #include "terminal.h"
@@ -49,6 +50,8 @@ LV_FONT_DECLARE(font_32);
 /**
  * Static variables
  */
+
+bb_cli_opts cli_opts;
 
 static bool resize_terminals = false;
 static lv_obj_t *keyboard = NULL;
@@ -243,7 +246,10 @@ static void pop_checked_modifier_keys(void) {
  * Main
  */
 
-int main(void) {
+int main(int argc, char *argv[]) {
+    /* Parse command line options */
+    bb_cli_parse_opts(argc, argv, &cli_opts);
+
     /* Prepare for terminal resizing and reset */
     resize_terminals = bb_terminal_init(2.0f / 3.0f);
     if (resize_terminals) {
@@ -276,18 +282,18 @@ int main(void) {
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.flush_cb = fbdev_flush;
-    disp_drv.rotated = LV_DISP_ROT_NONE;
+    disp_drv.rotated = cli_opts.rotation;
     disp_drv.sw_rotate = true;
     disp_drv.physical_hor_res = hor_res_phys;
     disp_drv.physical_ver_res = ver_res_phys;
-    switch (disp_drv.rotated) {
+    switch (cli_opts.rotation) {
         case LV_DISP_ROT_NONE:
         case LV_DISP_ROT_180: {
             lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
             disp_drv.hor_res = hor_res_phys;
             disp_drv.ver_res = ver_res_phys / denom;
             disp_drv.offset_x = 0;
-            disp_drv.offset_y = (disp_drv.rotated == LV_DISP_ROT_NONE) ? (denom - 1) * ver_res_phys / denom : 0;
+            disp_drv.offset_y = (cli_opts.rotation == LV_DISP_ROT_NONE) ? (denom - 1) * ver_res_phys / denom : 0;
             break;
         }
         case LV_DISP_ROT_90:
@@ -295,7 +301,7 @@ int main(void) {
             lv_coord_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
             disp_drv.hor_res = hor_res_phys / denom;
             disp_drv.ver_res = ver_res_phys;
-            disp_drv.offset_x = (disp_drv.rotated == LV_DISP_ROT_90) ? (denom - 1) * hor_res_phys / denom : 0;
+            disp_drv.offset_x = (cli_opts.rotation == LV_DISP_ROT_90) ? (denom - 1) * hor_res_phys / denom : 0;
             disp_drv.offset_y = 0;
             break;
         }
