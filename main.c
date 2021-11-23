@@ -18,6 +18,7 @@
  */
 
 
+#include "buffyboard.h"
 #include "command_line.h"
 #include "indev.h"
 #include "sq2lv_layouts.h"
@@ -38,13 +39,6 @@
 #include <unistd.h>
 
 #include <sys/time.h>
-
-
-/**
- * Custom fonts
- */
-
-LV_FONT_DECLARE(font_32);
 
 
 /**

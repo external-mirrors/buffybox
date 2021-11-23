@@ -20,6 +20,8 @@
 
 #include "command_line.h"
 
+#include "buffyboard.h"
+
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
