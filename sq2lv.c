@@ -207,7 +207,7 @@ bool sq2lv_is_modifier(lv_obj_t *keyboard, uint16_t btn_id) {
     return false;
 }
 
-const int * const sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers) {
+int * const sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers) {
     if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
         *num_modifiers = 0;
         return NULL;
@@ -228,7 +228,7 @@ const int * const sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifi
 }
 
 #if SQ2LV_SCANCODES_ENABLED
-const int * const sq2lv_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes) {
+int * const sq2lv_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes) {
     if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
         *num_scancodes = 0;
         return NULL;

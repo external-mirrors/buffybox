@@ -73,7 +73,7 @@ bool sq2lv_is_modifier(lv_obj_t *keyboard, uint16_t btn_id);
  * @param num_modifiers pointer to an integer into which the number of modifiers will be written
  * @return pointer to the array of button indexes corresponding to modifier keys
  */
-const int * const sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers);
+int * const sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers);
 
 #if SQ2LV_SCANCODES_ENABLED
 /**
@@ -84,7 +84,7 @@ const int * const sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifi
  * @param num_scancodes pointer to an integer into which the number of scancodes will be written
  * @return pointer into an array of scancodes at the appropriate index
  */
-const int * const sq2lv_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes);
+int * const sq2lv_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes);
 #endif /* SQ2LV_SCANCODES_ENABLED */
 
 #endif /* SQ2LV_H */
