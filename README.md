@@ -54,7 +54,17 @@ Below is a summary of contributions upstreamed thus far.
 
 ## Building & running
 
-For development and testing you can run the app in a VT. Unless your user account has special privileges, `sudo` will be needed to access input device files.
+Some of buffyboard's dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
+
+```
+$ git clone https://gitlab.com/cherrypicker/buffyboard.git
+$ git submodule init
+$ git submodule update
+```
+
+When pulling changes from the remote later, either use `git pull --recurse-submodules` or manually run `git submodule update` as needed after pulling.
+
+Once you have the sources, you can build the app and run it in a VT. Unless your user account has special privileges, `sudo` will be needed to access input device files.
 
 ```
 $ meson _build
