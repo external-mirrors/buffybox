@@ -58,6 +58,7 @@ Some of buffyboard's dependencies are included as git submodules in this reposit
 
 ```
 $ git clone https://gitlab.com/cherrypicker/buffyboard.git
+$ cd buffyboard
 $ git submodule init
 $ git submodule update
 ```
