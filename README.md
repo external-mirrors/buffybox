@@ -111,7 +111,7 @@ Below is a short explanation of the different unicode ranges used above.
 
 ## Keyboard layouts
 
-Buffyboard uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerate the layouts, run
+Buffyboard uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerate the layouts, ensure that you have pipenv installed (e.g. via `pip install --user pipenv`) and then run
 
 ```
 $ ./regenerate-layouts.sh
