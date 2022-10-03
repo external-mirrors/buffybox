@@ -755,14 +755,15 @@ if __name__ == '__main__':
         for file in args.input:
             layout_id, _ = os.path.splitext(file)
             layout_identifier = layout_id_to_c_identifier(layout_id)
+            layout_name = layout_id_to_layout_name(layout_id)
 
             data = load_yaml(layouts_dir, file)
             data_views = data['views']
             data_buttons = data['buttons'] if 'buttons' in data else {}
 
-            c_builder.add_section_comment(f'Layout: {layout_id_to_layout_name(layout_id)} - generated from {layout_id}')
+            c_builder.add_section_comment(f'Layout: {layout_name} - generated from {layout_id}')
             c_builder.add_line()
-            c_builder.add_line(f'static const char * const name_{layout_identifier} = "{layout_id_to_layout_name(layout_id)}";')
+            c_builder.add_line(f'static const char * const name_{layout_identifier} = "{layout_name}";')
             c_builder.add_line(f'static const char * const short_name_{layout_identifier} = "{layout_id}";')
             c_builder.add_line()
 
@@ -842,7 +843,7 @@ if __name__ == '__main__':
             c_builder.add_line()
 
             layouts.append({
-                'name': layout_id_to_layout_name(layout_id),
+                'name': layout_name,
                 'short_name': layout_id,
                 'identifier': layout_identifier
             })
