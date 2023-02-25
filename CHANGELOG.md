@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+Nothing at the moment
+
+## 0.3.1 (2023-02-25)
+
 - fix: Changed Color of the cursor in breeze_dark to be able to see it (#39)
 
 ## 0.3.0 (2022-11-13)
