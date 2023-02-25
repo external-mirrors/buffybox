@@ -16,6 +16,6 @@ path=$(echo "${response}" | jq -r .full_path)
 
 echo "${response}"
 echo
-echo "https://gitlab.com/${path}"
+echo "https://gitlab.com${path}"
 
 rm -f "${archive}"
