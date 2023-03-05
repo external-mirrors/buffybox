@@ -80,7 +80,7 @@ static void init_opts(ul_config_opts *opts) {
     opts->general.timeout = 0;
     opts->keyboard.autohide = true;
     opts->keyboard.layout_id = SQ2LV_LAYOUT_US;
-    opts->keyboard.popovers = false;
+    opts->keyboard.popovers = true;
     opts->textarea.obscured = true;
     opts->textarea.bullet = LV_SYMBOL_BULLET;
     opts->theme.default_id = UL_THEMES_THEME_BREEZY_DARK;
