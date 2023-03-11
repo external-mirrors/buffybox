@@ -26,13 +26,40 @@
 #include <stdbool.h>
 
 /**
- * Auto-connect currently available keyboard, pointer and touchscreen input devices.
+ * Set the required capabilities for input devices.
  *
- * @param keyboard if true, auto-connect keyboard devices
- * @param pointer if true, auto-connect pointer devices
- * @param touchscreen if true, auto-connect touchscreen devices
+ * @param keyboard if true, allow connection of keyboard devices
+ * @param pointer if true, allow connection of pointer devices
+ * @param touchscreen if true, allow connection of touchscreen devices
  */
-void ul_indev_auto_connect(bool keyboard, bool pointer, bool touchscreen);
+void ul_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen);
+
+/**
+ * Set the group for receiving input from keyboard devices.
+ * 
+ * @param group group that should receive input
+ */
+void ul_indev_set_keyboard_input_group(lv_group_t *group);
+
+/**
+ * Auto-connect currently available keyboard, pointer and touchscreen input devices.
+ */
+void ul_indev_auto_connect();
+
+/**
+ * Start the udev device monitor.
+ */
+void ul_indev_start_monitor();
+
+/**
+ * Stop the udev device monitor.
+ */
+void ul_indev_stop_monitor();
+
+/**
+ * Query the udev device monitor and (dis)connect added or removed devices
+ */
+void ul_indev_query_monitor();
 
 /**
  * Check if any keyboard devices are connected.
@@ -40,17 +67,5 @@ void ul_indev_auto_connect(bool keyboard, bool pointer, bool touchscreen);
  * @return true if at least one keyboard device is connected, false otherwise
  */
 bool ul_indev_is_keyboard_connected();
-
-/**
- * Set up an LVGL text area to receive input from currently connected keyboard devices.
- * 
- * @param textarea textarea widget
- */
-void ul_indev_set_up_textarea_for_keyboard_input(lv_obj_t *textarea);
-
-/**
- * Set up the mouse cursor image for currently connected pointer devices.
- */
-void ul_indev_set_up_mouse_cursor();
 
 #endif /* UL_INDEV_H */
