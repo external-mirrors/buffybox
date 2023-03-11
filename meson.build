@@ -48,6 +48,7 @@ squeek2lvgl_sources = [
 unl0kr_dependencies = [
   dependency('inih'),
   dependency('libinput'),
+  dependency('libudev'),
   dependency('xkbcommon'),
 ]
 

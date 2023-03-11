@@ -89,6 +89,7 @@ For an example configuration file, see [unl0kr.conf].
 - [lv_drivers] (git submodule / linked statically)
 - [squeek2lvgl] (git submodule / linked statically)
 - [libinput]
+- [libudev]
 - [libxkbcommon]
 - [libdrm] (optional, required for the DRM backend)
 - evdev kernel module
@@ -223,6 +224,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [fix(examples) don't compile assets unless needed]: https://github.com/lvgl/lvgl/pull/2523
 [inih]: https://github.com/benhoyt/inih
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
+[libudev]: https://github.com/systemd/systemd/tree/main/src/libudev
 [libxkbcommon]: https://github.com/xkbcommon/libxkbcommon
 [libdrm]: https://gitlab.freedesktop.org/mesa/drm
 [lv_drivers]: https://github.com/lvgl/lv_drivers

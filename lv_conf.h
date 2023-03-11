@@ -67,6 +67,9 @@
 /*Use the standard `memcpy` and `memset` instead of LVGL's own functions. (Might or might not be faster).*/
 #define LV_MEMCPY_MEMSET_STD    0
 
+/*TODO: Remove once lv_memzero becomes available in a release. Currently it is only available on master.*/
+#define lv_memzero(dst, len) (lv_memset(dst, 0x00, len))
+
 /*====================
    HAL SETTINGS
  *====================*/

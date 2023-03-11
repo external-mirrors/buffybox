@@ -69,6 +69,13 @@ lv_obj_t *keyboard = NULL;
  */
 
 /**
+ * Query the device monitor and handle updates.
+ *
+ * @param timer the timer object
+ */
+static void query_device_monitor(lv_timer_t *timer);
+
+/**
  * Handle LV_EVENT_CLICKED events from the theme toggle button.
  *
  * @param event the event object
@@ -198,6 +205,11 @@ static void sigaction_handler(int signum);
 /**
  * Static functions
  */
+
+static void query_device_monitor(lv_timer_t *timer) {
+    LV_UNUSED(timer);
+    ul_indev_query_monitor();
+}
 
 static void toggle_theme_btn_clicked_cb(lv_event_t *event) {
     LV_UNUSED(event);
@@ -408,9 +420,15 @@ int main(int argc, char *argv[]) {
     disp_drv.dpi = dpi;
     lv_disp_drv_register(&disp_drv);
 
-    /* Connect input devices */
-    ul_indev_auto_connect(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
-    ul_indev_set_up_mouse_cursor();
+    /* Prepare for routing physical keyboard input into the textarea */
+    lv_group_t *keyboard_input_group = lv_group_create();
+    ul_indev_set_keyboard_input_group(keyboard_input_group);
+
+    /* Start input device monitor and auto-connect available devices */
+    ul_indev_set_allowed_device_capability(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
+    ul_indev_start_monitor();
+    lv_timer_create(query_device_monitor, 1000, NULL);
+    ul_indev_auto_connect();
 
     /* Hide the on-screen keyboard by default if a physical keyboard is connected */
     if (conf_opts.keyboard.autohide && ul_indev_is_keyboard_connected()) {
@@ -524,7 +542,7 @@ int main(int argc, char *argv[]) {
     lv_obj_add_state(textarea, LV_STATE_FOCUSED);
 
     /* Route physical keyboard input into textarea */
-    ul_indev_set_up_textarea_for_keyboard_input(textarea);
+    lv_group_add_obj(keyboard_input_group, textarea);
 
     /* Reveal / obscure password button */
     lv_obj_t *toggle_pw_btn = lv_btn_create(textarea_container);
