@@ -7,6 +7,9 @@ Nothing at the moment
 ## 0.3.1 (2023-02-25)
 
 - fix: Changed Color of the cursor in breeze_dark to be able to see it (#39)
+- feat!: Handle input device connection/disconnection at runtime (#38)
+- feat: Update lv_drivers to git master (2023-03-11)
+- feat: Update lvgl to v8.3 (2023-03-08)
 
 ## 0.3.0 (2022-11-13)
 
