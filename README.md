@@ -18,7 +18,7 @@ We are en route to v1 which aims at providing a useable, visually pleasant appli
 Here are a few highlights of what already works:
 
 - Password-entry UI including on-screen keyboard on the framebuffer
-- Input device discovery for keyboards, mice, trackpads and touch screens
+- Input device discovery (both at start-up and afterwards) for keyboards, mice, trackpads and touch screens
 - On-screen keyboard control via:
   - One or more mice / trackpads (including cursor)
   - One or more hardware keyboards (including support for different layouts using XKB)
