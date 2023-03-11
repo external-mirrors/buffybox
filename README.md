@@ -95,27 +95,20 @@ $ sudo ./_build/unl0kr
 
 With meson <0\.55 use `ninja` instead of `meson compile`\.
 
-### Optional features
-
-If [libdrm] is installed, the DRM backend will be compiled automatically. It's possible to
-change this behaviour using the `with-drm` meson feature. For example,
-
-```
-$ meson _build -Dwith-drm=disabled
-```
-
-will forcibly disable the DRM backend regardless if libdrm is installed or not.
-
 ## Backends
 
-Unl0kr supports multiple lvgl display drivers, which are herein referred as "backends".
-
-Currently supported backends:
+Unl0kr supports multiple LVGL display drivers, referred to as "backends".
 
 - fbdev
 - drm (optional)
 
-The backend can be switched at runtime by modifying the `general.backend` configuration.
+The active backend can be selected via the `general.backend` option in the configuration file.
+
+Note that if [libdrm] is installed, the DRM backend will be compiled in automatically. It's possible to prevent this behaviour by passing the `with-drm` option to meson.
+
+```
+$ meson _build -Dwith-drm=disabled
+```
 
 ## Fonts
 
