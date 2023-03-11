@@ -31,29 +31,6 @@ Here are a few highlights of what already works:
 
 For a growing collection of demo videos, see the [wiki]. Screenshots of the currently available themes may be found in the [screenshots] folder.
 
-## Upstreaming
-
-Over the course of implementing unl0kr, suitable fixes and features have been upstreamed to the [lvgl] and [lv_drivers] repositories. The benefit of this goes both ways. Downstream we can rely on the features being maintained in the future and upstream they can make the features available to the larger audience of [LVGL] users.
-
-Below is a summary of contributions upstreamed thus far.
-
-### lvgl
-
-- [fix(examples) don't compile assets unless needed] (✅ merged)
-- [feat(btnmatrix): add option to show popovers on button press] (✅ merged)
-- [feat(msgbox): add function to get selected button index] (✅ merged)
-- [feat(msgbox): omit title label unless needed] (✅ merged)
-- [fix(btnmatrix): make ORed values work correctly with lv_btnmatrix_has_btn_ctrl] (✅ merged)
-
-### lv_drivers
-
-- [Add support for pointer devices to libinput driver] (✅ merged)
-- [Add support for keypads to libinput driver] (✅ merged)
-- [Add full keyboard support to libinput/evdev driver] (✅ merged)
-- [Automatic device discovery via libinput] (✅ merged)
-- [Make it possible to use multiple devices with the libinput and XKB drivers] (✅ merged)
-- [Use LV_LOG instead of printf in fbdev driver] (✅ merged)
-
 # Usage
 
 A man page is planned to be added with #6. For the time being, you can get an overview of available command line options by running unl0kr with the `-h` or `--help` argument.
@@ -206,22 +183,11 @@ The [OpenSans] font is licensed under the Apache License 2.0.
 
 The [FontAwesome] font is licensed under the Open Font License version 1.1.
 
-[Add full keyboard support to libinput/evdev driver]: https://github.com/lvgl/lv_drivers/pull/156
-[Add support for keypads to libinput driver]: https://github.com/lvgl/lv_drivers/pull/152
-[Add support for pointer devices to libinput driver]: https://github.com/lvgl/lv_drivers/pull/150
-[Automatic device discovery via libinput]: https://github.com/lvgl/lv_drivers/pull/157
 [FontAwesome]: https://fontawesome.com
 [LVGL]: https://lvgl.io
-[Make it possible to use multiple devices with the libinput and XKB drivers]: https://github.com/lvgl/lv_drivers/pull/165
 [OpenSans]: https://fonts.google.com/specimen/Open+Sans
-[Use LV_LOG instead of printf in fbdev driver]: https://github.com/lvgl/lv_drivers/pull/167
 [adjust]: https://fontawesome.com/v5.15/icons/adjust?style=solid
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
-[feat(btnmatrix): add option to show popovers on button press]: https://github.com/lvgl/lvgl/pull/2537
-[feat(msgbox): add function to get selected button index]: https://github.com/lvgl/lvgl/pull/2538
-[feat(msgbox): omit title label unless needed]: https://github.com/lvgl/lvgl/pull/2539
-[fix(btnmatrix): make ORed values work correctly with lv_btnmatrix_has_btn_ctrl]: https://github.com/lvgl/lvgl/pull/2571
-[fix(examples) don't compile assets unless needed]: https://github.com/lvgl/lvgl/pull/2523
 [inih]: https://github.com/benhoyt/inih
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
 [libudev]: https://github.com/systemd/systemd/tree/main/src/libudev
