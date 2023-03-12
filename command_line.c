@@ -50,14 +50,8 @@ static void print_usage();
  */
 
 static void init_opts(ul_cli_opts *opts) {
-    opts->num_config_files = 1;
-
-    opts->config_files = malloc(sizeof(char *));
-    if (!opts->config_files) {
-        ul_log(UL_LOG_LEVEL_ERROR, "Could not allocate memory for config file paths");
-        exit(EXIT_FAILURE);
-    }
-    opts->config_files[0] = "/etc/unl0kr.conf";
+    opts->num_config_files = 0;
+    opts->config_files = NULL;
 
     opts->hor_res = -1;
     opts->ver_res = -1;
@@ -75,13 +69,12 @@ static void print_usage() {
         "password is printed to STDOUT. All other output happens on STDERR.\n"
         "\n"
         "Mandatory arguments to long options are mandatory for short options too.\n"
-        "  -c, --config=PATH         Locaton of the main config file. Defaults to\n"
-        "                            /etc/unl0kr.conf.\n"
-        "  -C, --config-override     Location of the config override file. Values in\n"
-        "                            this file override values for the same keys in\n"
-        "                            the main config file. If specified multiple\n"
-        "                            times, the values from consecutive files will be\n"
-        "                            merged in order.\n"
+        "  -C, --config-override     Path to a config override file. Can be supplied\n"
+        "                            multiple times. Config files are merged in the\n"
+        "                            following order:\n"
+        "                            * /etc/unl0kr.conf\n"
+        "                            * /etc/unl0kr.conf.d/* (alphabetically)\n"
+        "                            * Override files (in supplied order)\n"
         "  -g, --geometry=NxM[@X,Y]  Force a display size of N horizontal times M\n"
         "                            vertical pixels, offset horizontally by X\n"
         "                            pixels and vertically by Y pixels\n"
@@ -101,7 +94,6 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
     init_opts(opts);
 
     struct option long_opts[] = {
-        { "config",          required_argument, NULL, 'c' },
         { "config-override", required_argument, NULL, 'C' },
         { "geometry",        required_argument, NULL, 'g' },
         { "dpi",             required_argument, NULL, 'd' },
@@ -115,9 +107,6 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
 
     while ((opt = getopt_long(argc, argv, "c:C:g:d:hvV", long_opts, &index)) != -1) {
         switch (opt) {
-        case 'c':
-            opts->config_files[0] = optarg;
-            break;
         case 'C':
             opts->config_files = realloc(opts->config_files, (opts->num_config_files + 1) * sizeof(char *));
             if (!opts->config_files) {
