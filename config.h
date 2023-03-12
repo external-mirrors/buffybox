@@ -103,12 +103,35 @@ typedef struct {
 } ul_config_opts;
 
 /**
- * Parse options from one or more configuration files.
+ * Initialise a config options struct with default values.
+ * 
+ * @param opts pointer to the options struct
+ */
+void ul_config_init_opts(ul_config_opts *opts);
+
+/**
+ * Find configuration files in a directory and parse them in alphabetic order.
+ * 
+ * @param path directory path
+ * @param opts pointer for writing the parsed options into
+ */
+void ul_config_parse_directory(const char *path, ul_config_opts *opts);
+
+/**
+ * Parse one or more configuration files.
  * 
  * @param files paths to configuration files
  * @param num_files number of configuration files
  * @param opts pointer for writing the parsed options into
  */
-void ul_config_parse(const char **files, int num_files, ul_config_opts *opts);
+void ul_config_parse_files(const char **files, int num_files, ul_config_opts *opts);
+
+/**
+ * Parse a configuration file.
+ * 
+ * @param path path to configuration file
+ * @param opts pointer for writing the parsed options into
+ */
+void ul_config_parse_file(const char *path, ul_config_opts *opts);
 
 #endif /* UL_CONFIG_H */

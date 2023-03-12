@@ -351,7 +351,10 @@ int main(int argc, char *argv[]) {
     ul_log(UL_LOG_LEVEL_VERBOSE, "unl0kr %s", UL_VERSION);
 
     /* Parse config files */
-    ul_config_parse(cli_opts.config_files, cli_opts.num_config_files, &conf_opts);
+    ul_config_init_opts(&conf_opts);
+    ul_config_parse_file("/etc/unl0kr.conf", &conf_opts);
+    ul_config_parse_directory("/etc/unl0kr.conf.d", &conf_opts);
+    ul_config_parse_files(cli_opts.config_files, cli_opts.num_config_files, &conf_opts);
 
     /* Prepare current TTY and clean up on termination */
     ul_terminal_prepare_current_terminal();

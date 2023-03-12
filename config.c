@@ -24,6 +24,7 @@
 
 #include "lvgl/lvgl.h"
 
+#include <dirent.h>
 #include <ini.h>
 #include <stdlib.h>
 
@@ -35,19 +36,31 @@
  */
 
 /**
- * Initialise a config options struct with default values.
- * 
- * @param opts pointer to the options struct
+ * Compares two strings from opaque types.
+ *
+ * @param a first string as void pointer
+ * @param b second string as void pointer
+ * @return a positive integer if a > b, a negative integer if a < b and 0 otherwise
  */
-static void init_opts(ul_config_opts *opts);
+static int compare_strings(const void* a, const void* b);
 
 /**
- * Parse options from a configuration file.
- * 
- * @param path path to configuration file
- * @param opts pointer for writing the parsed options into
+ * Checks whether a string ends with a suffix
+ *
+ * @param string string to check
+ * @param suffix suffix to compare to
+ * @return true if the suffix matches at the end of the string, false otherwise
  */
-static void parse_file(const char *path, ul_config_opts *opts);
+static bool string_ends_with(const char *string, const char *suffix);
+
+/**
+ * Non-recursively searches a directory for configuration files.
+ * 
+ * @param path folder to search in
+ * @param found pointer to write found configuration file names into (to be freed by the caller)
+ * @param num_found pointer to write number of found files into
+ */
+static void find_files(const char *path, char ***found, int *num_found);
 
 /**
  * Handle parsing events from INIH.
@@ -74,26 +87,71 @@ static bool parse_bool(const char *value, bool *result);
  * Static functions
  */
 
-static void init_opts(ul_config_opts *opts) {
-    opts->general.animations = false;
-    opts->general.backend = ul_backends_backends[0] == NULL ? UL_BACKENDS_BACKEND_NONE : 0;
-    opts->general.timeout = 0;
-    opts->keyboard.autohide = true;
-    opts->keyboard.layout_id = SQ2LV_LAYOUT_US;
-    opts->keyboard.popovers = true;
-    opts->textarea.obscured = true;
-    opts->textarea.bullet = LV_SYMBOL_BULLET;
-    opts->theme.default_id = UL_THEMES_THEME_BREEZY_DARK;
-    opts->theme.alternate_id = UL_THEMES_THEME_BREEZY_LIGHT;
-    opts->input.keyboard = true;
-    opts->input.pointer = true;
-    opts->input.touchscreen = true;
+static int compare_strings(const void* a, const void* b) {
+    return strcmp(*(const char**)a, *(const char**)b);
 }
 
-static void parse_file(const char *path, ul_config_opts *opts) {
-    if (ini_parse(path, parsing_handler, opts) != 0) {
-        ul_log(UL_LOG_LEVEL_ERROR, "Ignoring invalid config file %s", path);
+static bool string_ends_with(const char *string, const char *suffix) {
+    if (!string || !suffix || strlen(suffix) > strlen(string)) {
+        return false;
     }
+    return strncmp(string + strlen(string) - strlen(suffix), suffix, strlen(suffix)) == 0;
+}
+
+static void find_files(const char *path, char ***found, int *num_found) {
+    /* Initialise output variables */
+    *found = NULL;
+    *num_found = 0;
+
+    /* Count length of directory path */
+    const int path_length = strlen(path);
+
+    /* Open directory */
+    DIR *d = opendir(path);
+    if (!d) {
+        ul_log(UL_LOG_LEVEL_WARNING, "Could not read contents of folder %s", path);
+        return;
+    }
+
+    /* Loop over directory contents */
+    struct dirent *dir;
+    while ((dir = readdir(d)) != NULL) {
+        /* Ignore anything except for .conf files */
+        if (dir->d_type != DT_REG || !string_ends_with(dir->d_name, ".conf")) {
+            continue;
+        }
+
+        /* Grow output array */
+        char **tmp = realloc(*found, (*num_found + 1) * sizeof(char *));
+        if (!tmp) {
+            ul_log(UL_LOG_LEVEL_ERROR, "Could not reallocate memory for configuration file paths");
+            break;
+        }
+        *found = tmp;
+
+        /* Extract file name and length */
+        char *name = dir->d_name;
+        int name_length = strlen(name);
+
+        /* Allocate memory for full path */
+        char *found_path = malloc(path_length + name_length + 2); /* +1 for path separator and null terminator, respectively */
+        if (!found_path) {
+            ul_log(UL_LOG_LEVEL_ERROR, "Could not allocate memory for configuration file path");
+            break;
+        }
+
+        /* Build full path */
+        memcpy(found_path, path, path_length);
+        found_path[path_length] = '/';
+        memcpy(found_path + path_length + 1, dir->d_name, name_length + 1); /* +1 for path separator and null terminator, respectively */
+
+        /* Store file path */
+        (*found)[*num_found] = found_path;
+        *num_found += 1;
+    }
+
+    /* Close directory */
+    closedir(d);
 }
 
 static int parsing_handler(void* user_data, const char* section, const char* key, const char* value) {
@@ -196,9 +254,48 @@ static bool parse_bool(const char *value, bool *result) {
  * Public functions
  */
 
-void ul_config_parse(const char **files, int num_files, ul_config_opts *opts) {
-    init_opts(opts);
+void ul_config_init_opts(ul_config_opts *opts) {
+    opts->general.animations = false;
+    opts->general.backend = ul_backends_backends[0] == NULL ? UL_BACKENDS_BACKEND_NONE : 0;
+    opts->general.timeout = 0;
+    opts->keyboard.autohide = true;
+    opts->keyboard.layout_id = SQ2LV_LAYOUT_US;
+    opts->keyboard.popovers = true;
+    opts->textarea.obscured = true;
+    opts->textarea.bullet = LV_SYMBOL_BULLET;
+    opts->theme.default_id = UL_THEMES_THEME_BREEZY_DARK;
+    opts->theme.alternate_id = UL_THEMES_THEME_BREEZY_LIGHT;
+    opts->input.keyboard = true;
+    opts->input.pointer = true;
+    opts->input.touchscreen = true;
+}
+
+void ul_config_parse_directory(const char *path, ul_config_opts *opts) {
+    /* Find files in directory */
+    char **found = NULL;
+    int num_found = 0;
+    find_files(path, &found, &num_found);
+
+    /* Sort and parse files */
+    qsort(found, num_found, sizeof(char *), compare_strings);
+    ul_config_parse_files((const char **)found, num_found, opts);
+
+    /* Free memory */
+    for (int i = 0; i < num_found; ++i) {
+        free(found[i]);
+    }
+    free(found);
+}
+
+void ul_config_parse_files(const char **files, int num_files, ul_config_opts *opts) {
     for (int i = 0; i < num_files; ++i) {
-        parse_file(files[i], opts);
+        ul_config_parse_file(files[i], opts);
+    }
+}
+
+void ul_config_parse_file(const char *path, ul_config_opts *opts) {
+    ul_log(UL_LOG_LEVEL_VERBOSE, "Parsing config file %s", path);
+    if (ini_parse(path, parsing_handler, opts) != 0) {
+        ul_log(UL_LOG_LEVEL_ERROR, "Ignoring invalid config file %s", path);
     }
 }

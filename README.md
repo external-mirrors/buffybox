@@ -39,20 +39,23 @@ A man page is planned to be added with #6. For the time being, you can get an ov
 $ unl0kr --help
 Usage: unl0kr [OPTION]
 
+Unl0kr values the CRYPTTAB_TRIED variable. Upon completion, the entered
+password is printed to STDOUT. All other output happens on STDERR.
+
 Mandatory arguments to long options are mandatory for short options too.
-  -c, --config=PATH      Locaton of the main config file. Defaults to
-                         /etc/unl0kr.conf.
-  -C, --config-override  Location of the config override file. Values in
-                         this file override values for the same keys in the
-                         main config file. If specified multiple times, the
-                         values from consecutive files will be merged in
-                         order.
-  -g, --geometry=NxM     Force a display size of N horizontal times M
-                         vertical pixels
-  -d  --dpi=N            Overrides the DPI
-  -h, --help             Print this message and exit
-  -v, --verbose          Enable more detailed logging output on STDERR
-  -V, --version          Print the unl0kr version and exit
+  -C, --config-override     Path to a config override file. Can be supplied
+                            multiple times. Config files are merged in the
+                            following order:
+                            * /etc/unl0kr.conf
+                            * /etc/unl0kr.conf.d/* (alphabetically)
+                            * Override files (in supplied order)
+  -g, --geometry=NxM[@X,Y]  Force a display size of N horizontal times M
+                            vertical pixels, offset horizontally by X
+                            pixels and vertically by Y pixels
+  -d  --dpi=N               Override the display's DPI value
+  -h, --help                Print this message and exit
+  -v, --verbose             Enable more detailed logging output on STDERR
+  -V, --version             Print the unl0kr version and exit
 ```
 
 For an example configuration file, see [unl0kr.conf].
