@@ -98,6 +98,16 @@ $ sudo ./_build/unl0kr
 
 With meson <0\.55 use `ninja` instead of `meson compile`\.
 
+## Valgrind
+
+> Using C without Valgrind is like skydiving without a parachute.
+
+To be able to use Valgrind, add `default_options: ['optimization=g']` in the `project` section of `meson.build` and rebuild. Afterwards you can run the application with Valgrind's leaks check enabled via
+
+```
+sudo valgrind --leak-check=yes ./_build/unl0kr
+```
+
 ## Backends
 
 Unl0kr supports multiple LVGL display drivers, referred to as "backends".
