@@ -229,6 +229,16 @@ static int parsing_handler(void* user_data, const char* section, const char* key
                 return 1;
             }
         }
+    } else if (strcmp(section, "quirks") == 0) {
+        if (strcmp(key, "terminal_prevent_graphics_mode") == 0) {
+            if (parse_bool(value, &(opts->quirks.terminal_prevent_graphics_mode))) {
+                return 1;
+            }
+        } else if (strcmp(key, "terminal_allow_keyboard_input") == 0) {
+            if (parse_bool(value, &(opts->quirks.terminal_allow_keyboard_input))) {
+                return 1;
+            }
+        }
     }
 
     ul_log(UL_LOG_LEVEL_ERROR, "Ignoring invalid config value \"%s\" for key \"%s\" in section \"%s\"", value, key, section);
@@ -268,6 +278,8 @@ void ul_config_init_opts(ul_config_opts *opts) {
     opts->input.keyboard = true;
     opts->input.pointer = true;
     opts->input.touchscreen = true;
+    opts->quirks.terminal_prevent_graphics_mode = false;
+    opts->quirks.terminal_allow_keyboard_input = false;
 }
 
 void ul_config_parse_directory(const char *path, ul_config_opts *opts) {

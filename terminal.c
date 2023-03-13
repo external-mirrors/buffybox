@@ -37,8 +37,8 @@
 
 static int current_fd = -1;
 
-static int original_mode = KD_TEXT;
-static int original_kb_mode = K_UNICODE;
+static int original_mode = -1;
+static int original_kb_mode = -1;
 
 
 /**
@@ -88,7 +88,13 @@ static void close_current_terminal(void) {
  * Public functions
  */
 
-void ul_terminal_prepare_current_terminal(void) {
+void ul_terminal_prepare_current_terminal(bool enable_graphics_mode, bool disable_keyboard_input) {
+    /* Exit early if there is nothing to do */
+    if (!enable_graphics_mode && !disable_keyboard_input) {
+        return;
+    }
+
+    /* Reopen the current terminal */
     reopen_current_terminal();
 
     if (current_fd < 0) {
@@ -96,40 +102,43 @@ void ul_terminal_prepare_current_terminal(void) {
         return;
     }
 
-    // NB: The order of calls appears to matter for some devices. See
-    // https://gitlab.com/cherrypicker/unl0kr/-/issues/34 for further info.
+    /* Disable terminal keyboard input (hides entered text) */
+    if (disable_keyboard_input) {
+        if (ioctl(current_fd, KDGKBMODE, &original_kb_mode) != 0) {
+            ul_log(UL_LOG_LEVEL_WARNING, "Could not get terminal keyboard mode");
+        }
 
-    if (ioctl(current_fd, KDGKBMODE, &original_kb_mode) != 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not get terminal keyboard mode");
+        if (ioctl(current_fd, KDSKBMODE, K_OFF) != 0) {
+            ul_log(UL_LOG_LEVEL_WARNING, "Could not set terminal keyboard mode to off");
+        }
     }
 
-    if (ioctl(current_fd, KDSKBMODE, K_OFF) != 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not set terminal keyboard mode to off");
-    }
+    /* Switch terminal into graphics mode (hides command prompt) */
+    if (enable_graphics_mode) {
+        if (ioctl(current_fd, KDGETMODE, &original_mode) != 0) {
+            ul_log(UL_LOG_LEVEL_WARNING, "Could not get terminal mode");
+        }
 
-    if (ioctl(current_fd, KDGETMODE, &original_mode) != 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not get terminal mode");
-    }
-
-    if (ioctl(current_fd, KDSETMODE, KD_GRAPHICS) != 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not set terminal mode to graphics");
+        if (ioctl(current_fd, KDSETMODE, KD_GRAPHICS) != 0) {
+            ul_log(UL_LOG_LEVEL_WARNING, "Could not set terminal mode to graphics");
+        }
     }
 }
 
 void ul_terminal_reset_current_terminal(void) {
+    /* If we haven't previously opened the current terminal, exit */
     if (current_fd < 0) {
         ul_log(UL_LOG_LEVEL_WARNING, "Could not reset current terminal");
         return;
     }
 
-    // NB: The order of calls appears to matter for some devices. See
-    // https://gitlab.com/cherrypicker/unl0kr/-/issues/34 for further info.
-
-    if (ioctl(current_fd, KDSETMODE, original_mode) != 0) {
+    /* Reset terminal mode if needed */
+    if (original_mode >= 0 && ioctl(current_fd, KDSETMODE, original_mode) != 0) {
         ul_log(UL_LOG_LEVEL_WARNING, "Could not reset terminal mode");
     }
 
-    if (ioctl(current_fd, KDSKBMODE, original_kb_mode) != 0) {
+    /* Reset terminal keyboard mode if needed */
+    if (original_kb_mode >= 0 && ioctl(current_fd, KDSKBMODE, original_kb_mode) != 0) {
         ul_log(UL_LOG_LEVEL_WARNING, "Could not reset terminal keyboard mode");
     }
 

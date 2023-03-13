@@ -34,10 +34,10 @@
  * General options
  */
 typedef struct {
-    /* Backend to use */
-    ul_backends_backend_id_t backend;
     /* If true, use animations */
     bool animations;
+    /* Backend to use */
+    ul_backends_backend_id_t backend;
     /* Timeout (in seconds) - once elapsed, the device will shutdown. 0 (default) to disable */
     uint16_t timeout;
 } ul_config_opts_general;
@@ -87,6 +87,16 @@ typedef struct {
 } ul_config_opts_input;
 
 /**
+ * (Normally unneeded) quirky options
+ */
+typedef struct {
+    /* If true, do *not* switch terminal into graphics mode (will show terminal command prompt) */
+    bool terminal_prevent_graphics_mode;
+    /* If true, do *not* turn off terminal keyboard input (will show entered characters) */
+    bool terminal_allow_keyboard_input;
+} ul_config_opts_quirks;
+
+/**
  * Options parsed from config file(s)
  */
 typedef struct {
@@ -100,6 +110,8 @@ typedef struct {
     ul_config_opts_theme theme;
     /* Options related to input devices */
     ul_config_opts_input input;
+    /* Options related to (normally unneeded) quirks */
+    ul_config_opts_quirks quirks;
 } ul_config_opts;
 
 /**

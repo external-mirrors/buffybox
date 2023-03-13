@@ -12,6 +12,7 @@ Nothing at the moment
 - feat: Update lvgl to v8.3 (2023-03-08)
 - feat!: Deprecate -c CLI option and add support for reading from /etc/unl0kr.conf.d/
 - fix: Print correct version in logs
+- feat: Add config options to enable terminal quirks (#34)
 
 ## 0.3.0 (2022-11-13)
 

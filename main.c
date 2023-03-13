@@ -357,7 +357,7 @@ int main(int argc, char *argv[]) {
     ul_config_parse_files(cli_opts.config_files, cli_opts.num_config_files, &conf_opts);
 
     /* Prepare current TTY and clean up on termination */
-    ul_terminal_prepare_current_terminal();
+    ul_terminal_prepare_current_terminal(!conf_opts.quirks.terminal_prevent_graphics_mode, !conf_opts.quirks.terminal_allow_keyboard_input);
     struct sigaction action;
     memset(&action, 0, sizeof(action));
     action.sa_handler = sigaction_handler;
