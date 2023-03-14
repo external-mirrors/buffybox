@@ -8,8 +8,8 @@ Nothing at the moment
 
 - fix: Changed Color of the cursor in breeze_dark to be able to see it (#39)
 - feat!: Handle input device connection/disconnection at runtime (#38)
-- feat: Update lv_drivers to git master (2023-03-11)
-- feat: Update lvgl to v8.3 (2023-03-08)
+- feat: Update lv_drivers to git master (2023-03-14)
+- feat: Update lvgl to v8.3 (2023-03-14)
 - feat!: Deprecate -c CLI option and add support for reading from /etc/unl0kr.conf.d/
 - fix: Print correct version in logs
 - feat: Add config options to enable terminal quirks (#34)
