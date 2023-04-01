@@ -45,6 +45,11 @@ squeek2lvgl_sources = [
   'squeek2lvgl/sq2lv.c',
 ]
 
+man_files = [
+	'doc/unl0kr.1',
+	'doc/unl0kr.conf.5',
+]
+
 unl0kr_dependencies = [
   dependency('inih'),
   dependency('libinput'),
@@ -71,3 +76,23 @@ executable(
   dependencies: unl0kr_dependencies,
   install: true
 )
+
+scdoc = dependency('scdoc')
+scdoc_prog = find_program(scdoc.get_pkgconfig_variable('scdoc'), native : true)
+sh = find_program('sh', native : true)
+foreach file : man_files
+	filename = file + '.scd'
+	section = file.split('.')[-1]
+	topic = file.split('.' + section)[-2].split('/')[-1]
+	output = '@0@.@1@'.format(topic, section)
+
+	custom_target(
+		output,
+		input : filename,
+		output : output,
+		capture : true,
+		command : [sh, '-c', scdoc_prog.path() + ' < @INPUT@'],
+		install : true,
+		install_dir : get_option('mandir') / 'man' + section
+	)
+endforeach
