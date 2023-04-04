@@ -2,7 +2,7 @@ unl0kr(1) "unl0kr"
 
 # NAME
 
-UNL0KR
+UNL0KR - LVGL based initramfs disk unlocker
 
 # SYNOPSIS
 
