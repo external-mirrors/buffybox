@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-Nothing at the moment
+- feat: Add man page (#6, thanks @Jarrah)
 
 ## 1.0.0 (2023-03-14)
 
