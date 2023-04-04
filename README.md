@@ -73,6 +73,7 @@ For an example configuration file, see [unl0kr.conf].
 - [libxkbcommon]
 - [libdrm] (optional, required for the DRM backend)
 - evdev kernel module
+- [scdoc] (for generating the man page)
 
 ## Building & running
 
@@ -206,6 +207,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [online font converter]: https://lvgl.io/tools/fontconverter
 [open issues]: https://gitlab.com/cherrypicker/unl0kr/-/issues
 [osk-sdl]: https://gitlab.com/postmarketOS/osk-sdl
+[scdoc]: https://git.sr.ht/~sircmpwn/scdoc
 [screenshots]: ./screenshots
 [squeek2lvgl]: https://gitlab.com/cherrypicker/squeek2lvgl
 [squeekboard layouts]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master/data/keyboards
