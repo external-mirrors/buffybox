@@ -35,7 +35,7 @@ typedef enum {
 
 /* Themes */
 extern const int ul_themes_num_themes;
-extern const ul_theme ul_themes_themes[];
+extern const ul_theme *ul_themes_themes[];
 
 /**
  * Find the first theme with a given name.

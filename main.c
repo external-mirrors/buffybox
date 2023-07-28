@@ -222,7 +222,7 @@ static void toggle_theme(void) {
 }
 
 static void set_theme(bool is_alternate) {
-    ul_theme_apply(&(ul_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id]));
+    ul_theme_apply(ul_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id]);
 }
 
 static void toggle_pw_btn_clicked_cb(lv_event_t *event) {

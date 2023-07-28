@@ -659,16 +659,16 @@ static const ul_theme ul_themes_pmos_dark = {
  */
 
 const int ul_themes_num_themes = 4;
-const ul_theme ul_themes_themes[] = {
-    ul_themes_breezy_light,
-    ul_themes_breezy_dark,
-    ul_themes_pmos_light,
-    ul_themes_pmos_dark
+const ul_theme *ul_themes_themes[] = {
+    &ul_themes_breezy_light,
+    &ul_themes_breezy_dark,
+    &ul_themes_pmos_light,
+    &ul_themes_pmos_dark
 };
 
 ul_themes_theme_id_t ul_themes_find_theme_with_name(const char *name) {
     for (int i = 0; i < ul_themes_num_themes; ++i) {
-        if (strcmp(ul_themes_themes[i].name, name) == 0) {
+        if (strcmp(ul_themes_themes[i]->name, name) == 0) {
             ul_log(UL_LOG_LEVEL_VERBOSE, "Found theme: %s\n", name);
             return i;
         }
