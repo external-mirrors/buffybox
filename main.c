@@ -381,6 +381,9 @@ int main(int argc, char *argv[]) {
 #if USE_FBDEV
     case UL_BACKENDS_BACKEND_FBDEV:
         fbdev_init();
+        if (conf_opts.quirks.fbdev_force_refresh) {
+            fbdev_force_refresh(true);
+        }
         fbdev_get_sizes(&hor_res, &ver_res, &dpi);
         disp_drv.flush_cb = fbdev_flush;
         break;

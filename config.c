@@ -230,7 +230,11 @@ static int parsing_handler(void* user_data, const char* section, const char* key
             }
         }
     } else if (strcmp(section, "quirks") == 0) {
-        if (strcmp(key, "terminal_prevent_graphics_mode") == 0) {
+        if (strcmp(key, "fbdev_force_refresh") == 0) {
+            if (parse_bool(value, &(opts->quirks.fbdev_force_refresh))) {
+                return 1;
+            }
+        } else if (strcmp(key, "terminal_prevent_graphics_mode") == 0) {
             if (parse_bool(value, &(opts->quirks.terminal_prevent_graphics_mode))) {
                 return 1;
             }
@@ -278,6 +282,7 @@ void ul_config_init_opts(ul_config_opts *opts) {
     opts->input.keyboard = true;
     opts->input.pointer = true;
     opts->input.touchscreen = true;
+    opts->quirks.fbdev_force_refresh = false;
     opts->quirks.terminal_prevent_graphics_mode = false;
     opts->quirks.terminal_allow_keyboard_input = false;
 }

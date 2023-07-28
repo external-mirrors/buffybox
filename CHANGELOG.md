@@ -4,6 +4,7 @@
 
 - feat: Add man page (#6, thanks @Jarrah)
 - feat!: Enable direct rendering
+- feat: Add quirk for forcing fbdev refresh (#34, thanks @calebccff)
 
 ## 1.0.0 (2023-03-14)
 

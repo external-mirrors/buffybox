@@ -79,12 +79,17 @@ will be merged in the following order:
 	Default: true.
 
 ## Quirks
+*fbdev_force_refresh* = <true|false>
+	If true and using the framebuffer backend, this triggers a display refresh
+	after every draw operation. This has a negative performance impact.
+	Default: false.
+
 *terminal_prevent_graphics_mode* = <true|false>
-	If true this avoids setting the terminal into graphics mode. Will show 
-	terminal command prompt. Default: false.
+	If true, this avoids setting the terminal into graphics mode. This will
+	show the terminal command prompt. Default: false.
 
 *terminal_allow_keyboard_input* = <true|false>
-	If true this avoids turning off terminal keyboard input. This will show 
+	If true, this avoids turning off terminal keyboard input. This will show
 	your password on the terminal. Default: false.
 
 # SEE ALSO
@@ -93,3 +98,4 @@ will be merged in the following order:
 # AUTHORS
 
 *Undef* <debian@undef.tools>
+*Johannes Marbach* <n0-0ne@mailbox.org>

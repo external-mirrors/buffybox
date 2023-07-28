@@ -90,6 +90,8 @@ typedef struct {
  * (Normally unneeded) quirky options
  */
 typedef struct {
+    /* If true and using the framebuffer backend, force a refresh on every draw operation */
+    bool fbdev_force_refresh;
     /* If true, do *not* switch terminal into graphics mode (will show terminal command prompt) */
     bool terminal_prevent_graphics_mode;
     /* If true, do *not* turn off terminal keyboard input (will show entered characters) */
