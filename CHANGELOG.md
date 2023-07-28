@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+Nothing at the moment
+
+## 2.0.0 (2023-07-28)
+
 - feat: Add man page (#6, thanks @Jarrah)
 - feat!: Enable direct rendering
 - feat: Add quirk for forcing fbdev refresh (#34, thanks @calebccff)
