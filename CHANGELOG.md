@@ -3,6 +3,7 @@
 ## Unreleased
 
 - feat: Add man page (#6, thanks @Jarrah)
+- feat!: Enable direct rendering
 
 ## 1.0.0 (2023-03-14)
 

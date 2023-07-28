@@ -409,7 +409,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* Prepare display buffer */
-    const size_t buf_size = hor_res * ver_res / 10; /* At least 1/10 of the display size is recommended */
+    const size_t buf_size = hor_res * ver_res; /* Direct rendering requires using the screen size for the buffer */
     lv_disp_draw_buf_t disp_buf;
     lv_color_t *buf = (lv_color_t *)malloc(buf_size * sizeof(lv_color_t));
     lv_disp_draw_buf_init(&disp_buf, buf, NULL, buf_size);    
@@ -421,6 +421,7 @@ int main(int argc, char *argv[]) {
     disp_drv.offset_x = cli_opts.x_offset;
     disp_drv.offset_y = cli_opts.y_offset;
     disp_drv.dpi = dpi;
+    disp_drv.direct_mode = true;
     lv_disp_drv_register(&disp_drv);
 
     /* Prepare for routing physical keyboard input into the textarea */
