@@ -4,6 +4,10 @@
 
 Nothing at the moment
 
+## 2.0.1 (2023-10-01)
+
+- fix: Keyboard layout selection is broken (#45, thanks @Jarrah)
+
 ## 2.0.0 (2023-07-28)
 
 - feat: Add man page (#6, thanks @Jarrah)
