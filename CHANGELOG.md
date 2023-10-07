@@ -4,6 +4,10 @@
 
 Nothing at the moment
 
+## 2.0.2 (2023-10-07)
+
+- fix: Prefer keyboard capability when input devices offer both keyboard and pointer (!24, thanks @TravMurav)
+
 ## 2.0.1 (2023-10-01)
 
 - fix: Keyboard layout selection is broken (#45, thanks @Jarrah)
