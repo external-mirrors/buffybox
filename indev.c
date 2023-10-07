@@ -93,6 +93,14 @@ static bool is_keyboard_device(struct input_device *device);
 static bool is_pointer_device(struct input_device *device);
 
 /**
+ * Test whether a device can act as a touch device.
+ *
+ * @param device the device to test
+ * @return true if the device has the touch capability
+ */
+static bool is_touch_device(struct input_device *device);
+
+/**
  * Convert a device capability into a descriptive string.
  * 
  * @param capability input device capability
@@ -161,6 +169,10 @@ static bool is_keyboard_device(struct input_device *device) {
 
 static bool is_pointer_device(struct input_device *device) {
     return (device->capability & LIBINPUT_CAPABILITY_POINTER) != LIBINPUT_CAPABILITY_NONE;
+}
+
+static bool is_touch_device(struct input_device *device) {
+    return (device->capability & LIBINPUT_CAPABILITY_TOUCH) != LIBINPUT_CAPABILITY_NONE;
 }
 
 static char *capability_to_str(libinput_capability capability) {
@@ -252,21 +264,24 @@ static void connect_devnode(const char *node) {
     indev_drv->read_cb = libinput_read_cb;
     indev_drv->user_data = drv_state;
 
-    /* Set up indev driver type and related properties */
-    switch (device->capability) {
-        case LIBINPUT_CAPABILITY_KEYBOARD:
-            indev_drv->type = LV_INDEV_TYPE_KEYPAD;
-            break;
-        case LIBINPUT_CAPABILITY_POINTER:
-            indev_drv->type = LV_INDEV_TYPE_POINTER;
-            indev_drv->long_press_repeat_time = USHRT_MAX;
-            break;
-        case LIBINPUT_CAPABILITY_TOUCH:
-            indev_drv->type = LV_INDEV_TYPE_POINTER;
-            indev_drv->long_press_repeat_time = USHRT_MAX;
-            break;
-        default:
-            break;
+    /*
+     * Set up indev driver type and related properties
+     *
+     * FIXME: Some libinput devices (notably, certain hid-i2c keyboards)
+     * report both keyboard and pointer capability. Since lvgl expects
+     * every input device to have only one type, we register those devices
+     * as keyboards, considering this capability more useful. However
+     * we must also assume that keyboard+touch devices are touch.
+     */
+
+    if (is_touch_device(device)) {
+        indev_drv->type = LV_INDEV_TYPE_POINTER;
+        indev_drv->long_press_repeat_time = USHRT_MAX;
+    } else if (is_keyboard_device(device)) {
+        indev_drv->type = LV_INDEV_TYPE_KEYPAD;
+    } else if (is_pointer_device(device)) {
+        indev_drv->type = LV_INDEV_TYPE_POINTER;
+        indev_drv->long_press_repeat_time = USHRT_MAX;
     }
 
     /* Register indev */
