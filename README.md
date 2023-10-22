@@ -31,6 +31,12 @@ Here are a few highlights of what already works:
 
 For a growing collection of demo videos, see the [wiki]. Screenshots of the currently available themes may be found in the [screenshots] folder.
 
+<img src="screenshots/breezy-light-540x960.png" alt="540x960" height="300"/>
+<img src="screenshots/breezy-dark-540x960.png" alt="540x960" height="300"/>
+
+<img src="screenshots/pmos-light-800x480.png" alt="800x480" height="300"/>
+<img src="screenshots/pmos-dark-800x480.png" alt="800x480" height="300"/>
+
 # Usage
 
 A man page is planned to be added with #6. For the time being, you can get an overview of available command line options by running unl0kr with the `-h` or `--help` argument.
