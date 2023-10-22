@@ -33,7 +33,7 @@ For a growing collection of demo videos, see the [wiki]. Screenshots of the curr
 
 <img src="screenshots/breezy-light-540x960.png" alt="540x960" height="300"/>
 <img src="screenshots/breezy-dark-540x960.png" alt="540x960" height="300"/>
-
+<br>
 <img src="screenshots/pmos-light-800x480.png" alt="800x480" height="300"/>
 <img src="screenshots/pmos-dark-800x480.png" alt="800x480" height="300"/>
 
