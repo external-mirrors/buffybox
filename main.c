@@ -90,9 +90,16 @@ static void toggle_theme(void);
 /**
  * Set the UI theme.
  *
- * @param is_dark true if the dark theme should be applied, false if the light theme should be applied
+ * @param is_alternate true if the alternate theme should be applied, false if the default theme should be applied
  */
-static void set_theme(bool is_dark);
+static void set_theme(bool is_alternate);
+
+/**
+ * Get the UI theme.
+ *
+ * @param is_alternate true if the alternate theme should be selected, false if the default theme should be selected
+ */
+static const ul_theme * get_theme(bool is_alternate);
 
 /**
  * Handle LV_EVENT_CLICKED events from the show/hide password toggle button.
@@ -222,7 +229,11 @@ static void toggle_theme(void) {
 }
 
 static void set_theme(bool is_alternate) {
-    ul_theme_apply(ul_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id]);
+    ul_theme_apply(get_theme(is_alternate));
+}
+
+static const ul_theme * get_theme(bool is_alternate) {
+    return ul_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id];
 }
 
 static void toggle_pw_btn_clicked_cb(lv_event_t *event) {
@@ -318,7 +329,19 @@ static void textarea_ready_cb(lv_event_t *event) {
 }
 
 static void print_password_and_exit(lv_obj_t *textarea) {
+    /* Print the password to STDOUT */
     printf("%s\n", lv_textarea_get_text(textarea));
+
+    /* Clear the screen so that when the password field was unobscured, it cannot
+     * leak via stale display buffers after we've exited */
+    lv_obj_t *rect = lv_obj_create(lv_scr_act());
+    lv_obj_set_size(rect, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_pos(rect, 0, 0);
+    lv_obj_set_style_bg_opa(rect, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_bg_color(rect , lv_color_hex(get_theme(is_alternate_theme)->window.bg_color), LV_PART_MAIN);
+    lv_refr_now(lv_disp_get_default()); /* Force the screen to be drawn */
+
+    /* Trigger SIGTERM to exit */
     sigaction_handler(SIGTERM);
 }
 

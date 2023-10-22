@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-Nothing at the moment
+- fix: Clear the screen before exiting (#50)
 
 ## 2.0.2 (2023-10-07)
 
