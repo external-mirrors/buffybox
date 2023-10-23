@@ -79,10 +79,10 @@ for theme in ${themes[@]}; do
     readme="$readme"$'\n'"## $theme"$'\n\n'
     
     for res in ${resolutions[@]}; do
-        CRYPTTAB_SOURCE=/dev/sda1 $unl0kr -g $res -c unl0kr-screenshots.conf &
+        CRYPTTAB_SOURCE=/dev/sda1 $unl0kr -g $res -C unl0kr-screenshots.conf &
         pid=$!
 
-        sleep 2 # Wait for UI to render
+        sleep 3 # Wait for UI to render
 
         cat /dev/fb0 > "$outdir/$theme-$res"
         convert -size $fb_res -depth $fb_depth $fb_format:"$outdir/$theme-$res" -crop $res+0+0 "$outdir/$theme-$res.png"
