@@ -16,20 +16,36 @@ Afterwards you can execute the script with `pipenv run`. Use the `-h` / `--help`
 
 ```
 $ pipenv run python squeek2lvgl.py --help
-usage: squeek2lvgl.py [-h] --input INPUT [--shift-keycap SHIFT_KEYCAP] [--surround-space-with-arrows] [--generate-scancodes] --output OUTPUT
+usage: squeek2lvgl.py [-h] --input INPUT --name NAME
+                      [--extra-top-row-base EXTRA_TOP_ROW_BASE]
+                      [--extra-top-row-upper EXTRA_TOP_ROW_UPPER]
+                      [--shift-keycap SHIFT_KEYCAP]
+                      [--surround-space-with-arrows] [--generate-scancodes]
+                      --output OUTPUT
 
 Convert squeekboard layouts to LVGL-compatible C code.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  --input INPUT         squeekboard layout to use as input for generation. Has to be a YAML file path relative to data/keyboards. Can be specified
-                        multiple times.
+  --input INPUT         squeekboard layout to use as input for generation. Has
+                        to be a YAML file path relative to data/keyboards. Can
+                        be specified multiple times.
+  --name NAME           name for the layout. Needs to be specified once for
+                        every --input flag.
+  --extra-top-row-base EXTRA_TOP_ROW_BASE
+                        additional key row to add at the top of the base
+                        layer.
+  --extra-top-row-upper EXTRA_TOP_ROW_UPPER
+                        additional key row to add at the top of the upper
+                        layer.
   --shift-keycap SHIFT_KEYCAP
                         key caption for the Shift key. Defaults to "Shift".
   --surround-space-with-arrows
                         insert left / right arrow before / after space key
-  --generate-scancodes  also generate scancode tables (only works for US layout currently)
+  --generate-scancodes  also generate scancode tables (only works for US
+                        layout currently)
   --output OUTPUT       output directory for generated files
+
 ```
 
 As an example, the following command converts [squeekboard's US layout] to C

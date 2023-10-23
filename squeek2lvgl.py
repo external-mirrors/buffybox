@@ -64,6 +64,12 @@ def parse_arguments():
     parser.add_argument('--input', dest='input', action='append', required=True, help='squeekboard layout to '
                         + 'use as input for generation. Has to be a YAML file path relative to data/keyboards. '
                         + 'Can be specified multiple times.')
+    parser.add_argument('--name', dest='name', action='append', required=True, help='name for the layout. '
+                        + 'Needs to be specified once for every --input flag.')
+    parser.add_argument('--extra-top-row-base', dest='extra_top_row_base', type=str, required=False, help='additional '
+                        + 'key row to add at the top of the base layer.')
+    parser.add_argument('--extra-top-row-upper', dest='extra_top_row_upper', type=str, required=False, help='additional '
+                        + 'key row to add at the top of the upper layer.')
     parser.add_argument('--shift-keycap', dest='shift_keycap', type=str, required=False, help='key caption for '
                         + 'the Shift key. Defaults to "Shift".')
     parser.add_argument('--surround-space-with-arrows', action='store_true', dest='arrows_around_space',
@@ -259,22 +265,6 @@ class SourceFileBuilder(object):
 # Layout processing
 ##
 
-layout_name_for_layout_id = {
-    'terminal/us': 'US English (Terminal)',
-    'de': 'German',
-    'es': 'Spanish',
-    'fr': 'French',
-    'us': 'US English'
-}
-
-def layout_id_to_layout_name(layout_id):
-    """Return a descriptive name for a layout.
-
-    layout_id -- ID of the layout
-    """
-    return layout_name_for_layout_id[layout_id]
-
-
 def layout_id_to_c_identifier(layout_id):
     """Return a string for a layout that is suitable to be used in a C identifier.
     
@@ -389,12 +379,13 @@ def key_can_repeat(key):
     return key in repeatable_keys
 
 
-def key_to_attributes(key, is_locked, is_lockable, data_buttons):
+def key_to_attributes(key, is_locked, is_lockable, is_extra_top_row, data_buttons):
     """Return the LVGL button attributes for a key.
     
     key -- the key in question
     is_locked - whether the key is locked  in the current view
     is_lockable - whether the key can be locked in the current view
+    is_extra_top_row - whether the key is in the extra top row
     data_buttons -- the "buttons" object from the layout's YAML file
     """
     attributes = []
@@ -412,6 +403,11 @@ def key_to_attributes(key, is_locked, is_lockable, data_buttons):
 
     if not key_can_repeat(key):
         attributes.append('LV_BTNMATRIX_CTRL_NO_REPEAT')
+
+    if is_extra_top_row:
+        attributes.append('SQ2LV_CTRL_NON_CHAR')
+    if key == '<hidden>':
+        attributes.append('LV_BTNMATRIX_CTRL_HIDDEN')
 
     if key not in data_buttons or key in ['"', 'colon', 'period']:
         attributes.append('2')
@@ -593,7 +589,7 @@ def keycap_to_scancodes(args, keycap, is_switcher):
     return scancodes_for_keycap[keycap]
 
 
-def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, data_buttons):
+def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, data_buttons, extra_top_row):
     """Return keycaps, LVGL button attributes, modifier key indexes, layer switching key indexes,
     layer switching key destinations and scancodes for a view
     
@@ -601,6 +597,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
     view_id -- ID of the view
     data_views -- the "views" object from the layout's YAML file
     data_buttons -- the "buttons" object from the layout's YAML file
+    extra_top_row -- additional row of keys to insert at the top or "<hidden>" to insert an empty row
     """
     keycaps = []
     attrs = []
@@ -611,7 +608,11 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
 
     idx = 0
 
-    for row in data_views[view_id]:
+    rows = data_views[view_id]
+    if extra_top_row:
+        rows = [extra_top_row] + rows
+
+    for index, row in enumerate(rows):
         keycaps_in_row = []
         attrs_in_row = []
         scancodes_in_row = []
@@ -627,7 +628,6 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
             if space_idx != None:
                 keys.insert(space_idx, '←')
                 keys.insert(space_idx + 2, '→')
-
 
         for key in keys:
             if is_key_ignored(key):
@@ -670,7 +670,7 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
                     switcher_dests.append(dest)
                     is_switcher = True
 
-            attrs_in_row.append(key_to_attributes(key, is_locked, is_lockable, data_buttons))
+            attrs_in_row.append(key_to_attributes(key, is_locked, is_lockable, extra_top_row and index == 0, data_buttons))
 
             if args.generate_scancodes:
                 scancodes_in_row.append(keycap_to_scancodes(args, keycap, is_switcher))
@@ -752,10 +752,9 @@ if __name__ == '__main__':
 
         layouts_dir = os.path.join(tmp, rel_layouts_dir)
 
-        for file in args.input:
+        for file, layout_name in zip(args.input, args.name):
             layout_id, _ = os.path.splitext(file)
             layout_identifier = layout_id_to_c_identifier(layout_id)
-            layout_name = layout_id_to_layout_name(layout_id)
 
             data = load_yaml(layouts_dir, file)
             data_views = data['views']
@@ -783,8 +782,16 @@ if __name__ == '__main__':
                 c_builder.add_subsection_comment(f'Layer: {layer_name} - generated from {view_id}')
                 c_builder.add_line()
  
+                extra_top_row = None
+                if view_id == "base":
+                    extra_top_row = args.extra_top_row_base
+                if view_id == "upper":
+                    extra_top_row = args.extra_top_row_upper
+                if not extra_top_row and (args.extra_top_row_base or args.extra_top_row_upper):
+                    extra_top_row = "<hidden>"
+
                 keycaps, attrs, modifier_idxs, switcher_idxs, switcher_dests, scancodes = get_keycaps_attrs_modifiers_switchers_scancodes(
-                    args, view_id, data_views, data_buttons)
+                    args, view_id, data_views, data_buttons, extra_top_row)
 
                 for dest in switcher_dests:
                     if dest not in view_ids:
