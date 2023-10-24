@@ -270,7 +270,7 @@ static void set_keyboard_hidden(bool is_hidden) {
     lv_anim_t keyboard_anim;
     lv_anim_init(&keyboard_anim);
     lv_anim_set_var(&keyboard_anim, keyboard);
-    lv_anim_set_values(&keyboard_anim, is_hidden ? 0 : lv_obj_get_height(keyboard), is_hidden ? lv_obj_get_y(keyboard) : 0);
+    lv_anim_set_values(&keyboard_anim, is_hidden ? 0 : lv_obj_get_height(keyboard), is_hidden ? lv_obj_get_height(keyboard) : 0);
     lv_anim_set_path_cb(&keyboard_anim, lv_anim_path_ease_out);
     lv_anim_set_time(&keyboard_anim, 500);
     lv_anim_set_exec_cb(&keyboard_anim, keyboard_anim_y_cb);
@@ -472,9 +472,10 @@ int main(int argc, char *argv[]) {
     lv_obj_clear_flag(lv_scr_act(), LV_OBJ_FLAG_SCROLLABLE);
 
     /* Figure out a few numbers for sizing and positioning */
-    const int keyboard_height = ver_res > hor_res ? ver_res / 3 : ver_res / 2;
-    const int padding = keyboard_height / 8;
-    const int label_width = hor_res - 2 * padding;
+    const int base_keyboard_height = ver_res > hor_res ? ver_res / 3 : ver_res / 2; /* Height for 4 rows */
+    const int keyboard_height = base_keyboard_height * 1.25; /* Add space for an extra top row */
+    const int padding = keyboard_height / 10;
+    // const int label_width = hor_res - 2 * padding;
     const int textarea_container_max_width = LV_MIN(hor_res, ver_res);
 
     /* Main flexbox */
@@ -483,8 +484,9 @@ int main(int argc, char *argv[]) {
     lv_obj_set_flex_align(container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_size(container, LV_PCT(100), ver_res - keyboard_height);
     lv_obj_set_pos(container, 0, 0);
-    lv_obj_set_style_pad_row(container, padding, LV_PART_MAIN);
-    lv_obj_set_style_pad_bottom(container, padding, LV_PART_MAIN);
+    // lv_obj_set_style_pad_row(container, padding, LV_PART_MAIN);
+    // lv_obj_set_style_pad_bottom(container, padding, LV_PART_MAIN);
+    lv_obj_clear_flag(container, LV_OBJ_FLAG_SCROLLABLE);
 
     /* Header flexbox */
     lv_obj_t *header = lv_obj_create(container);
@@ -526,31 +528,36 @@ int main(int argc, char *argv[]) {
     lv_label_set_text(shutdown_btn_label, LV_SYMBOL_POWER);
     lv_obj_center(shutdown_btn_label);
 
+    /* Flexible spacer */
+    lv_obj_t *flexible_spacer = lv_obj_create(container);
+    lv_obj_set_size(flexible_spacer, LV_PCT(100), 0);
+    lv_obj_set_flex_grow(flexible_spacer, 1);
+
     /* Label container */
-    lv_obj_t *label_container = lv_obj_create(container);
-    lv_obj_set_size(label_container, label_width, LV_PCT(100));
-    lv_obj_set_flex_grow(label_container, 1);
+    // lv_obj_t *label_container = lv_obj_create(container);
+    // lv_obj_set_size(label_container, label_width, LV_PCT(100));
+    // lv_obj_set_flex_grow(label_container, 1);
 
-    /* Label */
-    lv_obj_t *spangroup = lv_spangroup_create(label_container);
-    lv_spangroup_set_align(spangroup, LV_TEXT_ALIGN_CENTER);
-    lv_spangroup_set_mode(spangroup, LV_SPAN_MODE_BREAK);
-    lv_spangroup_set_overflow(spangroup, LV_SPAN_OVERFLOW_ELLIPSIS);
-    lv_span_t *span1 = lv_spangroup_new_span(spangroup);
+    // /* Label */
+    // lv_obj_t *spangroup = lv_spangroup_create(label_container);
+    // lv_spangroup_set_align(spangroup, LV_TEXT_ALIGN_CENTER);
+    // lv_spangroup_set_mode(spangroup, LV_SPAN_MODE_BREAK);
+    // lv_spangroup_set_overflow(spangroup, LV_SPAN_OVERFLOW_ELLIPSIS);
+    // lv_span_t *span1 = lv_spangroup_new_span(spangroup);
 
-    /* Label text */
-    const char *crypttab_tried = getenv("CRYPTTAB_TRIED");
-    if (crypttab_tried && atoi(crypttab_tried) > 0) {
-        lv_span_set_text(span1, "Password incorrect");
-    } else {
-        lv_span_set_text(span1, "Password required for booting");
-    }
+    // /* Label text */
+    // const char *crypttab_tried = getenv("CRYPTTAB_TRIED");
+    // if (crypttab_tried && atoi(crypttab_tried) > 0) {
+    //     lv_span_set_text(span1, "Password incorrect");
+    // } else {
+    //     lv_span_set_text(span1, "Password required for booting");
+    // }
 
-    /* Size label to content */
-    const lv_coord_t label_height = lv_spangroup_get_expand_height(spangroup, label_width);
-    lv_obj_set_style_max_height(spangroup, LV_PCT(100), LV_PART_MAIN);
-    lv_obj_set_size(spangroup, label_width, label_height);
-    lv_obj_set_align(spangroup, LV_ALIGN_BOTTOM_MID);
+    // /* Size label to content */
+    // const lv_coord_t label_height = lv_spangroup_get_expand_height(spangroup, label_width);
+    // lv_obj_set_style_max_height(spangroup, LV_PCT(100), LV_PART_MAIN);
+    // lv_obj_set_size(spangroup, label_width, label_height);
+    // lv_obj_set_align(spangroup, LV_ALIGN_BOTTOM_MID);
 
     /* Textarea flexbox */
     lv_obj_t *textarea_container = lv_obj_create(container);
@@ -589,10 +596,14 @@ int main(int argc, char *argv[]) {
     lv_obj_set_size(toggle_kb_btn, dropwdown_height, dropwdown_height);
     lv_obj_set_size(shutdown_btn, dropwdown_height, dropwdown_height);
 
-    /* Hide label if it clips veritcally */
-    if (label_height > lv_obj_get_height(label_container)) {
-        lv_obj_set_height(spangroup, 0);
-    }
+    /* Fixed spacer */
+    lv_obj_t *fixed_spacer = lv_obj_create(container);
+    lv_obj_set_size(fixed_spacer, LV_PCT(100), padding);
+
+    // /* Hide label if it clips veritcally */
+    // if (label_height > lv_obj_get_height(label_container)) {
+    //     lv_obj_set_height(spangroup, 0);
+    // }
 
     /* Keyboard (after textarea / label so that key popovers are not drawn over) */
     keyboard = lv_keyboard_create(lv_scr_act());
