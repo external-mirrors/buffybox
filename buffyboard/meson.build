@@ -38,7 +38,7 @@ buffyboard_sources = [
 ]
 
 squeek2lvgl_sources = [
-  'squeek2lvgl/sq2lv.c',
+  '../squeek2lvgl/sq2lv.c',
 ]
 
 lvgl_sources = run_command('find-lvgl-sources.sh', 'lvgl').stdout().strip().split('\n')

@@ -18,10 +18,11 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 
-cd squeek2lvgl
+cd ../squeek2lvgl
 pipenv install
 pipenv run python squeek2lvgl.py \
     --input terminal/us.yaml \
-    --output .. \
+    --name "US English (Terminal)" \
+    --output ../buffyboard \
     --generate-scancodes \
     --shift-keycap '\xef\x8d\x9b'
