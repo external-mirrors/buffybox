@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix: Clear the screen before exiting (#50)
+- feat: Add extra top row for numbers & symbols, drop duplicative label (#49)
 
 ## 2.0.2 (2023-10-07)
 
