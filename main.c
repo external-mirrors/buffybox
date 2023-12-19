@@ -483,8 +483,6 @@ int main(int argc, char *argv[]) {
     lv_obj_set_flex_align(container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_size(container, LV_PCT(100), ver_res - keyboard_height);
     lv_obj_set_pos(container, 0, 0);
-    // lv_obj_set_style_pad_row(container, padding, LV_PART_MAIN);
-    // lv_obj_set_style_pad_bottom(container, padding, LV_PART_MAIN);
     lv_obj_clear_flag(container, LV_OBJ_FLAG_SCROLLABLE);
 
     /* Header flexbox */
