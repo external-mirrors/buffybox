@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+Nothing at the moment
+
+## 2.0.3 (2023-12-19)
+
 - fix: Clear the screen before exiting (#50)
 - feat: Add extra top row for numbers & symbols, drop duplicative label (#49)
 - fix: Stopgap solution for slow react on hardware keyboard (#36, thanks @jane400)
