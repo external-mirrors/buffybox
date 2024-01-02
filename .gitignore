@@ -1,4 +1,4 @@
 *.o
 Pipfile.lock
-/_build
+_build
 .vscode
