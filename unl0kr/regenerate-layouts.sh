@@ -18,7 +18,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 
-cd squeek2lvgl
+cd ../squeek2lvgl
 pipenv install
 pipenv run python squeek2lvgl.py \
     --input us.yaml \
@@ -31,6 +31,6 @@ pipenv run python squeek2lvgl.py \
       --name "Français" \
     --extra-top-row-base "1 2 3 4 5 6 7 8 9 0" \
     --extra-top-row-upper "! @ # $ % ^ & * ( )" \
-    --output .. \
+    --output ../unl0kr \
     --surround-space-with-arrows \
     --shift-keycap '\xef\x8d\x9b'

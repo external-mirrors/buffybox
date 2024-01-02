@@ -42,7 +42,7 @@ unl0kr_sources = [
 ]
 
 squeek2lvgl_sources = [
-  'squeek2lvgl/sq2lv.c',
+  '../squeek2lvgl/sq2lv.c',
 ]
 
 man_files = [

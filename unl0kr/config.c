@@ -28,7 +28,7 @@
 #include <ini.h>
 #include <stdlib.h>
 
-#include "squeek2lvgl/sq2lv.h"
+#include "../squeek2lvgl/sq2lv.h"
 
 
 /**

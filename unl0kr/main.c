@@ -39,7 +39,7 @@
 
 #include "lvgl/lvgl.h"
 
-#include "squeek2lvgl/sq2lv.h"
+#include "../squeek2lvgl/sq2lv.h"
 
 #include <signal.h>
 #include <stdio.h>
