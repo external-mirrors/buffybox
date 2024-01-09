@@ -1,12 +1,12 @@
-[submodule "buffyboard/lv_drivers"]
-	path = buffyboard/lv_drivers
-	url = https://github.com/littlevgl/lv_drivers.git
 [submodule "buffyboard/lvgl"]
 	path = buffyboard/lvgl
 	url = https://github.com/littlevgl/lvgl.git
+[submodule "buffyboard/lv_drivers"]
+	path = buffyboard/lv_drivers
+	url = https://github.com/littlevgl/lv_drivers.git
 [submodule "unl0kr/lvgl"]
 	path = unl0kr/lvgl
 	url = https://github.com/littlevgl/lvgl.git
 [submodule "unl0kr/lv_drivers"]
 	path = unl0kr/lv_drivers
-	url = git@github.com:calebccff/lv_drivers.git
+	url = https://github.com/calebccff/lv_drivers.git
