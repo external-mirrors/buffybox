@@ -2,12 +2,10 @@
 
 BuffyBox is a suite of graphical applications for the terminal.
 
-[[_TOC_]]
-
 ## Components
 
 * [buffyboard] – Touch-enabled on-screen keyboard for virtual terminals
-* [squeek2lvgl] – Converter for transforming [Squeekboard] layouts into LVGL-compatible C code
+* [squeek2lvgl] – Converter for transforming [Squeekboard] layouts into [LVGL]-compatible C code
 * [unl0kr] – Disk unlocking UI for the initramfs
 
 ## Contributing
@@ -20,6 +18,7 @@ This project is licensed under the GNU General Public License as published by th
 
 [#buffybox:matrix.org]: https://matrix.to/#/#buffybox:matrix.org
 [buffyboard]: ./buffyboard
+[LVGL]: https://github.com/lvgl/lvgl
 [squeek2lvgl]: ./squeek2lvgl
 [Squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard
 [unl0kr]: ./unl0kr
