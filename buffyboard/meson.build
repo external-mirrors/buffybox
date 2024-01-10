@@ -1,6 +1,6 @@
 # Copyright 2021 Johannes Marbach
 #
-# This file is part of buffyboard, hereafter referred to as the program.
+# This file is part of buffybox, hereafter referred to as the program.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
