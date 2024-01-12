@@ -22,7 +22,7 @@
 
 #include "log.h"
 
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 #include <dirent.h>
 #include <ini.h>

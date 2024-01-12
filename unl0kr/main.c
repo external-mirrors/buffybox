@@ -37,7 +37,7 @@
 #include "lv_drivers/display/drm.h"
 #endif /* USE_DRM */
 
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 #include "../squeek2lvgl/sq2lv.h"
 
@@ -371,7 +371,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* Announce ourselves */
-    ul_log(UL_LOG_LEVEL_VERBOSE, "unl0kr %s", UL_VERSION);
+    ul_log(UL_LOG_LEVEL_VERBOSE, "unl0kr %s", BUFFYBOX_VERSION);
 
     /* Parse config files */
     ul_config_init_opts(&conf_opts);

@@ -21,7 +21,7 @@
 #ifndef UL_INDEV_H
 #define UL_INDEV_H
 
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 #include <stdbool.h>
 

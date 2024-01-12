@@ -21,7 +21,7 @@
 #ifndef BB_CURSOR_H
 #define BB_CURSOR_H
 
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 /* Image description of the mouse cursor */
 extern const lv_img_dsc_t ul_cursor_img_dsc;

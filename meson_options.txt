@@ -1,0 +1,3 @@
+option('with-drm', type : 'feature', value : 'auto', description : 'Enable DRM backend')
+option('with-docs', type : 'feature', value : 'auto', description : 'Build documentation')
+option('unl0kr', type : 'feature', value : 'enabled', description : 'Build unl0kr')

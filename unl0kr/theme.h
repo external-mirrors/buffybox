@@ -21,7 +21,7 @@
 #ifndef UL_THEME_H
 #define UL_THEME_H
 
-#include "lvgl/lvgl.h"
+#include "lvgl.h"
 
 #include <stdbool.h>
 #include <stdint.h>
