@@ -1,7 +1,7 @@
 /**
  * Copyright 2021 Johannes Marbach
  *
- * This file is part of buffybox, hereafter referred to as the program.
+ * This file is part of squeek2lvgl, hereafter referred to as the program.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,24 @@
 
 #include "sq2lv.h"
 
-
 /**
  * Static variables
  */
 
 static sq2lv_layout_id_t current_layout_id = SQ2LV_LAYOUT_NONE;
+
+/* Layouts */
+static int sq2lv_num_layouts = 0;
+static const sq2lv_layout_t * sq2lv_layouts = NULL;
+
+int sq2lv_configure_layouts(unsigned int num_layouts, const sq2lv_layout_t *layouts) {
+    if (!num_layouts || !layouts)
+        return -1;
+
+    sq2lv_num_layouts = num_layouts;
+    sq2lv_layouts = layouts;
+    return 0;
+}
 
 
 /**

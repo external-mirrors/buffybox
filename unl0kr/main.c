@@ -465,6 +465,12 @@ int main(int argc, char *argv[]) {
         is_keyboard_hidden = true;
     }
 
+    /* Initialise OSK */
+    if (sq2lv_configure_layouts(sq2lv_num_layouts, sq2lv_layouts) < 0) {
+        ul_log(UL_LOG_LEVEL_ERROR, "Failed to configure layouts");
+        exit(EXIT_FAILURE);
+    }
+
     /* Initialise theme */
     set_theme(is_alternate_theme);
 
