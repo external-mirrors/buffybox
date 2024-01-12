@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "indev.h"
 
 #include "cursor.h"
+#include "indev.h"
 
 #include "lv_drivers/indev/libinput_drv.h"
 

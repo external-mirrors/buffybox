@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+
 #ifndef BB_UINPUT_DEVICE_H
 #define BB_UINPUT_DEVICE_H
 

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+
 #if 1 /*Set it to "1" to enable content*/
 
 #ifndef LV_CONF_H

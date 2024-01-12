@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+
 #ifndef BB_TERMINAL_H
 #define BB_TERMINAL_H
 

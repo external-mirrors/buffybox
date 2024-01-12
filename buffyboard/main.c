@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+
 #include "buffyboard.h"
 #include "command_line.h"
 #include "indev.h"
