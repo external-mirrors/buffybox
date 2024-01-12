@@ -154,6 +154,11 @@ Below is a short explanation of the different unicode ranges used above.
   - [arrow-alt-circle-up](https://fontawesome.com/v5/icons/arrow-alt-circle-up) (`0xF35B`)
   - [chevron-left](https://fontawesome.com/v5/icons/chevron-left) (`0xF053`)
 
+
+## Mouse cursor
+
+Unl0kr's mouse cursor is adapted from Ubuntu's [Yaru] theme suite. Similar to fonts, the mouse cursor image needs to be converted to LVGL-compatible C code. To do this, run `regenerate-cursor.sh` after any change of `cursor.png` to update the code.
+
 ## Keyboard layouts
 
 Unl0kr uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerate the layouts, ensure that you have pipenv installed (e.g. via `pip install --user pipenv`) and then run
@@ -186,8 +191,6 @@ $ sudo ffmpeg -f fbdev -i /dev/fb0 -r 24 -c:v libx264 -b:v 500k demo.avi
 
 The [lv_port_linux_frame_buffer] project served as a starting point for the codebase.
 
-The mouse cursor image was taken from [lv_sim_emscripten].
-
 # License
 
 Unl0kr is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -208,7 +211,6 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [libdrm]: https://gitlab.freedesktop.org/mesa/drm
 [lv_drivers]: https://github.com/lvgl/lv_drivers
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
-[lv_sim_emscripten]: https://github.com/lvgl/lv_sim_emscripten/blob/master/mouse_cursor_icon.c
 [lvgl]: https://github.com/lvgl/lvgl
 [online font converter]: https://lvgl.io/tools/fontconverter
 [open issues]: https://gitlab.com/cherrypicker/unl0kr/-/issues
@@ -220,3 +222,4 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [unl0kr.conf]: ./unl0kr.conf
 [v1 milestone]: https://gitlab.com/cherrypicker/unl0kr/-/milestones/1
 [wiki]: https://gitlab.com/cherrypicker/unl0kr/-/wikis/home
+[Yaru]: https://github.com/ubuntu/yaru

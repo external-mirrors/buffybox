@@ -2,3 +2,4 @@
 Pipfile.lock
 _build
 .vscode
+node_modules
