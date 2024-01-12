@@ -1,6 +1,8 @@
 #!/bin/sh -ex
+
 # Copyright 2023 Johannes Marbach
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 
 npm i
 

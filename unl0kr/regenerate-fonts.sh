@@ -1,6 +1,8 @@
 #!/bin/sh -ex
+
 # Copyright 2022 Johannes Marbach
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 
 npx lv_font_conv --bpp 4 --size 32 --no-compress -o font_32.c --format lvgl \
     --font OpenSans-Regular.ttf \
