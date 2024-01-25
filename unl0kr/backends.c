@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+
 #include "backends.h"
 
 #include <string.h>
@@ -12,12 +13,12 @@
  */
 
 const char *ul_backends_backends[] = {
-#if USE_FBDEV
+#if LV_USE_LINUX_FBDEV
     "fbdev",
-#endif /* USE_FBDEV */
-#if USE_DRM
+#endif /* LV_USE_LINUX_FBDEV */
+#if LV_USE_LINUX_DRM
     "drm",
-#endif /* USE_DRM */
+#endif /* LV_USE_LINUX_DRM */
     NULL
 };
 

@@ -74,11 +74,11 @@ static void reset_style(lv_style_t *style);
 static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj);
 
 /**
- * Handle LV_EVENT_DRAW_PART_BEGIN events from the keyboard widget.
+ * Handle LV_EVENT_DRAW_TASK_ADDED events from the keyboard widget.
  *
  * @param event the event object
  */
-static void keyboard_draw_part_begin_cb(lv_event_t *event);
+static void keyboard_draw_task_added_cb(lv_event_t *event);
 
 
 /**
@@ -248,13 +248,13 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return;
     }
 
-    if (lv_obj_check_type(obj, &lv_btn_class)) {
+    if (lv_obj_check_type(obj, &lv_button_class)) {
         lv_obj_add_style(obj, &(styles.button), 0);
         lv_obj_add_style(obj, &(styles.button_pressed), LV_STATE_PRESSED);
         return;
     }
 
-    if (lv_obj_check_type(obj, &lv_label_class) && lv_obj_check_type(lv_obj_get_parent(obj), &lv_btn_class)) {
+    if (lv_obj_check_type(obj, &lv_label_class) && lv_obj_check_type(lv_obj_get_parent(obj), &lv_button_class)) {
         return; /* Inherit styling from button */
     }
 
@@ -296,7 +296,7 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return; /* Inherit styling from message box */
     }
 
-    if (lv_obj_check_type(obj, &lv_btnmatrix_class) && lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_class)) {
+    if (lv_obj_check_type(obj, &lv_buttonmatrix_class) && lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_class)) {
         lv_obj_add_style(obj, &(styles.msgbox_btnmatrix), 0);
         lv_obj_add_style(obj, &(styles.button), LV_PART_ITEMS);
         lv_obj_add_style(obj, &(styles.button_pressed), LV_PART_ITEMS | LV_STATE_PRESSED);
@@ -320,10 +320,11 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
     }
 }
 
-static void keyboard_draw_part_begin_cb(lv_event_t *event) {
+static void keyboard_draw_task_added_cb(lv_event_t *event) {
     lv_obj_t *obj = lv_event_get_target(event);
-    lv_btnmatrix_t *btnm = (lv_btnmatrix_t *)obj;
-    lv_obj_draw_part_dsc_t *dsc = lv_event_get_param(event);
+    lv_buttonmatrix_t *btnm = (lv_buttonmatrix_t *)obj;
+    lv_draw_task_t *draw_task = lv_event_get_draw_task(event);
+    lv_draw_dsc_base_t *dsc = draw_task->draw_dsc;
 
     if (dsc->part != LV_PART_ITEMS) {
         return;
@@ -331,21 +332,29 @@ static void keyboard_draw_part_begin_cb(lv_event_t *event) {
 
     ul_theme_key *key = NULL;
 
-    if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
+    if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
         key = &(current_theme.keyboard.keys.key_mod_inact);
-    } else if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
+    } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
         key = &(current_theme.keyboard.keys.key_mod_act);
-    } else if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
+    } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
         key = &(current_theme.keyboard.keys.key_non_char);
     } else {
         key = &(current_theme.keyboard.keys.key_char);
     }
 
-    bool pressed = lv_btnmatrix_get_selected_btn(obj) == dsc->id && lv_obj_has_state(obj, LV_STATE_PRESSED);
+    bool pressed = lv_btnmatrix_get_selected_btn(obj) == dsc->id1 && lv_obj_has_state(obj, LV_STATE_PRESSED);
 
-    dsc->label_dsc->color = lv_color_hex((pressed ? key->pressed : key->normal).fg_color);
-    dsc->rect_dsc->bg_color = lv_color_hex((pressed ? key->pressed : key->normal).bg_color);
-    dsc->rect_dsc->border_color = lv_color_hex((pressed ? key->pressed : key->normal).border_color);
+    if (draw_task->type == LV_DRAW_TASK_TYPE_LABEL) {
+        ((lv_draw_label_dsc_t *)dsc)->color = lv_color_hex((pressed ? key->pressed : key->normal).fg_color);
+    }
+
+    if (draw_task->type == LV_DRAW_TASK_TYPE_FILL) {
+        ((lv_draw_fill_dsc_t *)dsc)->color = lv_color_hex((pressed ? key->pressed : key->normal).bg_color);
+    }
+
+    if (draw_task->type == LV_DRAW_TASK_TYPE_BORDER) {
+        ((lv_draw_border_dsc_t *)dsc)->color = lv_color_hex((pressed ? key->pressed : key->normal).border_color);
+    }
 }
 
 
@@ -354,7 +363,8 @@ static void keyboard_draw_part_begin_cb(lv_event_t *event) {
  */
 
 void ul_theme_prepare_keyboard(lv_obj_t *keyboard) {
-    lv_obj_add_event_cb(keyboard, keyboard_draw_part_begin_cb, LV_EVENT_DRAW_PART_BEGIN, NULL);
+    lv_obj_add_event_cb(keyboard, keyboard_draw_task_added_cb, LV_EVENT_DRAW_TASK_ADDED, NULL);
+    lv_obj_add_flag(keyboard, LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS);
 }
 
 void ul_theme_apply(const ul_theme *theme) {

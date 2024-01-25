@@ -9,6 +9,7 @@
 #include "cursor.h"
 #include "log.h"
 
+#include "lvgl/src/indev/lv_indev_private.h"
 #include "lv_drivers/indev/libinput_drv.h"
 
 #include <libinput.h>
@@ -46,7 +47,6 @@ struct input_device {
   char *node;
   libinput_capability capability;
   libinput_drv_state_t drv_state;
-  lv_indev_drv_t indev_drv;
   lv_indev_t *indev;
 };
 
@@ -125,10 +125,10 @@ static void disconnect_idx(int idx);
 /**
  * Perform an input read on a device using the libinput driver.
  *
- * @param indev_drv input device driver
+ * @param indev input device
  * @param data input device data to write into
  */
-static void libinput_read_cb(lv_indev_drv_t *indev_drv, lv_indev_data_t *data);
+static void libinput_read_cb(lv_indev_t *indev, lv_indev_data_t *data);
 
 /**
  * Set up the input group for a keyboard device.
@@ -217,9 +217,8 @@ static void connect_devnode(const char *node) {
     lv_memzero(device, sizeof(struct input_device));
     devices[num_connected_devices] = device;
 
-    /* Get pointers to driver state & indev driver */
+    /* Get pointer to driver state */
     libinput_drv_state_t *drv_state = &(device->drv_state);
-    lv_indev_drv_t *indev_drv = &(device->indev_drv);
 
     /* Copy the node path so that it can be used beyond the caller's scope */
     device->node = strdup(node);
@@ -245,13 +244,13 @@ static void connect_devnode(const char *node) {
         return;
     }
 
-    /* Initialise indev driver */
-    lv_indev_drv_init(indev_drv);
-    indev_drv->read_cb = libinput_read_cb;
-    indev_drv->user_data = drv_state;
+    /* Initialise indev */
+    device->indev = lv_indev_create();
+    device->indev->read_cb = libinput_read_cb;
+    device->indev->user_data = drv_state;
 
     /*
-     * Set up indev driver type and related properties
+     * Set up indev type and related properties
      *
      * FIXME: Some libinput devices (notably, certain hid-i2c keyboards)
      * report both keyboard and pointer capability. Since lvgl expects
@@ -261,17 +260,14 @@ static void connect_devnode(const char *node) {
      */
 
     if (is_touch_device(device)) {
-        indev_drv->type = LV_INDEV_TYPE_POINTER;
-        indev_drv->long_press_repeat_time = USHRT_MAX;
+        device->indev->type = LV_INDEV_TYPE_POINTER;
+        device->indev->long_press_repeat_time = USHRT_MAX;
     } else if (is_keyboard_device(device)) {
-        indev_drv->type = LV_INDEV_TYPE_KEYPAD;
+        device->indev->type = LV_INDEV_TYPE_KEYPAD;
     } else if (is_pointer_device(device)) {
-        indev_drv->type = LV_INDEV_TYPE_POINTER;
-        indev_drv->long_press_repeat_time = USHRT_MAX;
+        device->indev->type = LV_INDEV_TYPE_POINTER;
+        device->indev->long_press_repeat_time = USHRT_MAX;
     }
-
-    /* Register indev */
-    device->indev = lv_indev_drv_register(indev_drv);
 
     /* Set the input group for keyboard devices */
     if (is_keyboard_device(device)) {
@@ -355,8 +351,8 @@ static void disconnect_idx(int idx) {
     lv_memzero(devices + idx, sizeof(struct input_device *));
 }
 
-static void libinput_read_cb(lv_indev_drv_t *indev_drv, lv_indev_data_t *data) {
-    libinput_read_state(indev_drv->user_data, indev_drv, data);
+static void libinput_read_cb(lv_indev_t *indev, lv_indev_data_t *data) {
+    libinput_read_state(indev->user_data, indev, data);
 }
 
 static void set_keyboard_input_group(struct input_device *device) {

@@ -16,17 +16,11 @@
 
 #include "lv_drv_conf.h"
 
-#if USE_FBDEV
-#include "lv_drivers/display/fbdev.h"
-#endif /* USE_FBDEV */
-#if USE_DRM
-#include "lv_drivers/display/drm.h"
-#endif /* USE_DRM */
-
 #include "lvgl/lvgl.h"
 
 #include "../squeek2lvgl/sq2lv.h"
 
+#include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,6 +47,13 @@ lv_obj_t *keyboard = NULL;
 /**
  * Static prototypes
  */
+
+/**
+ * Function to invoke in the tick generation thread.
+ *
+ * @param args unused
+*/
+static void *tick_thread (void *args);
 
 /**
  * Query the device monitor and handle updates.
@@ -148,11 +149,18 @@ static void layout_dropdown_value_changed_cb(lv_event_t *event);
 static void shutdown_btn_clicked_cb(lv_event_t *event);
 
 /**
- * Handle LV_EVENT_VALUE_CHANGED events from the shutdown message box.
+ * Handle confirmation events from the shutdown message box.
  *
  * @param event the event object
  */
-static void shutdown_mbox_value_changed_cb(lv_event_t *event);
+static void shutdown_mbox_confirmed_cb(lv_event_t *event);
+
+/**
+ * Handle declination events from the shutdown message box.
+ *
+ * @param event the event object
+ */
+static void shutdown_mbox_declined_cb(lv_event_t *event);
 
 /**
  * Handle LV_EVENT_VALUE_CHANGED events from the keyboard widget.
@@ -198,6 +206,15 @@ static void sigaction_handler(int signum);
 /**
  * Static functions
  */
+
+
+static void *tick_thread (void *args) {
+    while (1) {
+        usleep(5 * 1000); /* Sleep for 5 millisecond */
+        lv_tick_inc(5); /* Tell LVGL that 5 milliseconds have elapsed */
+    }
+    return NULL;
+}
 
 static void query_device_monitor(lv_timer_t *timer) {
     LV_UNUSED(timer);
@@ -275,18 +292,23 @@ static void layout_dropdown_value_changed_cb(lv_event_t *event) {
 
 static void shutdown_btn_clicked_cb(lv_event_t *event) {
     LV_UNUSED(event);
-    static const char *btns[] = { "Yes", "No", "" };
-    lv_obj_t *mbox = lv_msgbox_create(NULL, NULL, "Shutdown device?", btns, false);
+    lv_obj_t *mbox = lv_msgbox_create(NULL);
+    lv_msgbox_add_title(mbox, "Shutdown device?");
+    lv_obj_t *confirm_btn = lv_msgbox_add_footer_button(mbox, "Yes");
+    lv_obj_add_event_cb(confirm_btn, shutdown_mbox_confirmed_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_t *decline_btn = lv_msgbox_add_footer_button(mbox, "No");
+    lv_obj_add_event_cb(decline_btn, shutdown_mbox_declined_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_set_size(mbox, 400, LV_SIZE_CONTENT);
-    lv_obj_add_event_cb(mbox, shutdown_mbox_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_center(mbox);
 }
 
-static void shutdown_mbox_value_changed_cb(lv_event_t *event) {
-    lv_obj_t *mbox = lv_event_get_current_target(event);
-    if (lv_msgbox_get_active_btn(mbox) == 0) {
-        shutdown();
-    }
+static void shutdown_mbox_confirmed_cb(lv_event_t *event) {
+    LV_UNUSED(event);
+    shutdown();
+}
+
+static void shutdown_mbox_declined_cb(lv_event_t *event) {
+    lv_obj_t *mbox = lv_event_get_target(event);
     lv_msgbox_close(mbox);
 }
 
@@ -377,64 +399,46 @@ int main(int argc, char *argv[]) {
     lv_init();
     lv_log_register_print_cb(ul_log_print_cb);
 
-    /* Initialise display driver */
-    static lv_disp_drv_t disp_drv;
-    lv_disp_drv_init(&disp_drv);
+    /* Start the tick thread */
+    pthread_t ticker;
+    pthread_create(&ticker, NULL, tick_thread, NULL);
 
-    /* Initialise framebuffer driver and query display size */
-    uint32_t hor_res = 0;
-    uint32_t ver_res = 0;
-    uint32_t dpi = 0;
-
+    /* Initialise display */
+    lv_display_t *disp = NULL;
     switch (conf_opts.general.backend) {
-#if USE_FBDEV
+#if LV_USE_LINUX_FBDEV
     case UL_BACKENDS_BACKEND_FBDEV:
-        fbdev_init();
+        disp = lv_linux_fbdev_create();
+        lv_linux_fbdev_set_file(disp, "/dev/fb0");
         if (conf_opts.quirks.fbdev_force_refresh) {
-            fbdev_force_refresh(true);
+            lv_linux_fbdev_set_force_refresh(disp, true);
         }
-        fbdev_get_sizes(&hor_res, &ver_res, &dpi);
-        disp_drv.flush_cb = fbdev_flush;
         break;
-#endif /* USE_FBDEV */
-#if USE_DRM
+#endif /* LV_USE_LINUX_FBDEV */
+#if LV_USE_LINUX_DRM
     case UL_BACKENDS_BACKEND_DRM:
-        drm_init();
-        drm_get_sizes((lv_coord_t *)&hor_res, (lv_coord_t *)&ver_res, &dpi);
-        disp_drv.flush_cb = drm_flush;
+        disp = lv_linux_drm_create();
+        lv_linux_drm_set_file(disp, "/dev/dri/card0", -1);
         break;
-#endif /* USE_DRM */
+#endif /* LV_USE_LINUX_DRM */
     default:
         ul_log(UL_LOG_LEVEL_ERROR, "Unable to find suitable backend");
         exit(EXIT_FAILURE);
     }
 
-    /* Override display parameters with command line options if necessary */
-    if (cli_opts.hor_res > 0) {
-        hor_res = cli_opts.hor_res;
-    }
-    if (cli_opts.ver_res > 0) {
-        ver_res = cli_opts.ver_res;
+    /* Override display properties with command line options if necessary */
+    lv_display_set_offset(disp, cli_opts.x_offset, cli_opts.y_offset);
+    if (cli_opts.hor_res > 0 || cli_opts.ver_res > 0) {
+        lv_display_set_physical_resolution(disp, lv_disp_get_hor_res(disp), lv_disp_get_ver_res(disp));
+        lv_display_set_resolution(disp, cli_opts.hor_res, cli_opts.ver_res);
     }
     if (cli_opts.dpi > 0) {
-        dpi = cli_opts.dpi;
+        lv_display_set_dpi(disp, cli_opts.dpi);
     }
 
-    /* Prepare display buffer */
-    const size_t buf_size = hor_res * ver_res; /* Direct rendering requires using the screen size for the buffer */
-    lv_disp_draw_buf_t disp_buf;
-    lv_color_t *buf = (lv_color_t *)malloc(buf_size * sizeof(lv_color_t));
-    lv_disp_draw_buf_init(&disp_buf, buf, NULL, buf_size);    
-
-    /* Register display driver */
-    disp_drv.draw_buf = &disp_buf;
-    disp_drv.hor_res = hor_res;
-    disp_drv.ver_res = ver_res;
-    disp_drv.offset_x = cli_opts.x_offset;
-    disp_drv.offset_y = cli_opts.y_offset;
-    disp_drv.dpi = dpi;
-    disp_drv.direct_mode = true;
-    lv_disp_drv_register(&disp_drv);
+    /* Store final display resolution for convenient later access */
+    const uint32_t hor_res = lv_disp_get_hor_res(disp);
+    const uint32_t ver_res = lv_disp_get_ver_res(disp);
 
     /* Prepare for routing physical keyboard input into the textarea */
     lv_group_t *keyboard_input_group = lv_group_create();
@@ -561,7 +565,13 @@ int main(int argc, char *argv[]) {
     keyboard = lv_keyboard_create(lv_scr_act());
     lv_keyboard_set_mode(keyboard, LV_KEYBOARD_MODE_TEXT_LOWER);
     lv_keyboard_set_textarea(keyboard, textarea);
-    lv_obj_remove_event_cb(keyboard, lv_keyboard_def_event_cb);
+    uint32_t num_keyboard_events = lv_obj_get_event_count(keyboard);
+    for(uint32_t i = 0; i < num_keyboard_events; ++i) {
+        if(lv_event_dsc_get_cb(lv_obj_get_event_dsc(keyboard, i)) == lv_keyboard_def_event_cb) {
+            lv_obj_remove_event(keyboard, i);
+            break;
+        }
+    }
     lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(keyboard, keyboard_ready_cb, LV_EVENT_READY, NULL);
     lv_obj_set_pos(keyboard, 0, is_keyboard_hidden ? keyboard_height : 0);
@@ -578,43 +588,15 @@ int main(int argc, char *argv[]) {
         lv_keyboard_set_popovers(keyboard, true);
     }
 
-    /* Run lvgl in "tickless" mode */
+    /* Periodically run timer / task handler */
     uint32_t timeout = conf_opts.general.timeout * 1000; /* ms */
     while(1) {
         if (!timeout || lv_disp_get_inactive_time(NULL) < timeout) {
-            lv_task_handler();
+            lv_timer_periodic_handler();
         } else if (timeout) {
             shutdown();
         }
-        usleep(5000);
     }
 
     return 0;
-}
-
-
-/**
- * Tick generation
- */
-
-/**
- * Generate tick for LVGL.
- * 
- * @return tick in ms
- */
-uint32_t ul_get_tick(void) {
-    static uint64_t start_ms = 0;
-    if (start_ms == 0) {
-        struct timeval tv_start;
-        gettimeofday(&tv_start, NULL);
-        start_ms = (tv_start.tv_sec * 1000000 + tv_start.tv_usec) / 1000;
-    }
-
-    struct timeval tv_now;
-    gettimeofday(&tv_now, NULL);
-    uint64_t now_ms;
-    now_ms = (tv_now.tv_sec * 1000000 + tv_now.tv_usec) / 1000;
-
-    uint32_t time_ms = now_ms - start_ms;
-    return time_ms;
 }

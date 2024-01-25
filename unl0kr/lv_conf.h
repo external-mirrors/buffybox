@@ -53,9 +53,6 @@
 /*Use the standard `memcpy` and `memset` instead of LVGL's own functions. (Might or might not be faster).*/
 #define LV_MEMCPY_MEMSET_STD    0
 
-/*TODO: Remove once lv_memzero becomes available in a release. Currently it is only available on master.*/
-#define lv_memzero(dst, len) (lv_memset(dst, 0x00, len))
-
 /*====================
    HAL SETTINGS
  *====================*/
@@ -65,15 +62,6 @@
 
 /*Input device read period in milliseconds*/
 #define LV_INDEV_DEF_READ_PERIOD    5      /*[ms]*/
-
-/*Use a custom tick source that tells the elapsed time in milliseconds.
- *It removes the need to manually update the tick with `lv_tick_inc()`)*/
-uint32_t ul_get_tick(void);
-#define LV_TICK_CUSTOM     1
-#if LV_TICK_CUSTOM
-#define LV_TICK_CUSTOM_INCLUDE  <stdint.h>         /*Header for the system time function*/
-#define LV_TICK_CUSTOM_SYS_TIME_EXPR (ul_get_tick())     /*Expression evaluating to current system time in ms*/
-#endif   /*LV_TICK_CUSTOM*/
 
 /*Default Dot Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
  *(Not so important, you can adjust it to modify default sizes and spaces)*/
@@ -446,9 +434,15 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 
 #define LV_USE_LIST         0
 
+#define LV_USE_MENU         0
+
 #define LV_USE_METER        0
 
 #define LV_USE_MSGBOX       1
+
+#define LV_USE_ROLLER       0
+
+#define LV_USE_SCALE        0
 
 #define LV_USE_SPINBOX      0
 
@@ -500,11 +494,41 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 #define LV_USE_GRID     0
 
 /*==================
+ * DEVICES
+ *==================*/
+
+/*Use SDL to open window on PC and handle mouse and keyboard*/
+#define LV_USE_SDL              0
+#if LV_USE_SDL
+    #define LV_SDL_INCLUDE_PATH    <SDL2/SDL.h>
+    #define LV_SDL_PARTIAL_MODE    0    /*Recommended only to emulate a setup with a display controller*/
+    #define LV_SDL_FULLSCREEN      0
+#endif
+
+/*Driver for /dev/fb*/
+#define LV_USE_LINUX_FBDEV      1
+#if LV_USE_LINUX_FBDEV
+    #define LV_LINUX_FBDEV_BSD           0
+    #define LV_LINUX_FBDEV_RENDER_MODE   LV_DISPLAY_RENDER_MODE_DIRECT
+    #define LV_LINUX_FBDEV_BUFFER_COUNT  0
+    #define LV_LINUX_FBDEV_BUFFER_SIZE   60
+#endif
+
+/*Driver for /dev/dri/card*/
+#define LV_USE_LINUX_DRM        1
+
+/*Interface for TFT_eSPI*/
+#define LV_USE_TFT_ESPI         0
+
+/*==================
 * EXAMPLES
 *==================*/
 
 /*Enable the examples to be built with the library*/
 #define LV_BUILD_EXAMPLES   0
+
+/*Temporarily enable development version*/
+#define LV_USE_DEV_VERSION 1
 
 /*--END OF LV_CONF_H--*/
 

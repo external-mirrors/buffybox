@@ -42,6 +42,7 @@ void ul_log(ul_log_level level, const char *format, ...) {
     }
 }
 
-void ul_log_print_cb(const char *msg) {
+void ul_log_print_cb(lv_log_level_t level, const char *msg) {
+    LV_UNUSED(level);
     ul_log(UL_LOG_LEVEL_VERBOSE, msg);
 }

@@ -7,6 +7,8 @@
 #ifndef UL_LOG_H
 #define UL_LOG_H
 
+#include "lvgl/lvgl.h"
+
 /**
  * Log levels
  */
@@ -37,9 +39,10 @@ void ul_log(ul_log_level level, const char *format, ...);
 
 /**
  * Handle an LVGL log message.
- * 
+ *
+ * @param level LVGL log level
  * @param msg message to print
  */
-void ul_log_print_cb(const char *msg);
+void ul_log_print_cb(lv_log_level_t level, const char *msg);
 
 #endif /* UL_LOG_H */

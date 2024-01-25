@@ -386,15 +386,15 @@ def key_to_attributes(key, is_locked, is_lockable, is_extra_top_row, data_button
     elif key in data_buttons and key not in ['"', 'colon', 'period', 'space'] or key in ['↑', '←', '↓', '→']:
         attributes.append('SQ2LV_CTRL_NON_CHAR')
     elif key not in ['space']:
-        attributes.append('LV_BTNMATRIX_CTRL_POPOVER')
+        attributes.append('LV_BUTTONMATRIX_CTRL_POPOVER')
 
     if not key_can_repeat(key):
-        attributes.append('LV_BTNMATRIX_CTRL_NO_REPEAT')
+        attributes.append('LV_BUTTONMATRIX_CTRL_NO_REPEAT')
 
     if is_extra_top_row:
         attributes.append('SQ2LV_CTRL_NON_CHAR')
     if key == '<hidden>':
-        attributes.append('LV_BTNMATRIX_CTRL_HIDDEN')
+        attributes.append('LV_BUTTONMATRIX_CTRL_HIDDEN')
 
     if key not in data_buttons or key in ['"', 'colon', 'period']:
         attributes.append('2')
@@ -726,9 +726,9 @@ if __name__ == '__main__':
     h_builder.add_line(f'#define SQ2LV_SCANCODES_ENABLED {1 if args.generate_scancodes else 0}')
     h_builder.add_line()
     h_builder.add_subsection_comment('Key attributes')
-    h_builder.add_line('#define SQ2LV_CTRL_NON_CHAR     (LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKED)')
-    h_builder.add_line('#define SQ2LV_CTRL_MOD_ACTIVE   (LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE)')
-    h_builder.add_line('#define SQ2LV_CTRL_MOD_INACTIVE (LV_BTNMATRIX_CTRL_CLICK_TRIG | LV_BTNMATRIX_CTRL_CHECKABLE | LV_BTNMATRIX_CTRL_CHECKED)')
+    h_builder.add_line('#define SQ2LV_CTRL_NON_CHAR     (LV_BUTTONMATRIX_CTRL_CLICK_TRIG | LV_BUTTONMATRIX_CTRL_CHECKED)')
+    h_builder.add_line('#define SQ2LV_CTRL_MOD_ACTIVE   (LV_BUTTONMATRIX_CTRL_CLICK_TRIG | LV_BUTTONMATRIX_CTRL_CHECKABLE)')
+    h_builder.add_line('#define SQ2LV_CTRL_MOD_INACTIVE (LV_BUTTONMATRIX_CTRL_CLICK_TRIG | LV_BUTTONMATRIX_CTRL_CHECKABLE | LV_BUTTONMATRIX_CTRL_CHECKED)')
     h_builder.add_line()
 
     layouts = []
@@ -789,7 +789,7 @@ if __name__ == '__main__':
                 c_builder.add_line()
                 c_builder.add_array(True, 'const char * const', f'keycaps_{layer_identifier}', keycaps, '"\\n"', '""')
                 c_builder.add_line()
-                c_builder.add_array(True, 'const lv_btnmatrix_ctrl_t', f'attributes_{layer_identifier}', attrs, '', '')
+                c_builder.add_array(True, 'const lv_buttonmatrix_ctrl_t', f'attributes_{layer_identifier}', attrs, '', '')
                 c_builder.add_line()
 
                 c_builder.add_line(f'static const int num_modifiers_{layer_identifier} = {len(modifier_idxs)};')
@@ -858,7 +858,7 @@ if __name__ == '__main__':
     h_builder.add_line('    /* Key caps */')
     h_builder.add_line('    const char * const * const keycaps;')
     h_builder.add_line('    /* Key attributes */')
-    h_builder.add_line('    const lv_btnmatrix_ctrl_t * const attributes;')
+    h_builder.add_line('    const lv_buttonmatrix_ctrl_t * const attributes;')
     h_builder.add_line('    /* Number of modifier keys */')
     h_builder.add_line('    const int num_modifiers;')
     h_builder.add_line('    /* Button indexes of modifier keys */')
