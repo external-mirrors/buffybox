@@ -12,9 +12,11 @@ npm i
     -o cursor.c \
     cursor.png
 
-# Once we migrate to LVGL master (https://github.com/lvgl/lvgl/issues/4011), we'll need to manually
-# replace the old constants since the image converter hasn't yet been updated
-# sed 's.LV_IMG_CF_TRUE_COLOR_ALPHA.LV_COLOR_FORMAT_NATIVE_ALPHA.g' cursor.c \
-#     | sed 's.LV_IMG_PX_SIZE_ALPHA_BYTE.LV_COLOR_FORMAT_NATIVE_ALPHA_SIZE.g' \
-#     > cursor.c.tmp
-# mv cursor.c.tmp cursor.c
+# We need to manually replace the old constants because the image converter hasn't
+# yet been updated to https://github.com/lvgl/lvgl/issues/4011
+sed 's/LV_IMG_CF_TRUE_COLOR_ALPHA/LV_COLOR_FORMAT_NATIVE_WITH_ALPHA/g' cursor.c \
+    | sed '/.*LV_IMG_PX_SIZE_ALPHA_BYTE.*/d' \
+    | sed '/.*header.always_zero.*/d' \
+    | sed '/.*header.reserved.*/d'\
+    > cursor.c.tmp
+mv cursor.c.tmp cursor.c

@@ -108,11 +108,8 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_UL_CURSOR
 };
 
 const lv_img_dsc_t ul_cursor_img_dsc = {
-  .header.cf = LV_IMG_CF_TRUE_COLOR_ALPHA,
-  .header.always_zero = 0,
-  .header.reserved = 0,
+  .header.cf = LV_COLOR_FORMAT_NATIVE_WITH_ALPHA,
   .header.w = 12,
   .header.h = 18,
-  .data_size = 216 * LV_IMG_PX_SIZE_ALPHA_BYTE,
   .data = ul_cursor_img_dsc_map,
 };

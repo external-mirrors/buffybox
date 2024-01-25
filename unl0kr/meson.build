@@ -46,7 +46,7 @@ unl0kr_dependencies = [
 libdrm_dep = dependency('libdrm', required: get_option('with-drm'))
 if libdrm_dep.found()
   unl0kr_dependencies += [libdrm_dep]
-  add_project_arguments('-DUSE_DRM=1', language: ['c'])
+  add_project_arguments('-DLV_USE_LINUX_DRM=1', language: ['c'])
 endif
 
 lvgl_sources = run_command('find-lvgl-sources.sh', 'lvgl', check: true).stdout().strip().split('\n')
