@@ -51,14 +51,12 @@ endif
 
 lvgl_sources = run_command('find-lvgl-sources.sh', 'lvgl', check: true).stdout().strip().split('\n')
 
-lv_drivers_sources = run_command('find-lvgl-sources.sh', 'lv_drivers', check: true).stdout().strip().split('\n')
-
 install_data(sources: 'unl0kr.conf', install_dir : get_option('sysconfdir'))
 
 executable(
   'unl0kr',
-  sources: unl0kr_sources + squeek2lvgl_sources + lvgl_sources + lv_drivers_sources,
-  include_directories: ['lvgl', 'lv_drivers'],
+  sources: unl0kr_sources + squeek2lvgl_sources + lvgl_sources,
+  include_directories: ['lvgl'],
   dependencies: unl0kr_dependencies,
   install: true
 )

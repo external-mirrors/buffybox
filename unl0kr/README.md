@@ -72,7 +72,6 @@ For an example configuration file, see [unl0kr.conf].
 
 - [inih]
 - [lvgl] (git submodule / linked statically)
-- [lv_drivers] (git submodule / linked statically)
 - [squeek2lvgl] (git submodule / linked statically)
 - [libinput]
 - [libudev]
@@ -209,7 +208,6 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [libudev]: https://github.com/systemd/systemd/tree/main/src/libudev
 [libxkbcommon]: https://github.com/xkbcommon/libxkbcommon
 [libdrm]: https://gitlab.freedesktop.org/mesa/drm
-[lv_drivers]: https://github.com/lvgl/lv_drivers
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
 [lvgl]: https://github.com/lvgl/lvgl
 [online font converter]: https://lvgl.io/tools/fontconverter
