@@ -1,0 +1,11 @@
+build-unl0kr:
+  image: alpine:3.19
+  tags:
+    - saas-linux-small-amd64
+  script:
+    - apk -q add git build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev libdrm-dev scdoc
+    - cd unl0kr
+    - git submodule init
+    - git submodule update
+    - meson _build
+    - meson compile -C _build
