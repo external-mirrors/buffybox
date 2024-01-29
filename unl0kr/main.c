@@ -209,6 +209,7 @@ static void sigaction_handler(int signum);
 
 
 static void *tick_thread (void *args) {
+    LV_UNUSED(args);
     while (1) {
         usleep(5 * 1000); /* Sleep for 5 millisecond */
         lv_tick_inc(5); /* Tell LVGL that 5 milliseconds have elapsed */

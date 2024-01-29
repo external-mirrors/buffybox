@@ -344,16 +344,19 @@ static void keyboard_draw_task_added_cb(lv_event_t *event) {
 
     bool pressed = lv_btnmatrix_get_selected_btn(obj) == dsc->id1 && lv_obj_has_state(obj, LV_STATE_PRESSED);
 
-    if (draw_task->type == LV_DRAW_TASK_TYPE_LABEL) {
-        ((lv_draw_label_dsc_t *)dsc)->color = lv_color_hex((pressed ? key->pressed : key->normal).fg_color);
+    lv_draw_label_dsc_t *label_dsc = lv_draw_task_get_label_dsc(draw_task);
+    if (label_dsc) {
+        label_dsc->color = lv_color_hex((pressed ? key->pressed : key->normal).fg_color);
     }
 
-    if (draw_task->type == LV_DRAW_TASK_TYPE_FILL) {
-        ((lv_draw_fill_dsc_t *)dsc)->color = lv_color_hex((pressed ? key->pressed : key->normal).bg_color);
+    lv_draw_fill_dsc_t *fill_dsc = lv_draw_task_get_fill_dsc(draw_task);
+    if (fill_dsc) {
+        fill_dsc->color = lv_color_hex((pressed ? key->pressed : key->normal).bg_color);
     }
 
-    if (draw_task->type == LV_DRAW_TASK_TYPE_BORDER) {
-        ((lv_draw_border_dsc_t *)dsc)->color = lv_color_hex((pressed ? key->pressed : key->normal).border_color);
+    lv_draw_border_dsc_t *border_dsc = lv_draw_task_get_border_dsc(draw_task);
+    if (border_dsc) {
+        border_dsc->color = lv_color_hex((pressed ? key->pressed : key->normal).border_color);
     }
 }
 
