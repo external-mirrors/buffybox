@@ -10,7 +10,6 @@
 #include "log.h"
 
 #include "lvgl/src/indev/lv_indev_private.h"
-#include "lv_drivers/indev/libinput_drv.h"
 
 #include <libinput.h>
 #include <libudev.h>
@@ -37,7 +36,7 @@
  * Static variables
  */
 
-static libinput_capability allowed_capability = LIBINPUT_CAPABILITY_NONE;
+static lv_libinput_capability allowed_capability = LV_LIBINPUT_CAPABILITY_NONE;
 
 static struct udev *context = NULL;
 static struct udev_monitor *monitor = NULL;
@@ -45,8 +44,7 @@ static int monitor_fd = -1;
 
 struct input_device {
   char *node;
-  libinput_capability capability;
-  libinput_drv_state_t drv_state;
+  lv_libinput_capability capability;
   lv_indev_t *indev;
 };
 
@@ -92,7 +90,7 @@ static bool is_touch_device(struct input_device *device);
  * @param capability input device capability
  * @return textual description
  */
-static char *capability_to_str(libinput_capability capability);
+static char *capability_to_str(lv_libinput_capability capability);
 
 /**
  * Connect a specific input device using its udev device.
@@ -123,14 +121,6 @@ static void disconnect_devnode(const char *node);
 static void disconnect_idx(int idx);
 
 /**
- * Perform an input read on a device using the libinput driver.
- *
- * @param indev input device
- * @param data input device data to write into
- */
-static void libinput_read_cb(lv_indev_t *indev, lv_indev_data_t *data);
-
-/**
  * Set up the input group for a keyboard device.
  *
  * @param device the input device
@@ -150,25 +140,25 @@ static void set_mouse_cursor(struct input_device *device);
  */
 
 static bool is_keyboard_device(struct input_device *device) {
-    return (device->capability & LIBINPUT_CAPABILITY_KEYBOARD) != LIBINPUT_CAPABILITY_NONE;
+    return (device->capability & LV_LIBINPUT_CAPABILITY_KEYBOARD) != LV_LIBINPUT_CAPABILITY_NONE;
 }
 
 static bool is_pointer_device(struct input_device *device) {
-    return (device->capability & LIBINPUT_CAPABILITY_POINTER) != LIBINPUT_CAPABILITY_NONE;
+    return (device->capability & LV_LIBINPUT_CAPABILITY_POINTER) != LV_LIBINPUT_CAPABILITY_NONE;
 }
 
 static bool is_touch_device(struct input_device *device) {
-    return (device->capability & LIBINPUT_CAPABILITY_TOUCH) != LIBINPUT_CAPABILITY_NONE;
+    return (device->capability & LV_LIBINPUT_CAPABILITY_TOUCH) != LV_LIBINPUT_CAPABILITY_NONE;
 }
 
-static char *capability_to_str(libinput_capability capability) {
-    if (capability == LIBINPUT_CAPABILITY_KEYBOARD) {
+static char *capability_to_str(lv_libinput_capability capability) {
+    if (capability == LV_LIBINPUT_CAPABILITY_KEYBOARD) {
         return "keyboard";
     }
-    if (capability == LIBINPUT_CAPABILITY_POINTER) {
+    if (capability == LV_LIBINPUT_CAPABILITY_POINTER) {
         return "pointer";
     }
-    if (capability == LIBINPUT_CAPABILITY_TOUCH) {
+    if (capability == LV_LIBINPUT_CAPABILITY_TOUCH) {
         return "touch";
     }
     return "none";
@@ -217,17 +207,18 @@ static void connect_devnode(const char *node) {
     lv_memzero(device, sizeof(struct input_device));
     devices[num_connected_devices] = device;
 
-    /* Get pointer to driver state */
-    libinput_drv_state_t *drv_state = &(device->drv_state);
-
     /* Copy the node path so that it can be used beyond the caller's scope */
     device->node = strdup(node);
 
-    /* Initialise the driver state and obtain the libinput device */
-    libinput_init_state(drv_state, device->node);
-    struct libinput_device *device_libinput = drv_state->libinput_device;
-
-    /* If libinput failed to connect the device, exit */
+    /* Initialise the indev and obtain the libinput device */
+    device->indev = lv_libinput_create(LV_INDEV_TYPE_NONE, device->node);
+    if (!device->indev) {
+        ul_log(UL_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
+        disconnect_idx(num_connected_devices);
+        return;
+    }
+    lv_libinput_t *dsc = lv_indev_get_driver_data(device->indev);
+    struct libinput_device *device_libinput = dsc->libinput_device;
     if (!device_libinput) {
         ul_log(UL_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
         disconnect_idx(num_connected_devices);
@@ -235,19 +226,14 @@ static void connect_devnode(const char *node) {
     }
 
     /* Obtain device capabilities */
-    device->capability = libinput_query_capability(device_libinput);
+    device->capability = lv_libinput_query_capability(device_libinput);
 
     /* If the device doesn't have any supported capabilities, exit */
-    if ((device->capability & allowed_capability) == LIBINPUT_CAPABILITY_NONE)  {
+    if ((device->capability & allowed_capability) == LV_LIBINPUT_CAPABILITY_NONE)  {
         ul_log(UL_LOG_LEVEL_WARNING, "Aborting connection of input device %s because it has no allowed capabilities", node);
         disconnect_idx(num_connected_devices);
         return;
     }
-
-    /* Initialise indev */
-    device->indev = lv_indev_create();
-    device->indev->read_cb = libinput_read_cb;
-    device->indev->user_data = drv_state;
 
     /*
      * Set up indev type and related properties
@@ -335,7 +321,7 @@ static void disconnect_devnode(const char *node) {
 static void disconnect_idx(int idx) {
     /* Delete LVGL indev */
     if (devices[idx]->indev) {
-        lv_indev_delete(devices[idx]->indev);
+        lv_libinput_delete(devices[idx]->indev);
     }
 
     /* Free previously copied node path */
@@ -343,16 +329,9 @@ static void disconnect_idx(int idx) {
         free(devices[idx]->node);
     }
 
-    /* De-initialise driver state */
-    libinput_deinit_state(&(devices[idx]->drv_state));
-
     /* Deallocate memory and zero out freed array element */
     free(devices[idx]);
     lv_memzero(devices + idx, sizeof(struct input_device *));
-}
-
-static void libinput_read_cb(lv_indev_t *indev, lv_indev_data_t *data) {
-    libinput_read_state(indev->user_data, indev, data);
 }
 
 static void set_keyboard_input_group(struct input_device *device) {
@@ -387,15 +366,15 @@ static void set_mouse_cursor(struct input_device *device) {
  */
 
 void ul_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen) {
-    allowed_capability = LIBINPUT_CAPABILITY_NONE;
+    allowed_capability = LV_LIBINPUT_CAPABILITY_NONE;
     if (keyboard) {
-        allowed_capability |= LIBINPUT_CAPABILITY_KEYBOARD;
+        allowed_capability |= LV_LIBINPUT_CAPABILITY_KEYBOARD;
     }
     if (pointer) {
-        allowed_capability |= LIBINPUT_CAPABILITY_POINTER;
+        allowed_capability |= LV_LIBINPUT_CAPABILITY_POINTER;
     }
     if (touchscreen) {
-        allowed_capability |= LIBINPUT_CAPABILITY_TOUCH;
+        allowed_capability |= LV_LIBINPUT_CAPABILITY_TOUCH;
     }
 }
 

@@ -14,8 +14,6 @@
 #include "theme.h"
 #include "themes.h"
 
-#include "lv_drv_conf.h"
-
 #include "lvgl/lvgl.h"
 
 #include "../squeek2lvgl/sq2lv.h"
@@ -348,7 +346,7 @@ static void print_password_and_exit(lv_obj_t *textarea) {
     lv_obj_set_pos(rect, 0, 0);
     lv_obj_set_style_bg_opa(rect, LV_OPA_COVER, LV_PART_MAIN);
     lv_obj_set_style_bg_color(rect , lv_color_hex(get_theme(is_alternate_theme)->window.bg_color), LV_PART_MAIN);
-    lv_refr_now(lv_disp_get_default()); /* Force the screen to be drawn */
+    lv_refr_now(lv_display_get_default()); /* Force the screen to be drawn */
 
     /* Trigger SIGTERM to exit */
     sigaction_handler(SIGTERM);

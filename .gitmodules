@@ -7,6 +7,3 @@
 [submodule "unl0kr/lvgl"]
 	path = unl0kr/lvgl
 	url = https://github.com/littlevgl/lvgl.git
-[submodule "unl0kr/lv_drivers"]
-	path = unl0kr/lv_drivers
-	url = https://github.com/calebccff/lv_drivers.git

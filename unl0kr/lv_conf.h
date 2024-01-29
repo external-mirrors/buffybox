@@ -520,6 +520,23 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 /*Interface for TFT_eSPI*/
 #define LV_USE_TFT_ESPI         0
 
+/*Driver for libinput input devices*/
+#define LV_USE_LIBINPUT    1
+
+#if LV_USE_LIBINPUT
+    #define LV_LIBINPUT_BSD    0
+
+    /*Full keyboard support*/
+    #define LV_LIBINPUT_XKB             1
+    #if LV_LIBINPUT_XKB
+        #define LV_LIBINPUT_XKB_KEY_MAP { .rules = NULL, \
+                                          .model = "pc101", \
+                                          .layout = "us", \
+                                          .variant = NULL, \
+                                          .options = NULL } /*"setxkbmap -query" can help find the right values for your keyboard*/
+    #endif
+#endif
+
 /*==================
 * EXAMPLES
 *==================*/

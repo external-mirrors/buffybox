@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-find lv_drivers -name '*.c'
 find lvgl/src -name 'lv_init.c'
 find lvgl/src/core -name '*.c'
 find lvgl/src/dev -name '*.c'
