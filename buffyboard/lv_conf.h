@@ -76,6 +76,103 @@ uint32_t bb_get_tick(void);
  *(Not so important, you can adjust it to modify default sizes and spaces)*/
 #define LV_DPI_DEF                  130     /*[px/inch]*/
 
+/*========================
+ * RENDERING CONFIGURATION
+ *========================*/
+
+/*Align the stride of all layers and images to this bytes*/
+#define LV_DRAW_BUF_STRIDE_ALIGN                1
+
+/*Align the start address of draw_buf addresses to this bytes*/
+#define LV_DRAW_BUF_ALIGN                       4
+
+#define LV_USE_DRAW_SW 1
+#if LV_USE_DRAW_SW == 1
+    /* Set the number of draw unit.
+     * > 1 requires an operating system enabled in `LV_USE_OS`
+     * > 1 means multiply threads will render the screen in parallel */
+    #define LV_DRAW_SW_DRAW_UNIT_CNT    1
+
+    /* Use Arm-2D to accelerate the sw render */
+    #define LV_USE_DRAW_ARM2D_SYNC      0
+
+    /* If a widget has `style_opa < 255` (not `bg_opa`, `text_opa` etc) or not NORMAL blend mode
+     * it is buffered into a "simple" layer before rendering. The widget can be buffered in smaller chunks.
+     * "Transformed layers" (if `transform_angle/zoom` are set) use larger buffers
+     * and can't be drawn in chunks. */
+
+    /*The target buffer size for simple layer chunks.*/
+    #define LV_DRAW_SW_LAYER_SIMPLE_BUF_SIZE    (24 * 1024)   /*[bytes]*/
+
+    /* 0: use a simple renderer capable of drawing only simple rectangles with gradient, images, texts, and straight lines only
+     * 1: use a complex renderer capable of drawing rounded corners, shadow, skew lines, and arcs too */
+    #define LV_DRAW_SW_COMPLEX          1
+
+    #if LV_DRAW_SW_COMPLEX == 1
+        /*Allow buffering some shadow calculation.
+        *LV_DRAW_SW_SHADOW_CACHE_SIZE is the max. shadow size to buffer, where shadow size is `shadow_width + radius`
+        *Caching has LV_DRAW_SW_SHADOW_CACHE_SIZE^2 RAM cost*/
+        #define LV_DRAW_SW_SHADOW_CACHE_SIZE 0
+
+        /* Set number of maximally cached circle data.
+        * The circumference of 1/4 circle are saved for anti-aliasing
+        * radius * 4 bytes are used per circle (the most often used radiuses are saved)
+        * 0: to disable caching */
+        #define LV_DRAW_SW_CIRCLE_CACHE_SIZE 4
+    #endif
+
+    #define  LV_USE_DRAW_SW_ASM     LV_DRAW_SW_ASM_NONE
+
+    #if LV_USE_DRAW_SW_ASM == LV_DRAW_SW_ASM_CUSTOM
+        #define  LV_DRAW_SW_ASM_CUSTOM_INCLUDE ""
+    #endif
+#endif
+
+/* Use NXP's VG-Lite GPU on iMX RTxxx platforms. */
+#define LV_USE_DRAW_VGLITE 0
+
+#if LV_USE_DRAW_VGLITE
+    /* Enable blit quality degradation workaround recommended for screen's dimension > 352 pixels. */
+    #define LV_USE_VGLITE_BLIT_SPLIT 0
+
+    #if LV_USE_OS
+        /* Enable VGLite draw async. Queue multiple tasks and flash them once to the GPU. */
+        #define LV_USE_VGLITE_DRAW_ASYNC 1
+    #endif
+
+    /* Enable VGLite asserts. */
+    #define LV_USE_VGLITE_ASSERT 0
+#endif
+
+/* Use NXP's PXP on iMX RTxxx platforms. */
+#define LV_USE_DRAW_PXP 0
+
+#if LV_USE_DRAW_PXP
+    /* Enable PXP asserts. */
+    #define LV_USE_PXP_ASSERT 0
+#endif
+
+/* Use Renesas Dave2D on RA  platforms. */
+#define LV_USE_DRAW_DAVE2D 0
+
+/* Draw using cached SDL textures*/
+#define LV_USE_DRAW_SDL 0
+
+/* Use VG-Lite GPU. */
+#define LV_USE_DRAW_VG_LITE 0
+
+#if LV_USE_DRAW_VG_LITE
+/* Enable VG-Lite custom external 'gpu_init()' function */
+#define LV_VG_LITE_USE_GPU_INIT 0
+
+/* Enable VG-Lite assert. */
+#define LV_VG_LITE_USE_ASSERT 0
+
+/* VG-Lite flush commit trigger threshold. GPU will try to batch these many draw tasks. */
+#define LV_VG_LITE_FLUSH_MAX_COUNT 8
+
+#endif
+
 /*=======================
  * FEATURE CONFIGURATION
  *=======================*/
@@ -494,7 +591,51 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 #define LV_USE_FLEX     1
 
 /*A layout similar to Grid in CSS.*/
-#define LV_USE_GRID     1
+#define LV_USE_GRID     0
+
+/*==================
+ * DEVICES
+ *==================*/
+
+/*Use SDL to open window on PC and handle mouse and keyboard*/
+#define LV_USE_SDL              0
+#if LV_USE_SDL
+    #define LV_SDL_INCLUDE_PATH    <SDL2/SDL.h>
+    #define LV_SDL_PARTIAL_MODE    0    /*Recommended only to emulate a setup with a display controller*/
+    #define LV_SDL_FULLSCREEN      0
+#endif
+
+/*Driver for /dev/fb*/
+#define LV_USE_LINUX_FBDEV      1
+#if LV_USE_LINUX_FBDEV
+    #define LV_LINUX_FBDEV_BSD           0
+    #define LV_LINUX_FBDEV_RENDER_MODE   LV_DISPLAY_RENDER_MODE_PARTIAL
+    #define LV_LINUX_FBDEV_BUFFER_COUNT  0
+    #define LV_LINUX_FBDEV_BUFFER_SIZE   60
+#endif
+
+/*Driver for /dev/dri/card*/
+#define LV_USE_LINUX_DRM        0
+
+/*Interface for TFT_eSPI*/
+#define LV_USE_TFT_ESPI         0
+
+/*Driver for libinput input devices*/
+#define LV_USE_LIBINPUT    1
+
+#if LV_USE_LIBINPUT
+    #define LV_LIBINPUT_BSD    0
+
+    /*Full keyboard support*/
+    #define LV_LIBINPUT_XKB             0
+    #if LV_LIBINPUT_XKB
+        #define LV_LIBINPUT_XKB_KEY_MAP { .rules = NULL, \
+                                          .model = "pc101", \
+                                          .layout = "us", \
+                                          .variant = NULL, \
+                                          .options = NULL } /*"setxkbmap -query" can help find the right values for your keyboard*/
+    #endif
+#endif
 
 /*==================
 * EXAMPLES

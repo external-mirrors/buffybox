@@ -25,28 +25,11 @@ Here are a few highlights of what already works:
 
 For a growing collection of demo videos, see the [wiki].
 
-## Upstreaming
-
-Over the course of implementing buffyboard, suitable fixes and features have been upstreamed to the [lvgl] and [lv_drivers] repositories. The benefit of this goes both ways. Downstream we can rely on the features being maintained in the future and upstream they can make the features available to the larger audience of [LVGL] users.
-
-Below is a summary of contributions upstreamed thus far.
-
-### lvgl
-
-- [feat(disp): Enable rendering to display subsection] (✅ merged)
-- [feat(keyboard): add user-defined modes]: (✅ merged)
-
-### lv_drivers
-
-- [Make it possible to set the variable offset for fbdev] (✅ merged)
-- [fix(libinput): read display dimensions from driver] (✅ merged)
-
 # Development
 
 ## Dependencies
 
 - [lvgl] (git submodule / linked statically)
-- [lv_drivers] (git submodule / linked statically)
 - [squeek2lvgl] (git submodule / linked statically)
 - [libinput]
 - evdev kernel module
@@ -109,6 +92,10 @@ Below is a short explanation of the different unicode ranges used above.
   - Standard `LV_SYMBOL_*` glyphs (`0xF001,0xF008,0xF00B,0xF00C,0xF00D,0xF011,0xF013,0xF015,0xF019,0xF01C,0xF021,0xF026,0xF027,0xF028,0xF03E,0xF0E0,0xF304,0xF043,0xF048,0xF04B,0xF04C,0xF04D,0xF051,0xF052,0xF053,0xF054,0xF067,0xF068,0xF06E,0xF070,0xF071,0xF074,0xF077,0xF078,0xF079,0xF07B,0xF093,0xF095,0xF0C4,0xF0C5,0xF0C7,0xF0C9,0xF0E7,0xF0EA,0xF0F3,0xF11C,0xF124,0xF158,0xF1EB,0xF240,0xF241,0xF242,0xF243,0xF244,0xF287,0xF293,0xF2ED,0xF55A,0xF7C2,0xF8A2`)
   - [arrow-alt-circle-up] (`0xF35B`)
 
+## Mouse cursor
+
+Buffyboard's mouse cursor is adapted from Ubuntu's [Yaru] theme suite. Similar to fonts, the mouse cursor image needs to be converted to LVGL-compatible C code. To do this, run `regenerate-cursor.sh` after any change of `cursor.png` to update the code.
+
 ## Keyboard layouts
 
 Buffyboard uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerate the layouts, ensure that you have pipenv installed (e.g. via `pip install --user pipenv`) and then run
@@ -142,20 +129,12 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [**Buffy** the Vampire Slayer]: https://en.wikipedia.org/wiki/Buffy_the_Vampire_Slayer
 [FontAwesome]: https://fontawesome.com/
 [LVGL]: https://lvgl.io
-[Make it possible to set the variable offset for fbdev]: https://github.com/lvgl/lv_drivers/pull/164
 [OpenSans]: https://fonts.google.com/specimen/Open+Sans
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
-[feat(disp): Enable rendering to display subsection]: https://github.com/lvgl/lvgl/pull/2583
-[feat(keyboard): add user-defined modes]: https://github.com/lvgl/lvgl/pull/2651
-[fix(libinput): read display dimensions from driver]: https://github.com/lvgl/lv_drivers/pull/192
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
-[lv_drivers]: https://github.com/lvgl/lv_drivers
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
 [lv_sim_emscripten]: https://github.com/lvgl/lv_sim_emscripten/blob/master/mouse_cursor_icon.c
-[lvgl/lv_drivers#151]: https://github.com/lvgl/lv_drivers/issues/151
-[lvgl/lv_drivers#165]: https://github.com/lvgl/lv_drivers/pull/165
-[lvgl/lv_drivers#166]: https://github.com/lvgl/lv_drivers/pull/166
 [lvgl]: https://github.com/lvgl/lvgl
 [open issues]: https://gitlab.com/cherrypicker/buffyboard/-/issues
 [squeek2lvgl]: https://gitlab.com/cherrypicker/squeek2lvgl]
@@ -164,3 +143,4 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master
 [v1 milestone]: https://gitlab.com/cherrypicker/buffyboard/-/milestones/1
 [wiki]: https://gitlab.com/cherrypicker/buffyboard/-/wikis/home
+[Yaru]: https://github.com/ubuntu/yaru

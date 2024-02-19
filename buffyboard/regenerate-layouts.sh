@@ -8,7 +8,7 @@ cd ../squeek2lvgl
 pipenv install
 pipenv run python squeek2lvgl.py \
     --input terminal/us.yaml \
-    --name "US English (Terminal)" \
+        --name "US English (Terminal)" \
     --output ../buffyboard \
     --generate-scancodes \
     --shift-keycap '\xef\x8d\x9b'

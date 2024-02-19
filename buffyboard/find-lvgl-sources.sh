@@ -1,38 +1,27 @@
 #!/bin/sh
 
-# Copyright 2021 Johannes Marbach
+# Copyright 2022 Johannes Marbach, Oliver Smith
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-find "$1" -name "*.mk" | while IFS= read -r makefile; do
-    grep "^CSRCS\s*+=" "$makefile" | sed "s|.*=\s*||g" | while read -r expr; do
-        # Ignore example code
-        if [[ $(dirname $makefile) =~ .*/examples ]]; then
-            continue
-        fi
-
-        # Handle full & relative paths
-        if echo "$expr" | grep -q '$(LVGL_DIR'; then
-            expr=$(echo "$expr" \
-                | sed 's|$(LVGL_DIR)/||g' \
-                | sed 's|$(LVGL_DIR_NAME)/|lvgl/|g' \
-                | sed 's|$(LV_DRIVERS_DIR_NAME)/|lv_drivers/|g')
-        else
-            expr="$(dirname $makefile)/$expr"
-        fi
-
-        # Resolve $(wildcard ...)
-        expr=$(echo "$expr" | sed 's|$(wildcard\s*\(.*\))|\1|g')
-
-        # Resolve $(shell ...)
-        if echo "$expr" | grep -q '$(shell'; then
-            expr=$(echo "$expr" | sed 's|$(shell\s*\(.*\))|\1|g')
-            expr=$(eval "$expr")
-        fi
-
-        # Resolve wildcards
-        for file in $expr; do
-            echo $file
-        done
-    done
-done
+find lvgl/src -name 'lv_init.c'
+find lvgl/src/core -name '*.c'
+find lvgl/src/dev -name '*.c'
+find lvgl/src/display -name '*.c'
+find lvgl/src/draw -name '*.c'
+find lvgl/src/drivers -name '*.c'
+find lvgl/src/extra -name '*.c'
+find lvgl/src/extra/widgets/keyboard -name '*.c'
+find lvgl/src/extra/widgets/msgbox -name '*.c'
+find lvgl/src/extra/widgets/span -name '*.c'
+find lvgl/src/indev -name '*.c'
+find lvgl/src/font -name '*.c'
+find lvgl/src/hal -name '*.c'
+find lvgl/src/layouts -name '*.c'
+find lvgl/src/libs -name '*.c'
+find lvgl/src/misc -name '*.c'
+find lvgl/src/osal -name '*.c'
+find lvgl/src/stdlib -name '*.c'
+find lvgl/src/tick -name '*.c'
+find lvgl/src/themes -name '*.c'
+find lvgl/src/widgets -name '*.c'

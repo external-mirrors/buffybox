@@ -14,7 +14,7 @@
  */
 typedef struct {
     /* Display rotation */
-    lv_disp_rot_t rotation;
+    lv_display_rotation_t rotation;
 } bb_cli_opts;
 
 /**
