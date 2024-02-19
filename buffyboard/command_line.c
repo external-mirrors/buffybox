@@ -35,7 +35,7 @@ static void print_usage();
  */
 
 static void init_opts(bb_cli_opts *opts) {
-    opts->rotation = LV_DISP_ROT_NONE;
+    opts->rotation = LV_DISPLAY_ROTATION_0;
 }
 
 static void print_usage() {
@@ -83,16 +83,16 @@ void bb_cli_parse_opts(int argc, char *argv[], bb_cli_opts *opts) {
             }
             switch (orientation) {
                 case 0:
-                    opts->rotation = LV_DISP_ROT_NONE;
+                    opts->rotation = LV_DISPLAY_ROTATION_0;
                     break;
                 case 1:
-                    opts->rotation = LV_DISP_ROT_270;
+                    opts->rotation = LV_DISPLAY_ROTATION_270;
                     break;
                 case 2:
-                    opts->rotation = LV_DISP_ROT_180;
+                    opts->rotation = LV_DISPLAY_ROTATION_180;
                     break;
                 case 3:
-                    opts->rotation = LV_DISP_ROT_90;
+                    opts->rotation = LV_DISPLAY_ROTATION_90;
                     break;
             }
             break;

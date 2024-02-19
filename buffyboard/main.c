@@ -11,9 +11,6 @@
 #include "terminal.h"
 #include "uinput_device.h"
 
-#include "lv_drivers/display/fbdev.h"
-#include "lv_drivers/indev/libinput_drv.h"
-
 #include "lvgl/lvgl.h"
 
 #include "../squeek2lvgl/sq2lv.h"
@@ -74,11 +71,11 @@ static void terminal_resize_timer_cb(lv_timer_t *timer);
 static void set_theme(bool is_dark);
 
 /**
- * Handle LV_EVENT_DRAW_PART_BEGIN events from the keyboard widget.
+ * Handle LV_EVENT_DRAW_TASK_ADDED events from the keyboard widget.
  *
  * @param event the event object
  */
-static void keyboard_draw_part_begin_cb(lv_event_t *event);
+static void keyboard_draw_task_added_cb(lv_event_t *event);
 
 /**
  * Handle LV_EVENT_VALUE_CHANGED events from the keyboard widget.
@@ -127,34 +124,40 @@ static void set_theme(bool is_dark) {
     lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_CYAN), is_dark, &font_32);
 }
 
-static void keyboard_draw_part_begin_cb(lv_event_t *event) {
+static void keyboard_draw_task_added_cb(lv_event_t *event) {
     lv_obj_t *obj = lv_event_get_target(event);
-    lv_btnmatrix_t *btnm = (lv_btnmatrix_t *)obj;
-    lv_obj_draw_part_dsc_t *dsc = lv_event_get_param(event);
+    lv_buttonmatrix_t *btnm = (lv_buttonmatrix_t *)obj;
+    lv_draw_task_t *draw_task = lv_event_get_draw_task(event);
+    lv_draw_dsc_base_t *dsc = draw_task->draw_dsc;
 
     if (dsc->part != LV_PART_ITEMS) {
         return;
     }
 
-    if (lv_btnmatrix_get_selected_btn(obj) == dsc->id) { /* key is held down */
-        if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
-            dsc->rect_dsc->bg_color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
-        } else if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
-            dsc->rect_dsc->bg_color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
-        } else if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
-            dsc->rect_dsc->bg_color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 3);
+    lv_draw_fill_dsc_t *fill_dsc = lv_draw_task_get_fill_dsc(draw_task);
+    if (!fill_dsc) {
+        return;
+    }
+
+    if (lv_btnmatrix_get_selected_btn(obj) == dsc->id1 && lv_obj_has_state(obj, LV_STATE_PRESSED)) {
+        if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
+            fill_dsc->color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
+        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
+            fill_dsc->color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
+        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
+            fill_dsc->color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 3);
         } else {
-            dsc->rect_dsc->bg_color = lv_palette_lighten(LV_PALETTE_BLUE_GREY, 1);
+            fill_dsc->color = lv_palette_lighten(LV_PALETTE_BLUE_GREY, 1);
         }
-    } else { /* key is not held down */
-        if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
-            dsc->rect_dsc->bg_color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 4);
-        } else if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
-            dsc->rect_dsc->bg_color = lv_palette_main(LV_PALETTE_TEAL);
-        } else if ((btnm->ctrl_bits[dsc->id] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
-            dsc->rect_dsc->bg_color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 4);
+    } else {
+        if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
+            fill_dsc->color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 4);
+        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
+            fill_dsc->color = lv_palette_main(LV_PALETTE_TEAL);
+        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
+            fill_dsc->color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 4);
         } else {
-            dsc->rect_dsc->bg_color = lv_palette_main(LV_PALETTE_BLUE_GREY);
+            fill_dsc->color = lv_palette_main(LV_PALETTE_BLUE_GREY);
         }
     }
 }
@@ -162,8 +165,8 @@ static void keyboard_draw_part_begin_cb(lv_event_t *event) {
 static void keyboard_value_changed_cb(lv_event_t *event) {
     lv_obj_t *kb = lv_event_get_target(event);
 
-    uint16_t btn_id = lv_btnmatrix_get_selected_btn(kb);
-    if (btn_id == LV_BTNMATRIX_BTN_NONE) {
+    uint16_t btn_id = lv_buttonmatrix_get_selected_button(kb);
+    if (btn_id == LV_BUTTONMATRIX_BUTTON_NONE) {
         return;
     }
 
@@ -173,12 +176,12 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
         return;
     }
 
-    /* Note that the LV_BTNMATRIX_CTRL_CHECKED logic is inverted because LV_KEYBOARD_CTRL_BTN_FLAGS already
-     * contains LV_BTNMATRIX_CTRL_CHECKED. As a result, pressing e.g. CTRL will _un_check the key. To account
+    /* Note that the LV_BUTTONMATRIX_CTRL_CHECKED logic is inverted because LV_KEYBOARD_CTRL_BTN_FLAGS already
+     * contains LV_BUTTONMATRIX_CTRL_CHECKED. As a result, pressing e.g. CTRL will _un_check the key. To account
      * for this, we invert the meaning of "checked" here and elsewhere in the code. */
 
     bool is_modifier = sq2lv_is_modifier(keyboard, btn_id);
-    bool is_checked = !lv_btnmatrix_has_btn_ctrl(keyboard, btn_id, LV_BTNMATRIX_CTRL_CHECKED);
+    bool is_checked = !lv_buttonmatrix_has_button_ctrl(keyboard, btn_id, LV_BUTTONMATRIX_CTRL_CHECKED);
 
     /* Emit key events. Suppress key up events for modifiers unless they were unchecked. For checked modifiers
      * the key up events are sent with the next non-modifier key press. */
@@ -214,9 +217,9 @@ static void pop_checked_modifier_keys(void) {
     const int *modifier_idxs = sq2lv_get_modifier_indexes(keyboard, &num_modifiers);
 
     for (int i = 0; i < num_modifiers; ++i) {
-        if (!lv_btnmatrix_has_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED)) {
+        if (!lv_buttonmatrix_has_button_ctrl(keyboard, modifier_idxs[i], LV_BUTTONMATRIX_CTRL_CHECKED)) {
             emit_key_events(modifier_idxs[i], false, true);
-            lv_btnmatrix_set_btn_ctrl(keyboard, modifier_idxs[i], LV_BTNMATRIX_CTRL_CHECKED);
+            lv_buttonmatrix_set_button_ctrl(keyboard, modifier_idxs[i], LV_BUTTONMATRIX_CTRL_CHECKED);
         }
     }
 }
@@ -252,50 +255,33 @@ int main(int argc, char *argv[]) {
     /* Initialise lvgl */
     lv_init();
 
-    /* Initialise framebuffer driver and query display size */
-    fbdev_init();
-    uint32_t hor_res_phys;
-    uint32_t ver_res_phys;
-    fbdev_get_sizes(&hor_res_phys, &ver_res_phys);
-
-    /* Initialise display driver */
-    static lv_disp_drv_t disp_drv;
-    lv_disp_drv_init(&disp_drv);
-    disp_drv.flush_cb = fbdev_flush;
-    disp_drv.rotated = cli_opts.rotation;
-    disp_drv.sw_rotate = true;
-    disp_drv.physical_hor_res = hor_res_phys;
-    disp_drv.physical_ver_res = ver_res_phys;
-    switch (cli_opts.rotation) {
-        case LV_DISP_ROT_NONE:
-        case LV_DISP_ROT_180: {
-            lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
-            disp_drv.hor_res = hor_res_phys;
-            disp_drv.ver_res = ver_res_phys / denom;
-            disp_drv.offset_x = 0;
-            disp_drv.offset_y = (cli_opts.rotation == LV_DISP_ROT_NONE) ? (denom - 1) * ver_res_phys / denom : 0;
-            break;
-        }
-        case LV_DISP_ROT_90:
-        case LV_DISP_ROT_270: {
-            lv_coord_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
-            disp_drv.hor_res = hor_res_phys / denom;
-            disp_drv.ver_res = ver_res_phys;
-            disp_drv.offset_x = (cli_opts.rotation == LV_DISP_ROT_90) ? (denom - 1) * hor_res_phys / denom : 0;
-            disp_drv.offset_y = 0;
-            break;
-        }
-    }
-
-    /* Prepare display buffer */
-    const size_t buf_size = disp_drv.hor_res * disp_drv.ver_res / 10; /* At least 1/10 of the display size is recommended */
-    lv_disp_draw_buf_t disp_buf;
-    lv_color_t *buf = (lv_color_t *)malloc(buf_size * sizeof(lv_color_t));
-    lv_disp_draw_buf_init(&disp_buf, buf, NULL, buf_size);
-    disp_drv.draw_buf = &disp_buf;
-
-    /* Register display driver */
-    lv_disp_drv_register(&disp_drv);
+    /* Initialise display */
+    lv_display_t *disp = lv_linux_fbdev_create();
+    lv_linux_fbdev_set_file(disp, "/dev/fb0");
+    int32_t hor_res_phys = lv_display_get_horizontal_resolution(disp);
+    int32_t ver_res_phys = lv_display_get_vertical_resolution(disp);
+    lv_display_set_physical_resolution(disp, hor_res_phys, ver_res_phys);
+    // TODO: Sofware-rotation is currently broken in the framebuffer driver (https://gitlab.com/postmarketOS/buffybox/-/issues/26)
+    lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
+    lv_display_set_resolution(disp, hor_res_phys, ver_res_phys / denom);
+    lv_display_set_offset(disp, 0, (denom - 1) * ver_res_phys / denom);
+    // lv_display_set_rotation(disp, cli_opts.rotation);
+    // switch (cli_opts.rotation) {
+    //     case LV_DISPLAY_ROTATION_0:
+    //     case LV_DISPLAY_ROTATION_180: {
+    //         lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
+    //         lv_display_set_resolution(disp, hor_res_phys, ver_res_phys / denom);
+    //         lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_0) ? (denom - 1) * ver_res_phys / denom : 0);
+    //         break;
+    //     }
+    //     case LV_DISPLAY_ROTATION_90:
+    //     case LV_DISPLAY_ROTATION_270: {
+    //         lv_coord_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
+    //         lv_display_set_resolution(disp, hor_res_phys / denom, ver_res_phys);
+    //         lv_display_set_offset(disp, (cli_opts.rotation == LV_DISPLAY_ROTATION_90) ? (denom - 1) * hor_res_phys / denom : 0, 0);
+    //         break;
+    //     }
+    // }
 
     /* Connect input devices */
     bb_indev_auto_connect();
@@ -308,7 +294,7 @@ int main(int argc, char *argv[]) {
 
     /* Add keyboard */
     keyboard = lv_keyboard_create(lv_scr_act());
-    // lv_btnmatrix_set_popovers(keyboard, true);
+    // lv_buttonmatrix_set_popovers(keyboard, true);
     lv_obj_set_pos(keyboard, 0, 0);
     lv_obj_set_size(keyboard, LV_HOR_RES, LV_VER_RES);
     lv_obj_add_style(keyboard, &style_text_normal, 0);
@@ -316,7 +302,8 @@ int main(int argc, char *argv[]) {
     /* Set up keyboard event handlers */
     lv_obj_remove_event_cb(keyboard, lv_keyboard_def_event_cb);
     lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(keyboard, keyboard_draw_part_begin_cb, LV_EVENT_DRAW_PART_BEGIN, NULL);
+    lv_obj_add_event_cb(keyboard, keyboard_draw_task_added_cb, LV_EVENT_DRAW_TASK_ADDED, NULL);
+    lv_obj_add_flag(keyboard, LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS);
 
     /* Apply default keyboard layout */
     sq2lv_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);

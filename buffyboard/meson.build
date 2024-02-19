@@ -27,18 +27,15 @@ squeek2lvgl_sources = [
   '../squeek2lvgl/sq2lv.c',
 ]
 
-lvgl_sources = run_command('find-lvgl-sources.sh', 'lvgl').stdout().strip().split('\n')
-
-lv_drivers_sources = run_command('find-lvgl-sources.sh', 'lv_drivers').stdout().strip().split('\n')
+lvgl_sources = run_command('find-lvgl-sources.sh', 'lvgl', check: true).stdout().strip().split('\n')
 
 executable(
   'buffyboard',
-  sources: buffyboard_sources + squeek2lvgl_sources + lvgl_sources + lv_drivers_sources,
-  include_directories: ['lvgl', 'lv_drivers'],
+  sources: buffyboard_sources + squeek2lvgl_sources + lvgl_sources,
+  include_directories: ['lvgl'],
   dependencies: [
     dependency('libinput'),
     meson.get_compiler('c').find_library('m', required: false),
-    dependency('xkbcommon'),
   ],
   install: true
 )

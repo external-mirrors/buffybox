@@ -1,3 +1,15 @@
+build-buffyboard:
+  image: alpine:3.19
+  tags:
+    - saas-linux-small-amd64
+  script:
+    - apk -q add git build-base meson linux-headers libinput-dev eudev-dev
+    - cd buffyboard
+    - git submodule init
+    - git submodule update
+    - meson _build
+    - meson compile -C _build
+
 build-unl0kr:
   image: alpine:3.19
   tags:
