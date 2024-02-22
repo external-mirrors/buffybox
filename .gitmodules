@@ -1,6 +1,3 @@
-[submodule "buffyboard/lvgl"]
-	path = buffyboard/lvgl
-	url = https://github.com/littlevgl/lvgl.git
-[submodule "unl0kr/lvgl"]
-	path = unl0kr/lvgl
+[submodule "lvgl"]
+	path = lvgl
 	url = https://github.com/littlevgl/lvgl.git
