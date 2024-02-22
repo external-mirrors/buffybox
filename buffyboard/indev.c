@@ -7,7 +7,7 @@
 #include "cursor.h"
 #include "indev.h"
 
-#include "lvgl/lvgl.h"
+#include "../lvgl/lvgl.h"
 
 #include <limits.h>
 

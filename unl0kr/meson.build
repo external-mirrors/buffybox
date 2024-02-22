@@ -49,14 +49,14 @@ if libdrm_dep.found()
   add_project_arguments('-DLV_USE_LINUX_DRM=1', language: ['c'])
 endif
 
-lvgl_sources = run_command('find-lvgl-sources.sh', 'lvgl', check: true).stdout().strip().split('\n')
+lvgl_sources = run_command('../find-lvgl-sources.sh', '../lvgl', check: true).stdout().strip().split('\n')
 
 install_data(sources: 'unl0kr.conf', install_dir : get_option('sysconfdir'))
 
 executable(
   'unl0kr',
   sources: unl0kr_sources + squeek2lvgl_sources + lvgl_sources,
-  include_directories: ['lvgl'],
+  include_directories: ['..'],
   dependencies: unl0kr_dependencies,
   install: true
 )
