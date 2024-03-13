@@ -13,23 +13,23 @@ For some background on how unl0kr came to be, see postmarketOS/osk-sdl#121.
 
 # Status
 
-We are en route to v1 which aims at providing a useable, visually pleasant application including [osk-sdl]'s most essential features. For details about the current status, see the [v1 milestone]. You may also browse the full list of [open issues] to get an idea of what's planned beyond v1.
+While we continue to tweak and extend Unl0kr, it is deemed fully functional. Unl0kr has been set up as the default disk unlocker on [postmarketOS][package-pmos] and was also packaged for other distrubtions including [Arch Linux][package-arch] and [Debian][package-debian].
 
-Here are a few highlights of what already works:
+Here are a few highlights of the currently supported features:
 
-- Password-entry UI including on-screen keyboard on the framebuffer
-- Input device discovery (both at start-up and afterwards) for keyboards, mice, trackpads and touch screens
+- Password-entry UI including on-screen keyboard using either the Linux framebuffer or the DRM subsystem
+- Automatic input device discovery (both at start-up and runtime) for keyboards, mice, trackpads and touch screens
 - On-screen keyboard control via:
   - One or more mice / trackpads (including cursor)
   - One or more hardware keyboards (including support for different layouts using XKB)
-  - Touchscreen (tested on PinePhone)
-- Switching on-screen keyboard layout at runtime (currently supported layouts: de, es, fr, us)
+  - Touchscreen
+- Keyboard layout configuration (currently supported: de, es, fr, us) including switching the layout at runtime 
 - Toggling on-screen keyboard with slide in/out animation
-- Switching between light and dark theme at runtime
+- Theming support including switching between light and dark theme at runtime
 - Disclosing and hiding entered password at runtime
 - Shutting down the device via a soft button
 
-For a growing collection of demo videos, see the [wiki]. Screenshots of the currently available themes may be found in the [screenshots] folder.
+Screenshots of the currently available themes may be found in the [screenshots] folder.
 
 <img src="screenshots/breezy-light-540x960.png" alt="540x960" height="300"/>
 <img src="screenshots/breezy-dark-540x960.png" alt="540x960" height="300"/>
@@ -39,7 +39,7 @@ For a growing collection of demo videos, see the [wiki]. Screenshots of the curr
 
 # Usage
 
-A man page is planned to be added with #6. For the time being, you can get an overview of available command line options by running unl0kr with the `-h` or `--help` argument.
+Unl0kr includes a man page. Additionally, you can get an overview of available command line options by running it with the `-h` or `--help` argument.
 
 ```
 $ unl0kr --help
@@ -72,7 +72,7 @@ For an example configuration file, see [unl0kr.conf].
 
 - [inih]
 - [lvgl] (git submodule / linked statically)
-- [squeek2lvgl] (git submodule / linked statically)
+- [squeek2lvgl] (linked statically)
 - [libinput]
 - [libudev]
 - [libxkbcommon]
@@ -85,8 +85,8 @@ For an example configuration file, see [unl0kr.conf].
 Some of unl0kr's dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
 
 ```
-$ git clone https://gitlab.com/cherrypicker/unl0kr.git
-$ cd unl0kr
+$ git clone https://gitlab.com/postmarketOS/buffybox.git
+$ cd buffybox
 $ git submodule init
 $ git submodule update
 ```
@@ -211,13 +211,13 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
 [lvgl]: https://github.com/lvgl/lvgl
 [online font converter]: https://lvgl.io/tools/fontconverter
-[open issues]: https://gitlab.com/cherrypicker/unl0kr/-/issues
 [osk-sdl]: https://gitlab.com/postmarketOS/osk-sdl
+[package-arch]: https://aur.archlinux.org/packages/unl0kr
+[package-debian]: https://tracker.debian.org/pkg/unl0kr
+[package-pmos]: https://gitlab.com/postmarketOS/pmaports/-/tree/master/main/unl0kr
 [scdoc]: https://git.sr.ht/~sircmpwn/scdoc
 [screenshots]: ./screenshots
-[squeek2lvgl]: https://gitlab.com/cherrypicker/squeek2lvgl
+[squeek2lvgl]: ../squeek2lvgl
 [squeekboard layouts]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master/data/keyboards
 [unl0kr.conf]: ./unl0kr.conf
-[v1 milestone]: https://gitlab.com/cherrypicker/unl0kr/-/milestones/1
-[wiki]: https://gitlab.com/cherrypicker/unl0kr/-/wikis/home
 [Yaru]: https://github.com/ubuntu/yaru
