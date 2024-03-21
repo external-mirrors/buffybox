@@ -71,8 +71,16 @@ We're using semantic versioning and the following changelog types:
 - fix: Prevent scrolling when keyboard hides (https://gitlab.com/cherrypicker/unl0kr/-/issues/21)
 - feat: Do not show last typed character when typing (https://gitlab.com/cherrypicker/unl0kr/-/issues/25)
 - feat: Update lvgl & lv_drivers to git master (2022-02-21)
-- feat: allow runtime selection of the lvgl display driver ("backend")
-- feat: allow overriding dpi with the --dpi command line parameter
+- feat: Allow runtime selection of the lvgl display driver ("backend")
+- feat: Allow overriding dpi with the --dpi command line parameter
+
+## buffyboard-0.2.0 (2021-11-23)
+
+- feat: Enable software rotation
+
+## buffyboard-0.1.0 (2021-11-21)
+
+Initial release
 
 ## unl0kr-0.1.0 (2021-11-15)
 
