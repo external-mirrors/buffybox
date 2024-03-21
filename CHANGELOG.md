@@ -6,6 +6,8 @@ We're using semantic versioning and the following changelog types:
 - fix: Bug fixes
 - misc: Anything else
 
+If a change only affects particular applications, they are listed in parentheses after the type, e.g. feat(unl0kr).
+
 ## Unreleased
 
 - misc: Update lvgl to git master (2023-03-21) and eliminate lv_drivers
