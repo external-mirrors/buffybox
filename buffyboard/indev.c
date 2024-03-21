@@ -54,8 +54,8 @@ static void auto_connect(lv_libinput_capability capability, int max_num_devs, in
  */
 
 static void auto_connect(lv_libinput_capability capability, int max_num_devs, int *num_devs, char *devs[], lv_indev_t *indevs[]) {
-    memset(devs, 0, max_num_devs * sizeof(char *));
-    memset(indevs, 0, max_num_devs * sizeof(lv_indev_t *));
+    lv_memset(devs, 0, max_num_devs * sizeof(char *));
+    lv_memset(indevs, 0, max_num_devs * sizeof(lv_indev_t *));
 
     *num_devs = lv_libinput_find_devs(capability, devs, max_num_devs, false);
 
