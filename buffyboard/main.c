@@ -238,7 +238,7 @@ int main(int argc, char *argv[]) {
     if (resize_terminals) {
         /* Clean up on termination */
         struct sigaction action;
-        memset(&action, 0, sizeof(action));
+        lv_memset(&action, 0, sizeof(action));
         action.sa_handler = sigaction_handler;
         sigaction(SIGINT, &action, NULL);
         sigaction(SIGTERM, &action, NULL);
@@ -261,27 +261,23 @@ int main(int argc, char *argv[]) {
     int32_t hor_res_phys = lv_display_get_horizontal_resolution(disp);
     int32_t ver_res_phys = lv_display_get_vertical_resolution(disp);
     lv_display_set_physical_resolution(disp, hor_res_phys, ver_res_phys);
-    // TODO: Sofware-rotation is currently broken in the framebuffer driver (https://gitlab.com/postmarketOS/buffybox/-/issues/26)
-    lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
-    lv_display_set_resolution(disp, hor_res_phys, ver_res_phys / denom);
-    lv_display_set_offset(disp, 0, (denom - 1) * ver_res_phys / denom);
-    // lv_display_set_rotation(disp, cli_opts.rotation);
-    // switch (cli_opts.rotation) {
-    //     case LV_DISPLAY_ROTATION_0:
-    //     case LV_DISPLAY_ROTATION_180: {
-    //         lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
-    //         lv_display_set_resolution(disp, hor_res_phys, ver_res_phys / denom);
-    //         lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_0) ? (denom - 1) * ver_res_phys / denom : 0);
-    //         break;
-    //     }
-    //     case LV_DISPLAY_ROTATION_90:
-    //     case LV_DISPLAY_ROTATION_270: {
-    //         lv_coord_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
-    //         lv_display_set_resolution(disp, hor_res_phys / denom, ver_res_phys);
-    //         lv_display_set_offset(disp, (cli_opts.rotation == LV_DISPLAY_ROTATION_90) ? (denom - 1) * hor_res_phys / denom : 0, 0);
-    //         break;
-    //     }
-    // }
+    lv_display_set_rotation(disp, cli_opts.rotation);
+    switch (cli_opts.rotation) {
+        case LV_DISPLAY_ROTATION_0:
+        case LV_DISPLAY_ROTATION_180: {
+            lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
+            lv_display_set_resolution(disp, hor_res_phys, ver_res_phys / denom);
+            lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_0) ? (denom - 1) * ver_res_phys / denom : 0);
+            break;
+        }
+        case LV_DISPLAY_ROTATION_90:
+        case LV_DISPLAY_ROTATION_270: {
+            lv_coord_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
+            lv_display_set_resolution(disp, hor_res_phys / denom, ver_res_phys);
+            lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_90) ? (denom - 1) * hor_res_phys / denom : 0);
+            break;
+        }
+    }
 
     /* Connect input devices */
     bb_indev_auto_connect();
