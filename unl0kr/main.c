@@ -18,14 +18,14 @@
 
 #include "../squeek2lvgl/sq2lv.h"
 
+#include <bits/sigaction.h>
+#include <sys/reboot.h>
+#include <sys/time.h>
 #include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#include <sys/reboot.h>
-#include <sys/time.h>
 
 
 /**

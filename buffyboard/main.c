@@ -15,13 +15,13 @@
 
 #include "../squeek2lvgl/sq2lv.h"
 
+#include <bits/sigaction.h>
+#include <sys/time.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#include <sys/time.h>
 
 
 /**
