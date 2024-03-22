@@ -10,6 +10,11 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+Nothing at the moment
+
+## 3.0.0 (2024-03-22)
+
+- misc: Share the same lvgl submodule (and version) between buffyboard and unl0kr
 - misc: Update lvgl to git master (2023-03-21) and eliminate lv_drivers
 
 ## unl0kr-2.0.3 (2023-12-19)
