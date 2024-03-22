@@ -25,4 +25,4 @@ git push --tags
 
 ./archive.sh "$2"
 
-echo "Now create a release for https://gitlab.com/cherrypicker/unl0kr/-/tags/$1 and attach the uploaded archive"
+echo "Now create a release for https://gitlab.com/postmarketOS/buffybox/-/tags/$1 and attach the uploaded archive"
