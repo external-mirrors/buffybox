@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cstr_core = "0.2.6"
-lvgl = { version = "0.6.2", features = ["alloc", "drivers", "nightly"] }
-lvgl-sys = { version = "0.6.2", features = ["drivers"] }
+cstr_core = { version = "0.2.6" }
+lvgl = { git = "https://github.com/Johennes/lv_binding_rust.git", branch = "johannes/strncmp", features = ["drivers", "nightly"] }
+lvgl-sys = { git = "https://github.com/Johennes/lv_binding_rust.git", branch = "johannes/strncmp" }
 matrix-sdk = "0.7.1"
 tokio = { version = "1.36.0", features = ["rt-multi-thread"] }
