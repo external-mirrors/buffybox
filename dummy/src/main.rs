@@ -1,3 +1,4 @@
+use anyhow::Context;
 use cstr_core::{cstr, CStr, CString};
 use lvgl::input_device::InputDriver;
 use lvgl::widgets::*;
@@ -8,9 +9,15 @@ use lvgl_sys::{
     lv_disp_load_scr, lv_keyboard_set_textarea, lv_obj_create, lv_obj_del, lv_textarea_get_text,
 };
 use matrix_sdk::config::SyncSettings;
+use matrix_sdk::matrix_auth::MatrixSession;
 use matrix_sdk::reqwest::Url;
 use matrix_sdk::Client;
+use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng};
+use serde::{Deserialize, Serialize};
 use std::cmp::max;
+use std::fs;
+use std::path::{Path, PathBuf};
 use std::thread::sleep;
 use std::time::Duration;
 use std::time::Instant;
@@ -163,12 +170,41 @@ fn load_sign_in_loading_screen(
         }
         let url = url.unwrap();
 
-        let client = Client::builder().homeserver_url(url).build().await;
+        let data_dir = dirs::data_dir();
+        if data_dir.is_none() {
+            println!("Could not determine data dir");
+            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
+            return;
+        }
+        let session_file = data_dir.as_ref().unwrap().join("dummy.session");
+        let db_path = data_dir.as_ref().unwrap().join("dummy.db");
+
+        let db_passphrase = thread_rng()
+            .sample_iter(Alphanumeric)
+            .take(32)
+            .map(char::from)
+            .collect::<String>();
+
+        let client = Client::builder()
+            .homeserver_url(url)
+            .sqlite_store(&db_path, Some(&db_passphrase))
+            .build()
+            .await;
         if client.is_err() {
+            println!("Could not create client {:?}", client.err());
             let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
             return;
         }
         let client = client.unwrap();
+
+        if store_session(&session_file, &client, &db_path, &db_passphrase)
+            .await
+            .is_err()
+        {
+            println!("Could not store session");
+            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
+            return;
+        }
 
         if client
             .matrix_auth()
@@ -182,6 +218,7 @@ fn load_sign_in_loading_screen(
         }
 
         if client.sync_once(SyncSettings::default()).await.is_err() {
+            println!("Could not perform initial sync");
             let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
             return;
         }
@@ -223,6 +260,63 @@ fn load_room_list_screen(client: Client) -> LvResult<()> {
     Ok(())
 }
 
+#[derive(Serialize, Deserialize)]
+struct SessionPickle {
+    homeserver: String,
+
+    db_path: PathBuf,
+    db_passphrase: String,
+
+    session: MatrixSession,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sync_token: Option<String>,
+}
+
+impl SessionPickle {
+    fn write_to_file(self: Self, file: &Path) -> anyhow::Result<()> {
+        let json = serde_json::to_string(&self)?;
+        fs::write(file, json)?;
+        Ok(())
+    }
+
+    fn read_from_file(file: &Path) -> anyhow::Result<Self> {
+        let json = fs::read_to_string(file)?;
+        Ok(serde_json::from_str::<Self>(&json)?)
+    }
+}
+
+async fn store_session(
+    file: &Path,
+    client: &Client,
+    db_path: &PathBuf,
+    db_passphrase: &String,
+) -> anyhow::Result<()> {
+    let pickle = SessionPickle {
+        homeserver: client.homeserver().to_string(),
+        db_path: db_path.to_path_buf(),
+        db_passphrase: db_passphrase.to_string(),
+        session: client
+            .matrix_auth()
+            .session()
+            .context("Client should have a session when logged in")?,
+        sync_token: None,
+    };
+    pickle.write_to_file(file)?;
+    Ok(())
+}
+
+async fn restore_session(file: &Path) -> anyhow::Result<Client> {
+    let session_pickle = SessionPickle::read_from_file(&file)?;
+    let client = Client::builder()
+        .homeserver_url(session_pickle.homeserver)
+        .sqlite_store(session_pickle.db_path, Some(&session_pickle.db_passphrase))
+        .build()
+        .await?;
+    client.restore_session(session_pickle.session).await?;
+    Ok(client)
+}
+
 #[tokio::main]
 async fn main() -> LvResult<()> {
     lvgl::init();
@@ -234,7 +328,24 @@ async fn main() -> LvResult<()> {
     let display = lv_drv_disp_sdl!(buffer, HOR_RES, VER_RES)?;
     let _input = lv_drv_input_pointer_sdl!(display)?;
 
-    _ = load_sign_in_screen(None, None, None);
+    // TODO: Without this the app crashes with a "bus error" on launch
+    lvgl::task_handler();
+
+    tokio::spawn(async {
+        let data_dir =
+            dirs::data_dir().expect("Should be able to find the operating system's data directory");
+        println!("Using data dir {:?}", data_dir);
+        let session_file = data_dir.join("dummy.session");
+
+        if session_file.exists() {
+            if let Ok(client) = restore_session(&session_file).await {
+                _ = load_room_list_screen(client);
+                return;
+            }
+        }
+
+        _ = load_sign_in_screen(None, None, None);
+    });
 
     loop {
         let start = Instant::now();
