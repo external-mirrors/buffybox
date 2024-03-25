@@ -11,6 +11,7 @@ use lvgl_sys::{
 use matrix_sdk::config::SyncSettings;
 use matrix_sdk::matrix_auth::MatrixSession;
 use matrix_sdk::reqwest::Url;
+use matrix_sdk::ruma::RoomId;
 use matrix_sdk::Client;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
@@ -198,7 +199,7 @@ fn load_sign_in_loading_screen(
         }
 
         match try_login(&homeserver, &username, &password).await {
-            Ok(client) => load_room_list_screen(client),
+            Ok(client) => load_room_list_screen(&client),
             Err(_) => load_sign_in_screen(homeserver.into(), username.into(), password.into()),
         }
     });
@@ -206,33 +207,72 @@ fn load_sign_in_loading_screen(
     Ok(())
 }
 
-fn load_room_list_screen(client: Client) -> LvResult<()> {
+fn load_room_list_screen(client: &Client) -> LvResult<()> {
     blank_screen();
 
-    let rooms: Vec<String> = client
-        .rooms()
-        .iter()
-        .filter(|room| room.name().is_some())
-        .map(|room| room.name().unwrap())
-        .collect();
+    let client_arc = std::sync::Arc::new(client);
 
-    let mut heading = Label::new()?;
-    heading.set_align(Align::TopLeft, 0, 0);
-    heading.set_height(60);
-    heading.set_text(cstr!("# Rooms"))?;
-
-    let mut y = 60;
-    for room in rooms.iter() {
+    let mut y = 16;
+    for room in client.rooms().iter() {
         let mut label = Label::new()?;
-        label.set_align(Align::TopLeft, 0, y);
-        label.set_height(40);
+        label.set_align(Align::TopLeft, 16, y + 10);
+        label.set_height(20);
         label.set_text(
-            CString::new(room.to_string())
+            CString::new(room.name().unwrap_or(room.room_id().to_string()))
                 .unwrap_or(cstr!("").into())
                 .as_ref(),
         )?;
+
+        let mut btn = Btn::new()?;
+        btn.set_align(Align::TopRight, -16, y + 5);
+        btn.set_height(30);
+
+        let mut btn_label = Label::create(&mut btn)?;
+        btn_label.set_align(Align::Center, 0, 0);
+        btn_label.set_text(cstr!(">"))?;
+
         y += 40;
+
+        let client_arc_for_btn = std::sync::Arc::clone(&client_arc);
+        btn.on_event(move |_btn, event| {
+            if let lvgl::Event::Clicked = event {
+                _ = load_room_screen(&client_arc_for_btn, room.room_id());
+            }
+        })?;
     }
+
+    Ok(())
+}
+
+fn load_room_screen(client: &Client, room_id: &RoomId) -> LvResult<()> {
+    blank_screen();
+
+    let client_arc = std::sync::Arc::new(client);
+
+    let mut back_btn = Btn::new()?;
+    back_btn.set_align(Align::TopLeft, 16, 16);
+    back_btn.set_height(30);
+
+    let mut back_btn_label = Label::create(&mut back_btn)?;
+    back_btn_label.set_align(Align::Center, 0, 0);
+    back_btn_label.set_text(cstr!("<"))?;
+
+    let client_arc_for_btn = std::sync::Arc::clone(&client_arc);
+    back_btn.on_event(move |_btn, event| {
+        if let lvgl::Event::Clicked = event {
+            _ = load_room_list_screen(&client_arc_for_btn);
+        }
+    })?;
+
+    // let room = client_arc.get_room(room_id).unwrap();
+
+    let mut label = Label::new()?;
+    label.set_align(Align::Center, 0, 0);
+    label.set_text(
+        CString::new("room_id".to_string())
+            .unwrap_or(cstr!("").into())
+            .as_ref(),
+    )?;
 
     Ok(())
 }
@@ -334,7 +374,7 @@ async fn main() -> LvResult<()> {
     tokio::spawn(async {
         if Paths::session_file().exists() {
             if let Ok(client) = restore_session(&Paths::session_file()).await {
-                _ = load_room_list_screen(client);
+                _ = load_room_list_screen(&client);
                 return;
             }
             fs::remove_dir(Paths::data_dir())
