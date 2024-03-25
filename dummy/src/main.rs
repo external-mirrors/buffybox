@@ -1,6 +1,7 @@
 use anyhow::Context;
 use cstr_core::{cstr, CStr, CString};
 use lvgl::input_device::InputDriver;
+use lvgl::style::Style;
 use lvgl::widgets::*;
 use lvgl::{lv_drv_disp_sdl, lv_drv_input_pointer_sdl, LvResult, NativeObject};
 use lvgl::{Align, DrawBuffer, Widget};
@@ -160,70 +161,47 @@ fn load_sign_in_loading_screen(
 
     let mut label = Label::new()?;
     label.set_align(Align::Center, 0, 0);
-    label.set_text(cstr!("Signing in..."))?;
+    label.set_text(cstr!("Mmm Mmm Mmm Mmm..."))?;
 
     tokio::spawn(async move {
-        let url = Url::parse(&homeserver);
-        if url.is_err() {
-            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
-            return;
-        }
-        let url = url.unwrap();
+        async fn try_login(
+            homeserver: &String,
+            username: &String,
+            password: &String,
+        ) -> anyhow::Result<Client> {
+            let url = Url::parse(&homeserver)?;
 
-        let data_dir = dirs::data_dir();
-        if data_dir.is_none() {
-            println!("Could not determine data dir");
-            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
-            return;
-        }
-        let session_file = data_dir.as_ref().unwrap().join("dummy.session");
-        let db_path = data_dir.as_ref().unwrap().join("dummy.db");
+            let db_passphrase = thread_rng()
+                .sample_iter(Alphanumeric)
+                .take(32)
+                .map(char::from)
+                .collect::<String>();
 
-        let db_passphrase = thread_rng()
-            .sample_iter(Alphanumeric)
-            .take(32)
-            .map(char::from)
-            .collect::<String>();
+            let client = build_client(&url, &Paths::db_dir(), &db_passphrase, None).await?;
 
-        let client = Client::builder()
-            .homeserver_url(url)
-            .sqlite_store(&db_path, Some(&db_passphrase))
-            .build()
-            .await;
-        if client.is_err() {
-            println!("Could not create client {:?}", client.err());
-            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
-            return;
-        }
-        let client = client.unwrap();
+            client
+                .matrix_auth()
+                .login_username(&username, &password)
+                .send()
+                .await?;
 
-        if store_session(&session_file, &client, &db_path, &db_passphrase)
-            .await
-            .is_err()
-        {
-            println!("Could not store session");
-            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
-            return;
+            store_session(
+                &Paths::session_file(),
+                &client,
+                &Paths::db_dir(),
+                &db_passphrase,
+            )
+            .await?;
+
+            client.sync_once(SyncSettings::default()).await?;
+
+            Ok(client)
         }
 
-        if client
-            .matrix_auth()
-            .login_username(&username, &password)
-            .send()
-            .await
-            .is_err()
-        {
-            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
-            return;
+        match try_login(&homeserver, &username, &password).await {
+            Ok(client) => load_room_list_screen(client),
+            Err(_) => load_sign_in_screen(homeserver.into(), username.into(), password.into()),
         }
-
-        if client.sync_once(SyncSettings::default()).await.is_err() {
-            println!("Could not perform initial sync");
-            let _ = load_sign_in_screen(homeserver.into(), username.into(), password.into());
-            return;
-        }
-
-        let _ = load_room_list_screen(client);
     });
 
     Ok(())
@@ -260,6 +238,24 @@ fn load_room_list_screen(client: Client) -> LvResult<()> {
     Ok(())
 }
 
+struct Paths {}
+
+impl Paths {
+    fn data_dir() -> PathBuf {
+        dirs::data_dir()
+            .expect("Should be able to find the operating system's data directory")
+            .join("dummy")
+    }
+
+    fn session_file() -> PathBuf {
+        Self::data_dir().join("session")
+    }
+
+    fn db_dir() -> PathBuf {
+        Self::data_dir().join("db")
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 struct SessionPickle {
     homeserver: String,
@@ -273,47 +269,52 @@ struct SessionPickle {
     sync_token: Option<String>,
 }
 
-impl SessionPickle {
-    fn write_to_file(self: Self, file: &Path) -> anyhow::Result<()> {
-        let json = serde_json::to_string(&self)?;
-        fs::write(file, json)?;
-        Ok(())
-    }
-
-    fn read_from_file(file: &Path) -> anyhow::Result<Self> {
-        let json = fs::read_to_string(file)?;
-        Ok(serde_json::from_str::<Self>(&json)?)
-    }
-}
-
 async fn store_session(
     file: &Path,
     client: &Client,
     db_path: &PathBuf,
     db_passphrase: &String,
 ) -> anyhow::Result<()> {
+    let session = client
+        .matrix_auth()
+        .session()
+        .context("Client should have a session when logged in")?;
     let pickle = SessionPickle {
         homeserver: client.homeserver().to_string(),
         db_path: db_path.to_path_buf(),
         db_passphrase: db_passphrase.to_string(),
-        session: client
-            .matrix_auth()
-            .session()
-            .context("Client should have a session when logged in")?,
+        session: session,
         sync_token: None,
     };
-    pickle.write_to_file(file)?;
+    fs::write(file, serde_json::to_string(&pickle)?)?;
     Ok(())
 }
 
 async fn restore_session(file: &Path) -> anyhow::Result<Client> {
-    let session_pickle = SessionPickle::read_from_file(&file)?;
+    let pickle = serde_json::from_str::<SessionPickle>(fs::read_to_string(file)?.as_ref())?;
     let client = Client::builder()
-        .homeserver_url(session_pickle.homeserver)
-        .sqlite_store(session_pickle.db_path, Some(&session_pickle.db_passphrase))
+        .homeserver_url(pickle.homeserver)
+        .sqlite_store(pickle.db_path, Some(&pickle.db_passphrase))
         .build()
         .await?;
-    client.restore_session(session_pickle.session).await?;
+    client.restore_session(pickle.session).await?;
+    Ok(client)
+}
+
+async fn build_client(
+    homeserver: &Url,
+    db_path: &PathBuf,
+    db_passphrase: &String,
+    session: Option<MatrixSession>,
+) -> anyhow::Result<Client> {
+    let client = Client::builder()
+        .homeserver_url(homeserver)
+        .sqlite_store(db_path, Some(db_passphrase))
+        .build()
+        .await?;
+    if let Some(session) = session {
+        client.restore_session(session).await?;
+    }
     Ok(client)
 }
 
@@ -332,16 +333,13 @@ async fn main() -> LvResult<()> {
     lvgl::task_handler();
 
     tokio::spawn(async {
-        let data_dir =
-            dirs::data_dir().expect("Should be able to find the operating system's data directory");
-        println!("Using data dir {:?}", data_dir);
-        let session_file = data_dir.join("dummy.session");
-
-        if session_file.exists() {
-            if let Ok(client) = restore_session(&session_file).await {
+        if Paths::session_file().exists() {
+            if let Ok(client) = restore_session(&Paths::session_file()).await {
                 _ = load_room_list_screen(client);
                 return;
             }
+            fs::remove_dir(Paths::data_dir())
+                .expect("Should be able to remove corrupt data directory");
         }
 
         _ = load_sign_in_screen(None, None, None);
