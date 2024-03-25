@@ -1,7 +1,6 @@
 use anyhow::Context;
 use cstr_core::{cstr, CStr, CString};
 use lvgl::input_device::InputDriver;
-use lvgl::style::Style;
 use lvgl::widgets::*;
 use lvgl::{lv_drv_disp_sdl, lv_drv_input_pointer_sdl, LvResult, NativeObject};
 use lvgl::{Align, DrawBuffer, Widget};
