@@ -1,7 +1,7 @@
 use anyhow::Context;
 use cstr_core::{cstr, CStr, CString};
 use lvgl::input_device::InputDriver;
-use lvgl::widgets::*;
+use lvgl::widgets::{Btn, Keyboard, Label, Textarea};
 use lvgl::{lv_drv_disp_sdl, lv_drv_input_pointer_sdl, LvResult, NativeObject};
 use lvgl::{Align, DrawBuffer, Widget};
 use lvgl_sys::{
@@ -19,6 +19,7 @@ use serde::{Deserialize, Serialize};
 use std::cmp::max;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use std::thread::sleep;
 use std::time::Duration;
 use std::time::Instant;
@@ -90,9 +91,9 @@ fn load_sign_in_screen(
     keyboard.set_height((0.33 * ver_res as f32) as u32);
     keyboard.set_align(Align::BottomMid, 0, 0);
 
-    let keyboard_arc = std::sync::Arc::new(keyboard);
+    let keyboard_arc = Arc::new(keyboard);
 
-    let keyboard_arc_for_homeserver = std::sync::Arc::clone(&keyboard_arc);
+    let keyboard_arc_for_homeserver = Arc::clone(&keyboard_arc);
     homeserver_ta.on_event(move |textarea, event| {
         if let lvgl::Event::Clicked = event {
             unsafe {
@@ -104,7 +105,7 @@ fn load_sign_in_screen(
         }
     })?;
 
-    let keyboard_arc_for_username = std::sync::Arc::clone(&keyboard_arc);
+    let keyboard_arc_for_username = Arc::clone(&keyboard_arc);
     username_ta.on_event(move |textarea, event| {
         if let lvgl::Event::Clicked = event {
             unsafe {
@@ -116,7 +117,7 @@ fn load_sign_in_screen(
         }
     })?;
 
-    let keyboard_arc_for_password = std::sync::Arc::clone(&keyboard_arc);
+    let keyboard_arc_for_password = Arc::clone(&keyboard_arc);
     password_ta.on_event(move |textarea, event| {
         if let lvgl::Event::Clicked = event {
             unsafe {
@@ -199,7 +200,7 @@ fn load_sign_in_loading_screen(
         }
 
         match try_login(&homeserver, &username, &password).await {
-            Ok(client) => load_room_list_screen(&client),
+            Ok(client) => load_room_list_screen(&Arc::new(client)),
             Err(_) => load_sign_in_screen(homeserver.into(), username.into(), password.into()),
         }
     });
@@ -207,10 +208,8 @@ fn load_sign_in_loading_screen(
     Ok(())
 }
 
-fn load_room_list_screen(client: &Client) -> LvResult<()> {
+fn load_room_list_screen(client: &Arc<Client>) -> LvResult<()> {
     blank_screen();
-
-    let client_arc = std::sync::Arc::new(client);
 
     let mut y = 16;
     for room in client.rooms().iter() {
@@ -233,10 +232,12 @@ fn load_room_list_screen(client: &Client) -> LvResult<()> {
 
         y += 40;
 
-        let client_arc_for_btn = std::sync::Arc::clone(&client_arc);
+        // TODO: Why can't we pass &RoomId via the closure?
+        let room_id = room.room_id().to_string();
+        let client_arc = Arc::clone(&client);
         btn.on_event(move |_btn, event| {
             if let lvgl::Event::Clicked = event {
-                _ = load_room_screen(&client_arc_for_btn, room.room_id());
+                _ = load_room_screen(&client_arc, &room_id);
             }
         })?;
     }
@@ -244,10 +245,8 @@ fn load_room_list_screen(client: &Client) -> LvResult<()> {
     Ok(())
 }
 
-fn load_room_screen(client: &Client, room_id: &RoomId) -> LvResult<()> {
+fn load_room_screen(client: &Arc<Client>, room_id: &String) -> LvResult<()> {
     blank_screen();
-
-    let client_arc = std::sync::Arc::new(client);
 
     let mut back_btn = Btn::new()?;
     back_btn.set_align(Align::TopLeft, 16, 16);
@@ -257,19 +256,20 @@ fn load_room_screen(client: &Client, room_id: &RoomId) -> LvResult<()> {
     back_btn_label.set_align(Align::Center, 0, 0);
     back_btn_label.set_text(cstr!("<"))?;
 
-    let client_arc_for_btn = std::sync::Arc::clone(&client_arc);
+    let client_arc = Arc::clone(&client);
     back_btn.on_event(move |_btn, event| {
         if let lvgl::Event::Clicked = event {
-            _ = load_room_list_screen(&client_arc_for_btn);
+            _ = load_room_list_screen(&client_arc);
         }
     })?;
 
-    // let room = client_arc.get_room(room_id).unwrap();
+    let room_id = <&RoomId>::try_from(room_id.as_str()).unwrap();
+    let room = client.get_room(room_id).unwrap();
 
     let mut label = Label::new()?;
     label.set_align(Align::Center, 0, 0);
     label.set_text(
-        CString::new("room_id".to_string())
+        CString::new(room.name().unwrap_or(room.room_id().to_string()))
             .unwrap_or(cstr!("").into())
             .as_ref(),
     )?;
@@ -374,7 +374,7 @@ async fn main() -> LvResult<()> {
     tokio::spawn(async {
         if Paths::session_file().exists() {
             if let Ok(client) = restore_session(&Paths::session_file()).await {
-                _ = load_room_list_screen(&client);
+                _ = load_room_list_screen(&Arc::new(client));
                 return;
             }
             fs::remove_dir(Paths::data_dir())
