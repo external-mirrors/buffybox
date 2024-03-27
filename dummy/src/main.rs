@@ -12,7 +12,8 @@ use matrix_sdk::config::SyncSettings;
 use matrix_sdk::matrix_auth::MatrixSession;
 use matrix_sdk::reqwest::Url;
 use matrix_sdk::ruma::RoomId;
-use matrix_sdk::Client;
+use matrix_sdk::{Client, Error, LoopCtrl};
+use matrix_sdk_ui::timeline::{PaginationOptions, RoomExt};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 use serde::{Deserialize, Serialize};
@@ -169,7 +170,7 @@ fn load_sign_in_loading_screen(
             homeserver: &String,
             username: &String,
             password: &String,
-        ) -> anyhow::Result<Client> {
+        ) -> anyhow::Result<Arc<Client>> {
             let url = Url::parse(&homeserver)?;
 
             let db_passphrase = thread_rng()
@@ -194,13 +195,16 @@ fn load_sign_in_loading_screen(
             )
             .await?;
 
-            client.sync_once(SyncSettings::default()).await?;
+            let client_arc = Arc::new(client);
 
-            Ok(client)
+            let client_arc_for_sync = Arc::clone(&client_arc);
+            start_syncing(client_arc_for_sync, None).await?;
+
+            Ok(client_arc)
         }
 
         match try_login(&homeserver, &username, &password).await {
-            Ok(client) => load_room_list_screen(&Arc::new(client)),
+            Ok(client) => load_room_list_screen(&client),
             Err(_) => load_sign_in_screen(homeserver.into(), username.into(), password.into()),
         }
     });
@@ -266,13 +270,33 @@ fn load_room_screen(client: &Arc<Client>, room_id: &String) -> LvResult<()> {
     let room_id = <&RoomId>::try_from(room_id.as_str()).unwrap();
     let room = client.get_room(room_id).unwrap();
 
-    let mut label = Label::new()?;
-    label.set_align(Align::Center, 0, 0);
-    label.set_text(
-        CString::new(room.name().unwrap_or(room.room_id().to_string()))
-            .unwrap_or(cstr!("").into())
-            .as_ref(),
-    )?;
+    tokio::spawn(async move {
+        let timeline = room.timeline().await;
+        timeline
+            .paginate_backwards(PaginationOptions::until_num_items(50, 50))
+            .await
+            .unwrap();
+
+        let mut text = "".to_string();
+
+        for item in timeline.items().await {
+            if let Some(event) = item.as_event() {
+                if let Some(message) = event.content().as_message() {
+                    text += &event.sender().to_string();
+                    text += "\n";
+                    text += message.body();
+                    text += "\n\n";
+                }
+            }
+        }
+
+        let mut label = Label::new().unwrap();
+        label.set_align(Align::TopLeft, 16, 54);
+        label.set_width(max(0, unsafe { lv_disp_get_hor_res(lv_disp_get_default()) }) as u32 - 32);
+        label
+            .set_text(CString::new(text).unwrap_or(cstr!("").into()).as_ref())
+            .unwrap();
+    });
 
     Ok(())
 }
@@ -329,7 +353,7 @@ async fn store_session(
     Ok(())
 }
 
-async fn restore_session(file: &Path) -> anyhow::Result<Client> {
+async fn restore_session(file: &Path) -> anyhow::Result<(Client, Option<String>)> {
     let pickle = serde_json::from_str::<SessionPickle>(fs::read_to_string(file)?.as_ref())?;
     let client = Client::builder()
         .homeserver_url(pickle.homeserver)
@@ -337,7 +361,14 @@ async fn restore_session(file: &Path) -> anyhow::Result<Client> {
         .build()
         .await?;
     client.restore_session(pickle.session).await?;
-    Ok(client)
+    Ok((client, pickle.sync_token))
+}
+
+async fn store_sync_token(file: &Path, sync_token: String) -> anyhow::Result<()> {
+    let mut pickle = serde_json::from_str::<SessionPickle>(fs::read_to_string(file)?.as_ref())?;
+    pickle.sync_token = Some(sync_token);
+    fs::write(file, serde_json::to_string(&pickle)?)?;
+    Ok(())
 }
 
 async fn build_client(
@@ -357,6 +388,51 @@ async fn build_client(
     Ok(client)
 }
 
+async fn start_syncing(client: Arc<Client>, sync_token: Option<String>) -> anyhow::Result<()> {
+    let mut sync_settings = SyncSettings::default();
+
+    if let Some(sync_token) = sync_token {
+        sync_settings = sync_settings.token(sync_token);
+    }
+
+    // Loop until the initial sync stops timing out
+    loop {
+        println!("Attempting initial sync");
+        match client.sync_once(sync_settings.clone()).await {
+            Ok(response) => {
+                println!("Initial sync completed");
+                sync_settings = sync_settings.token(response.next_batch.clone());
+                store_sync_token(&Paths::session_file(), response.next_batch).await?;
+                break;
+            }
+            Err(error) => {
+                println!("Error during initial sync: {error}");
+                println!("Trying again...");
+            }
+        }
+    }
+
+    // Start background sync
+    tokio::spawn(async move {
+        println!("Starting sync loop");
+        client
+            .sync_with_result_callback(sync_settings, |sync_result| async move {
+                println!("Sync fired");
+                let response = sync_result?;
+
+                store_sync_token(&Paths::session_file(), response.next_batch)
+                    .await
+                    .map_err(|err| Error::UnknownError(err.into()))?;
+
+                Ok(LoopCtrl::Continue)
+            })
+            .await
+            .unwrap();
+    });
+
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> LvResult<()> {
     lvgl::init();
@@ -373,8 +449,15 @@ async fn main() -> LvResult<()> {
 
     tokio::spawn(async {
         if Paths::session_file().exists() {
-            if let Ok(client) = restore_session(&Paths::session_file()).await {
-                _ = load_room_list_screen(&Arc::new(client));
+            if let Ok((client, sync_token)) = restore_session(&Paths::session_file()).await {
+                let client_arc = Arc::new(client);
+
+                let client_arc_for_sync = Arc::clone(&client_arc);
+                start_syncing(client_arc_for_sync, sync_token)
+                    .await
+                    .unwrap();
+
+                _ = load_room_list_screen(&client_arc);
                 return;
             }
             fs::remove_dir(Paths::data_dir())
