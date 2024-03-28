@@ -7,8 +7,6 @@
 #ifndef UL_BACKENDS_H
 #define UL_BACKENDS_H
 
-#include "log.h"
-
 #include "lvgl/lvgl.h"
 
 /**

@@ -8,15 +8,15 @@
 #include "command_line.h"
 #include "config.h"
 #include "indev.h"
-#include "log.h"
 #include "unl0kr.h"
 #include "terminal.h"
 #include "theme.h"
 #include "themes.h"
 
-#include "lvgl/lvgl.h"
-
+#include "../shared/log.h"
 #include "../squeek2lvgl/sq2lv.h"
+
+#include "lvgl/lvgl.h"
 
 #include <pthread.h>
 #include <signal.h>
@@ -375,11 +375,11 @@ int main(int argc, char *argv[]) {
 
     /* Set up log level */
     if (cli_opts.verbose) {
-        ul_log_set_level(UL_LOG_LEVEL_VERBOSE);
+        bb_log_set_level(BB_LOG_LEVEL_VERBOSE);
     }
 
     /* Announce ourselves */
-    ul_log(UL_LOG_LEVEL_VERBOSE, "unl0kr %s", UL_VERSION);
+    bb_log(BB_LOG_LEVEL_VERBOSE, "unl0kr %s", UL_VERSION);
 
     /* Parse config files */
     ul_config_init_opts(&conf_opts);
@@ -397,7 +397,7 @@ int main(int argc, char *argv[]) {
 
     /* Initialise LVGL and set up logging callback */
     lv_init();
-    lv_log_register_print_cb(ul_log_print_cb);
+    lv_log_register_print_cb(bb_log_print_cb);
 
     /* Start the tick thread */
     pthread_t ticker;
@@ -422,7 +422,7 @@ int main(int argc, char *argv[]) {
         break;
 #endif /* LV_USE_LINUX_DRM */
     default:
-        ul_log(UL_LOG_LEVEL_ERROR, "Unable to find suitable backend");
+        bb_log(BB_LOG_LEVEL_ERROR, "Unable to find suitable backend");
         exit(EXIT_FAILURE);
     }
 

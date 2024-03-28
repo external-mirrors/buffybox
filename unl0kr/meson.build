@@ -18,7 +18,6 @@ unl0kr_sources = [
   'config.c',
   'font_32.c',
   'indev.c',
-  'log.c',
   'main.c',
   'sq2lv_layouts.c',
   'terminal.c',
@@ -27,7 +26,8 @@ unl0kr_sources = [
 ]
 
 shared_sources = [
-  '../shared/cursor/cursor.c'
+  '../shared/cursor/cursor.c',
+  '../shared/log.c',
 ]
 
 squeek2lvgl_sources = [

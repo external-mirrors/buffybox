@@ -6,7 +6,8 @@
 
 #include "config.h"
 
-#include "log.h"
+#include "../shared/log.h"
+#include "../squeek2lvgl/sq2lv.h"
 
 #include "lvgl/lvgl.h"
 
@@ -14,8 +15,6 @@
 #include <ini.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "../squeek2lvgl/sq2lv.h"
 
 
 /**
@@ -96,7 +95,7 @@ static void find_files(const char *path, char ***found, int *num_found) {
     /* Open directory */
     DIR *d = opendir(path);
     if (!d) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not read contents of folder %s", path);
+        bb_log(BB_LOG_LEVEL_WARNING, "Could not read contents of folder %s", path);
         return;
     }
 
@@ -111,7 +110,7 @@ static void find_files(const char *path, char ***found, int *num_found) {
         /* Grow output array */
         char **tmp = realloc(*found, (*num_found + 1) * sizeof(char *));
         if (!tmp) {
-            ul_log(UL_LOG_LEVEL_ERROR, "Could not reallocate memory for configuration file paths");
+            bb_log(BB_LOG_LEVEL_ERROR, "Could not reallocate memory for configuration file paths");
             break;
         }
         *found = tmp;
@@ -123,7 +122,7 @@ static void find_files(const char *path, char ***found, int *num_found) {
         /* Allocate memory for full path */
         char *found_path = malloc(path_length + name_length + 2); /* +1 for path separator and null terminator, respectively */
         if (!found_path) {
-            ul_log(UL_LOG_LEVEL_ERROR, "Could not allocate memory for configuration file path");
+            bb_log(BB_LOG_LEVEL_ERROR, "Could not allocate memory for configuration file path");
             break;
         }
 
@@ -232,7 +231,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
         }
     }
 
-    ul_log(UL_LOG_LEVEL_ERROR, "Ignoring invalid config value \"%s\" for key \"%s\" in section \"%s\"", value, key, section);
+    bb_log(BB_LOG_LEVEL_ERROR, "Ignoring invalid config value \"%s\" for key \"%s\" in section \"%s\"", value, key, section);
     return 1; /* Return 1 (true) so that we can use the return value of ini_parse exclusively for file-level errors (e.g. file not found) */
 }
 
@@ -298,8 +297,8 @@ void ul_config_parse_files(const char **files, int num_files, ul_config_opts *op
 }
 
 void ul_config_parse_file(const char *path, ul_config_opts *opts) {
-    ul_log(UL_LOG_LEVEL_VERBOSE, "Parsing config file %s", path);
+    bb_log(BB_LOG_LEVEL_VERBOSE, "Parsing config file %s", path);
     if (ini_parse(path, parsing_handler, opts) != 0) {
-        ul_log(UL_LOG_LEVEL_ERROR, "Ignoring invalid config file %s", path);
+        bb_log(BB_LOG_LEVEL_ERROR, "Ignoring invalid config file %s", path);
     }
 }
