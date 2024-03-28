@@ -5,7 +5,7 @@
 project(
   'unl0kr',
   'c',
-  version: '2.0.2',
+  version: '3.0.0',
   default_options: 'warning_level=3',
   meson_version: '>=0.53.0'
 )
@@ -16,7 +16,6 @@ unl0kr_sources = [
   'backends.c',
   'command_line.c',
   'config.c',
-  'cursor.c',
   'font_32.c',
   'indev.c',
   'log.c',
@@ -25,6 +24,10 @@ unl0kr_sources = [
   'terminal.c',
   'theme.c',
   'themes.c',
+]
+
+shared_sources = [
+  '../shared/cursor/cursor.c'
 ]
 
 squeek2lvgl_sources = [
@@ -55,7 +58,7 @@ install_data(sources: 'unl0kr.conf', install_dir : get_option('sysconfdir'))
 
 executable(
   'unl0kr',
-  sources: unl0kr_sources + squeek2lvgl_sources + lvgl_sources,
+  sources: unl0kr_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
   include_directories: ['..'],
   dependencies: unl0kr_dependencies,
   install: true

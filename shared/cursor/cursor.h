@@ -10,6 +10,6 @@
 #include "lvgl/lvgl.h"
 
 /* Image description of the mouse cursor */
-extern const lv_img_dsc_t ul_cursor_img_dsc;
+extern const lv_img_dsc_t bb_cursor_img_dsc;
 
 #endif /* UL_CURSOR_H */

@@ -6,6 +6,8 @@
 
 #include "themes.h"
 
+#include <string.h>
+
 
 /**
  * Static variables

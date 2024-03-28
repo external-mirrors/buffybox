@@ -6,8 +6,9 @@
 
 #include "indev.h"
 
-#include "cursor.h"
 #include "log.h"
+
+#include "../shared/cursor/cursor.h"
 
 #include "lvgl/src/indev/lv_indev_private.h"
 
@@ -15,6 +16,7 @@
 #include <libudev.h>
 #include <limits.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <linux/input.h>
 
@@ -353,7 +355,7 @@ static void set_mouse_cursor(struct input_device *device) {
     /* Initialise cursor image if needed */
     if (!cursor_obj) {
         cursor_obj = lv_img_create(lv_scr_act());
-        lv_img_set_src(cursor_obj, &ul_cursor_img_dsc);
+        lv_img_set_src(cursor_obj, &bb_cursor_img_dsc);
     }
 
     /* Apply the cursor image */

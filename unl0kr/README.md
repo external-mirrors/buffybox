@@ -153,11 +153,6 @@ Below is a short explanation of the different unicode ranges used above.
   - [arrow-alt-circle-up](https://fontawesome.com/v5/icons/arrow-alt-circle-up) (`0xF35B`)
   - [chevron-left](https://fontawesome.com/v5/icons/chevron-left) (`0xF053`)
 
-
-## Mouse cursor
-
-Unl0kr's mouse cursor is adapted from Ubuntu's [Yaru] theme suite. Similar to fonts, the mouse cursor image needs to be converted to LVGL-compatible C code. To do this, run `regenerate-cursor.sh` after any change of `cursor.png` to update the code.
-
 ## Keyboard layouts
 
 Unl0kr uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerate the layouts, ensure that you have pipenv installed (e.g. via `pip install --user pipenv`) and then run
@@ -220,4 +215,3 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [squeek2lvgl]: ../squeek2lvgl
 [squeekboard layouts]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master/data/keyboards
 [unl0kr.conf]: ./unl0kr.conf
-[Yaru]: https://github.com/ubuntu/yaru

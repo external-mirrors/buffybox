@@ -13,6 +13,7 @@
 #include <dirent.h>
 #include <ini.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../squeek2lvgl/sq2lv.h"
 
