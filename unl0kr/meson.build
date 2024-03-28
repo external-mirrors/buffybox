@@ -17,7 +17,6 @@ unl0kr_sources = [
   'command_line.c',
   'config.c',
   'font_32.c',
-  'indev.c',
   'main.c',
   'sq2lv_layouts.c',
   'terminal.c',
@@ -27,6 +26,7 @@ unl0kr_sources = [
 
 shared_sources = [
   '../shared/cursor/cursor.c',
+  '../shared/indev.c',
   '../shared/log.c',
 ]
 

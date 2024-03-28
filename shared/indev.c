@@ -6,8 +6,8 @@
 
 #include "indev.h"
 
-#include "../shared/cursor/cursor.h"
-#include "../shared/log.h"
+#include "cursor/cursor.h"
+#include "log.h"
 
 #include "lvgl/src/indev/lv_indev_private.h"
 
@@ -361,12 +361,17 @@ static void set_mouse_cursor(struct input_device *device) {
     lv_indev_set_cursor(device->indev, cursor_obj);
 }
 
+static void query_device_monitor(lv_timer_t *timer) {
+    LV_UNUSED(timer);
+    bb_indev_query_monitor();
+}
+
 
 /**
  * Public functions
  */
 
-void ul_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen) {
+void bb_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen) {
     allowed_capability = LV_LIBINPUT_CAPABILITY_NONE;
     if (keyboard) {
         allowed_capability |= LV_LIBINPUT_CAPABILITY_KEYBOARD;
@@ -379,7 +384,7 @@ void ul_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool to
     }
 }
 
-void ul_indev_set_keyboard_input_group(lv_group_t *group) {
+void bb_indev_set_keyboard_input_group(lv_group_t *group) {
     /* Store the group */
     keyboard_input_group = group;
 
@@ -391,7 +396,14 @@ void ul_indev_set_keyboard_input_group(lv_group_t *group) {
     }
 }
 
-void ul_indev_auto_connect() {
+void bb_indev_start_monitor_and_autoconnect(bool keyboard, bool pointer, bool touchscreen) {
+    bb_indev_set_allowed_device_capability(keyboard, pointer, touchscreen);
+    bb_indev_start_monitor();
+    lv_timer_create(query_device_monitor, 1000, NULL);
+    bb_indev_auto_connect();
+}
+
+void bb_indev_auto_connect() {
     bb_log(BB_LOG_LEVEL_VERBOSE, "Auto-connecting supported input devices");
 
     /* Make sure udev context is initialised */
@@ -434,7 +446,7 @@ void ul_indev_auto_connect() {
     udev_enumerate_unref(enumerate);
 }
 
-void ul_indev_start_monitor() {
+void bb_indev_start_monitor() {
     /* Make sure udev context is initialised */
     if (!context) {
         context = udev_new();
@@ -454,7 +466,7 @@ void ul_indev_start_monitor() {
     monitor = udev_monitor_new_from_netlink(context, "udev");
     if (!monitor) {
         bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev monitor");
-        ul_indev_stop_monitor();
+        bb_indev_stop_monitor();
         return;
     }
 
@@ -466,19 +478,19 @@ void ul_indev_start_monitor() {
     /* Start monitor */
     if (udev_monitor_enable_receiving(monitor) < 0) {
         bb_log(BB_LOG_LEVEL_WARNING, "Could not enable udev monitor");
-        ul_indev_stop_monitor();
+        bb_indev_stop_monitor();
         return;
     }
 
     /* Obtain monitor file descriptor */
     if ((monitor_fd = udev_monitor_get_fd(monitor)) < 0) {
         bb_log(BB_LOG_LEVEL_WARNING, "Could not acquire file descriptor for udev monitor");
-        ul_indev_stop_monitor();
+        bb_indev_stop_monitor();
         return;
     }
 }
 
-void ul_indev_stop_monitor() {
+void bb_indev_stop_monitor() {
     /* Unreference monitor */
     if (monitor) {
         udev_monitor_unref(monitor);
@@ -497,7 +509,7 @@ void ul_indev_stop_monitor() {
     }
 }
 
-void ul_indev_query_monitor() {
+void bb_indev_query_monitor() {
     /* Make sure the monitor is running */
     if (!monitor) {
         bb_log(BB_LOG_LEVEL_ERROR, "Cannot query udev monitor because it is not running");
@@ -535,7 +547,7 @@ void ul_indev_query_monitor() {
     }
 }
 
-bool ul_indev_is_keyboard_connected() {
+bool bb_indev_is_keyboard_connected() {
     for (int i = 0; i < num_connected_devices; ++i) {
         if (is_keyboard_device(devices[i])) {
             return true;

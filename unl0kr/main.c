@@ -7,12 +7,12 @@
 #include "backends.h"
 #include "command_line.h"
 #include "config.h"
-#include "indev.h"
 #include "unl0kr.h"
 #include "terminal.h"
 #include "theme.h"
 #include "themes.h"
 
+#include "../shared/indev.h"
 #include "../shared/log.h"
 #include "../squeek2lvgl/sq2lv.h"
 
@@ -53,13 +53,6 @@ lv_obj_t *keyboard = NULL;
  * @param args unused
 */
 static void *tick_thread (void *args);
-
-/**
- * Query the device monitor and handle updates.
- *
- * @param timer the timer object
- */
-static void query_device_monitor(lv_timer_t *timer);
 
 /**
  * Handle LV_EVENT_CLICKED events from the theme toggle button.
@@ -214,11 +207,6 @@ static void *tick_thread (void *args) {
         lv_tick_inc(5); /* Tell LVGL that 5 milliseconds have elapsed */
     }
     return NULL;
-}
-
-static void query_device_monitor(lv_timer_t *timer) {
-    LV_UNUSED(timer);
-    ul_indev_query_monitor();
 }
 
 static void toggle_theme_btn_clicked_cb(lv_event_t *event) {
@@ -442,16 +430,13 @@ int main(int argc, char *argv[]) {
 
     /* Prepare for routing physical keyboard input into the textarea */
     lv_group_t *keyboard_input_group = lv_group_create();
-    ul_indev_set_keyboard_input_group(keyboard_input_group);
+    bb_indev_set_keyboard_input_group(keyboard_input_group);
 
     /* Start input device monitor and auto-connect available devices */
-    ul_indev_set_allowed_device_capability(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
-    ul_indev_start_monitor();
-    lv_timer_create(query_device_monitor, 1000, NULL);
-    ul_indev_auto_connect();
+    bb_indev_start_monitor_and_autoconnect(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
 
     /* Hide the on-screen keyboard by default if a physical keyboard is connected */
-    if (conf_opts.keyboard.autohide && ul_indev_is_keyboard_connected()) {
+    if (conf_opts.keyboard.autohide && bb_indev_is_keyboard_connected()) {
         is_keyboard_hidden = true;
     }
 
