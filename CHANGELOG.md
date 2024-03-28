@@ -10,7 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-Nothing at the moment
+- feat(buffyboard): Handle input device connection/disconnection at runtime; adds new dependency libudev
 
 ## 3.0.0 (2024-03-22)
 

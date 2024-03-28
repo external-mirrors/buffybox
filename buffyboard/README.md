@@ -32,6 +32,7 @@ For a growing collection of demo videos, see the [wiki].
 - [lvgl] (git submodule / linked statically)
 - [squeek2lvgl] (git submodule / linked statically)
 - [libinput]
+- [libudev]
 - evdev kernel module
 - uinput kernel module
 
@@ -129,6 +130,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
+[libudev]: https://github.com/systemd/systemd/tree/main/src/libudev
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
 [lv_sim_emscripten]: https://github.com/lvgl/lv_sim_emscripten/blob/master/mouse_cursor_icon.c
 [lvgl]: https://github.com/lvgl/lvgl

@@ -6,13 +6,13 @@
 
 #include "buffyboard.h"
 #include "command_line.h"
-#include "indev.h"
 #include "sq2lv_layouts.h"
 #include "terminal.h"
 #include "uinput_device.h"
 
 #include "lvgl/lvgl.h"
 
+#include "../shared/indev.h"
 #include "../squeek2lvgl/sq2lv.h"
 
 #include <limits.h>
@@ -279,9 +279,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    /* Connect input devices */
-    bb_indev_auto_connect();
-    bb_indev_set_up_mouse_cursor();
+    /* Start input device monitor and auto-connect available devices */
+    bb_indev_start_monitor_and_autoconnect(false, true, true);
 
     /* Initialise theme and styles */
     set_theme(true);
