@@ -4,8 +4,8 @@
  */
 
 
-#ifndef UL_LOG_H
-#define UL_LOG_H
+#ifndef BB_LOG_H
+#define BB_LOG_H
 
 #include "lvgl/lvgl.h"
 
@@ -14,19 +14,19 @@
  */
 typedef enum {
     /* Errors only */
-    UL_LOG_LEVEL_ERROR   = 0,
+    BB_LOG_LEVEL_ERROR   = 0,
     /* Warnings and errors */
-    UL_LOG_LEVEL_WARNING = 1,
+    BB_LOG_LEVEL_WARNING = 1,
     /* Include non-errors in log */
-    UL_LOG_LEVEL_VERBOSE = 2
-} ul_log_level;
+    BB_LOG_LEVEL_VERBOSE = 2
+} bb_log_level;
 
 /**
  * Set the log level.
  * 
  * @param level new log level value
  */
-void ul_log_set_level(ul_log_level level);
+void bb_log_set_level(bb_log_level level);
 
 /**
  * Log a message. A newline character is appended unless the message ends in one.
@@ -35,7 +35,7 @@ void ul_log_set_level(ul_log_level level);
  * @param format message format string
  * @param ... parameters to fill into the format string
  */
-void ul_log(ul_log_level level, const char *format, ...);
+void bb_log(bb_log_level level, const char *format, ...);
 
 /**
  * Handle an LVGL log message.
@@ -43,6 +43,6 @@ void ul_log(ul_log_level level, const char *format, ...);
  * @param level LVGL log level
  * @param msg message to print
  */
-void ul_log_print_cb(lv_log_level_t level, const char *msg);
+void bb_log_print_cb(lv_log_level_t level, const char *msg);
 
-#endif /* UL_LOG_H */
+#endif /* BB_LOG_H */

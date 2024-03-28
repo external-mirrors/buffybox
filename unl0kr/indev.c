@@ -6,9 +6,8 @@
 
 #include "indev.h"
 
-#include "log.h"
-
 #include "../shared/cursor/cursor.h"
+#include "../shared/log.h"
 
 #include "lvgl/src/indev/lv_indev_private.h"
 
@@ -170,7 +169,7 @@ static void connect_udev_device(struct udev_device *device) {
     /* Obtain and verify device node */
     const char *node = udev_device_get_devnode(device);
     if (!node || strncmp(node, INPUT_DEVICE_NODE_PREFIX, strlen(INPUT_DEVICE_NODE_PREFIX)) != 0) {
-        ul_log(UL_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
+        bb_log(BB_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
         return;
     }
 
@@ -182,7 +181,7 @@ static void connect_devnode(const char *node) {
     /* Check if the device is already connected */
     for (int i = 0; i < num_connected_devices; ++i) {
         if (strcmp(devices[i]->node, node) == 0) {
-            ul_log(UL_LOG_LEVEL_WARNING, "Ignoring already connected input device %s", node);
+            bb_log(BB_LOG_LEVEL_WARNING, "Ignoring already connected input device %s", node);
             return;
         }
     }
@@ -192,7 +191,7 @@ static void connect_devnode(const char *node) {
         /* Re-allocate array */
         struct input_device **tmp = realloc(devices, (2 * num_devices + 1) * sizeof(struct input_device *));
         if (!tmp) {
-            ul_log(UL_LOG_LEVEL_ERROR, "Could not reallocate memory for input device array");
+            bb_log(BB_LOG_LEVEL_ERROR, "Could not reallocate memory for input device array");
             return;
         }
         devices = tmp;
@@ -215,14 +214,14 @@ static void connect_devnode(const char *node) {
     /* Initialise the indev and obtain the libinput device */
     device->indev = lv_libinput_create(LV_INDEV_TYPE_NONE, device->node);
     if (!device->indev) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
+        bb_log(BB_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
         disconnect_idx(num_connected_devices);
         return;
     }
     lv_libinput_t *dsc = lv_indev_get_driver_data(device->indev);
     struct libinput_device *device_libinput = dsc->libinput_device;
     if (!device_libinput) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
+        bb_log(BB_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
         disconnect_idx(num_connected_devices);
         return;
     }
@@ -232,7 +231,7 @@ static void connect_devnode(const char *node) {
 
     /* If the device doesn't have any supported capabilities, exit */
     if ((device->capability & allowed_capability) == LV_LIBINPUT_CAPABILITY_NONE)  {
-        ul_log(UL_LOG_LEVEL_WARNING, "Aborting connection of input device %s because it has no allowed capabilities", node);
+        bb_log(BB_LOG_LEVEL_WARNING, "Aborting connection of input device %s because it has no allowed capabilities", node);
         disconnect_idx(num_connected_devices);
         return;
     }
@@ -270,14 +269,14 @@ static void connect_devnode(const char *node) {
     /* Increment connected device count */
     num_connected_devices++;
 
-    ul_log(UL_LOG_LEVEL_VERBOSE, "Connected input device %s (%s)", node, capability_to_str(device->capability));
+    bb_log(BB_LOG_LEVEL_VERBOSE, "Connected input device %s (%s)", node, capability_to_str(device->capability));
 }
 
 static void disconnect_udev_device(struct udev_device *device) {
     /* Obtain and verify device node */
     const char *node = udev_device_get_devnode(device);
     if (!node || strncmp(node, INPUT_DEVICE_NODE_PREFIX, strlen(INPUT_DEVICE_NODE_PREFIX)) != 0) {
-        ul_log(UL_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
+        bb_log(BB_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
         return;
     }
 
@@ -297,7 +296,7 @@ static void disconnect_devnode(const char *node) {
 
     /* If no matching device was found, exit */
     if (idx < 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Ignoring already disconnected input device %s", node);
+        bb_log(BB_LOG_LEVEL_WARNING, "Ignoring already disconnected input device %s", node);
         return;
     }
 
@@ -317,7 +316,7 @@ static void disconnect_devnode(const char *node) {
     /* Decrement connected device count */
     --num_connected_devices;
 
-    ul_log(UL_LOG_LEVEL_VERBOSE, "Disconnected input device %s", node);
+    bb_log(BB_LOG_LEVEL_VERBOSE, "Disconnected input device %s", node);
 }
 
 static void disconnect_idx(int idx) {
@@ -393,13 +392,13 @@ void ul_indev_set_keyboard_input_group(lv_group_t *group) {
 }
 
 void ul_indev_auto_connect() {
-    ul_log(UL_LOG_LEVEL_VERBOSE, "Auto-connecting supported input devices");
+    bb_log(BB_LOG_LEVEL_VERBOSE, "Auto-connecting supported input devices");
 
     /* Make sure udev context is initialised */
     if (!context) {
         context = udev_new();
         if (!context) {
-            ul_log(UL_LOG_LEVEL_WARNING, "Could not create udev context");
+            bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev context");
             return;
         }
     }
@@ -420,7 +419,7 @@ void ul_indev_auto_connect() {
         /* Create udev device */
         struct udev_device *device = udev_device_new_from_syspath(context, path);
         if (!device) {
-            ul_log(UL_LOG_LEVEL_WARNING, "Could not create udev device for %s", path);
+            bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev device for %s", path);
             continue;
         }
 
@@ -440,40 +439,40 @@ void ul_indev_start_monitor() {
     if (!context) {
         context = udev_new();
         if (!context) {
-            ul_log(UL_LOG_LEVEL_WARNING, "Could not create udev context");
+            bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev context");
             return;
         }
     }
 
     /* Check if monitor is already running */
     if (monitor) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Not starting udev monitor because it is already running");
+        bb_log(BB_LOG_LEVEL_WARNING, "Not starting udev monitor because it is already running");
         return;
     }
 
     /* Create new monitor */
     monitor = udev_monitor_new_from_netlink(context, "udev");
     if (!monitor) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not create udev monitor");
+        bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev monitor");
         ul_indev_stop_monitor();
         return;
     }
 
     /* Apply input subsystem filter */
     if (udev_monitor_filter_add_match_subsystem_devtype(monitor, "input", NULL) < 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not add input subsystem filter for udev monitor");
+        bb_log(BB_LOG_LEVEL_WARNING, "Could not add input subsystem filter for udev monitor");
     }
 
     /* Start monitor */
     if (udev_monitor_enable_receiving(monitor) < 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not enable udev monitor");
+        bb_log(BB_LOG_LEVEL_WARNING, "Could not enable udev monitor");
         ul_indev_stop_monitor();
         return;
     }
 
     /* Obtain monitor file descriptor */
     if ((monitor_fd = udev_monitor_get_fd(monitor)) < 0) {
-        ul_log(UL_LOG_LEVEL_WARNING, "Could not acquire file descriptor for udev monitor");
+        bb_log(BB_LOG_LEVEL_WARNING, "Could not acquire file descriptor for udev monitor");
         ul_indev_stop_monitor();
         return;
     }
@@ -501,7 +500,7 @@ void ul_indev_stop_monitor() {
 void ul_indev_query_monitor() {
     /* Make sure the monitor is running */
     if (!monitor) {
-        ul_log(UL_LOG_LEVEL_ERROR, "Cannot query udev monitor because it is not running");
+        bb_log(BB_LOG_LEVEL_ERROR, "Cannot query udev monitor because it is not running");
         return;
     }
 

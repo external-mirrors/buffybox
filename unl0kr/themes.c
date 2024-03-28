@@ -6,6 +6,8 @@
 
 #include "themes.h"
 
+#include "../shared/log.h"
+
 #include <string.h>
 
 
@@ -657,10 +659,10 @@ const ul_theme *ul_themes_themes[] = {
 ul_themes_theme_id_t ul_themes_find_theme_with_name(const char *name) {
     for (int i = 0; i < ul_themes_num_themes; ++i) {
         if (strcmp(ul_themes_themes[i]->name, name) == 0) {
-            ul_log(UL_LOG_LEVEL_VERBOSE, "Found theme: %s\n", name);
+            bb_log(BB_LOG_LEVEL_VERBOSE, "Found theme: %s\n", name);
             return i;
         }
     }
-    ul_log(UL_LOG_LEVEL_WARNING, "Theme %s not found\n", name);
+    bb_log(BB_LOG_LEVEL_WARNING, "Theme %s not found\n", name);
     return UL_THEMES_THEME_NONE;
 }

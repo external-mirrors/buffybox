@@ -6,9 +6,10 @@
 
 #include "theme.h"
 
-#include "log.h"
 #include "sq2lv_layouts.h"
 #include "unl0kr.h"
+
+#include "../shared/log.h"
 
 #include "lvgl/lvgl.h"
 
@@ -372,7 +373,7 @@ void ul_theme_prepare_keyboard(lv_obj_t *keyboard) {
 
 void ul_theme_apply(const ul_theme *theme) {
     if (!theme) {
-        ul_log(UL_LOG_LEVEL_ERROR, "Could not apply theme from NULL pointer");
+        bb_log(BB_LOG_LEVEL_ERROR, "Could not apply theme from NULL pointer");
         return;
     }
 
