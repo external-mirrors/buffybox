@@ -15,8 +15,13 @@ if ! grep "## $1" CHANGELOG.md > /dev/null; then
     exit 1
 fi
 
-if ! grep -E "^\s*version:\s*'$1'" meson.build > /dev/null; then
-    echo "Error: Version $1 differs from version in meson.build"
+if ! grep -E "^\s*version:\s*'$1'" buffyboard/meson.build > /dev/null; then
+    echo "Error: Version $1 differs from version in buffyboard/meson.build"
+    exit 1
+fi
+
+if ! grep -E "^\s*version:\s*'$1'" unl0kr/meson.build > /dev/null; then
+    echo "Error: Version $1 differs from version in unl0kr/meson.build"
     exit 1
 fi
 

@@ -4,10 +4,11 @@
  */
 
 
-#include "cursor.h"
 #include "indev.h"
 
-#include "../lvgl/lvgl.h"
+#include "../shared/cursor/cursor.h"
+
+#include "lvgl/lvgl.h"
 
 #include <limits.h>
 
