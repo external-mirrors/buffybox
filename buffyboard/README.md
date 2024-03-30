@@ -22,8 +22,36 @@ Here are a few highlights of what already works:
 - Key chords with one or more modifiers terminated by a single non-modifier (e.g. `CTRL-c`)
 - Highlighting of active modifiers
 - Automatic resizing (and later reset) of active VT to prevent overlap with keyboard
+- Theming support
 
-For a growing collection of demo videos, see the [wiki].
+# Usage
+
+You can get an overview of available command line options by running it with the `-h` or `--help` argument.
+
+```
+$ buffyboard --help
+Usage: buffyboard [OPTION]
+
+Mandatory arguments to long options are mandatory for short options too.
+  -C, --config-override  Path to a config override file. Can be supplied
+                         multiple times. Config files are merged in the
+                         following order:
+                         * /etc/buffyboard.conf
+                         * /etc/buffyboard.conf.d/* (alphabetically)
+                         * Override files (in supplied order)
+  -r, --rotate=[0-3]     Rotate the UI to the given orientation. The
+                         values match the ones provided by the kernel in
+                         /sys/class/graphics/fbcon/rotate.
+                         * 0 - normal orientation (0 degree)
+                         * 1 - clockwise orientation (90 degrees)
+                         * 2 - upside down orientation (180 degrees)
+                         * 3 - counterclockwise orientation (270 degrees)
+  -h, --help             Print this message and exit
+  -V, --version          Print the buffyboard version and exit
+
+```
+
+For an example configuration file, see [buffyboard.conf].
 
 # Development
 
@@ -119,6 +147,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [LVGL]: https://lvgl.io
 [OpenSans]: https://fonts.google.com/specimen/Open+Sans
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
+[buffyboard.conf]: ./buffyboard.conf
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
 [inih]: https://github.com/benhoyt/inih
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
@@ -132,4 +161,3 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master
 [v1 milestone]: https://gitlab.com/cherrypicker/buffyboard/-/milestones/1
-[wiki]: https://gitlab.com/cherrypicker/buffyboard/-/wikis/home
