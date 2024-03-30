@@ -17,6 +17,16 @@ typedef struct {
     int num_config_files;
     /* Paths of config file */
     const char **config_files;
+    /* Horizontal display resolution */
+    int hor_res;
+    /* Vertical display resolution */
+    int ver_res;
+    /* Horizontal display offset */
+    int x_offset;
+    /* Vertical display offset */
+    int y_offset;
+    /* DPI */
+    int dpi;
     /* Display rotation */
     lv_display_rotation_t rotation;
 } bb_cli_opts;

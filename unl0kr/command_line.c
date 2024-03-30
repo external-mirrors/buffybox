@@ -39,11 +39,11 @@ static void print_usage();
 static void init_opts(ul_cli_opts *opts) {
     opts->num_config_files = 0;
     opts->config_files = NULL;
-
     opts->hor_res = -1;
     opts->ver_res = -1;
     opts->x_offset = 0;
     opts->y_offset = 0;
+    opts->dpi = 0;
     opts->verbose = false;
 }
 

@@ -10,9 +10,11 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-- feat(buffyboard): Add fbdev force-refresh quirk via config
-- feat(buffyboard): Allow choosing theme via config and add all themes from unl0kr
 - feat(buffyboard): Handle input device connection/disconnection at runtime; adds new dependency libudev
+- feat(buffyboard): Allow choosing theme via config and add all themes from unl0kr
+- feat(buffyboard): Add fbdev force-refresh quirk via config
+- feat(buffyboard): Allow disabling input devices via config
+- feat(buffyboard): Add CLI flags for overriding geometry & DPI
 
 ## 3.0.0 (2024-03-22)
 

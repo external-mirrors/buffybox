@@ -214,6 +214,18 @@ int main(int argc, char *argv[]) {
     if (conf_opts.quirks.fbdev_force_refresh) {
         lv_linux_fbdev_set_force_refresh(disp, true);
     }
+
+    /* Override display properties with command line options if necessary */
+    lv_display_set_offset(disp, cli_opts.x_offset, cli_opts.y_offset);
+    if (cli_opts.hor_res > 0 || cli_opts.ver_res > 0) {
+        lv_display_set_physical_resolution(disp, lv_disp_get_hor_res(disp), lv_disp_get_ver_res(disp));
+        lv_display_set_resolution(disp, cli_opts.hor_res, cli_opts.ver_res);
+    }
+    if (cli_opts.dpi > 0) {
+        lv_display_set_dpi(disp, cli_opts.dpi);
+    }
+
+    /* Set up display rotation */
     int32_t hor_res_phys = lv_display_get_horizontal_resolution(disp);
     int32_t ver_res_phys = lv_display_get_vertical_resolution(disp);
     lv_display_set_physical_resolution(disp, hor_res_phys, ver_res_phys);
@@ -236,7 +248,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* Start input device monitor and auto-connect available devices */
-    bb_indev_start_monitor_and_autoconnect(false, true, true);
+    bb_indev_start_monitor_and_autoconnect(false, conf_opts.input.pointer, conf_opts.input.touchscreen);
 
     /* Initialise theme */
     bb_theme_apply(bb_themes_themes[conf_opts.theme.default_id]);

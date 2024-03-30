@@ -7,7 +7,7 @@ fb_format=rgba
 
 executable=$1
 outdir=screenshots
-config=unl0kr-screenshots.conf
+config=buffyboard-screenshots.conf
 
 themes=(
     breezy-light
@@ -41,37 +41,31 @@ fi
 
 function write_config() {
     cat << EOF > $config
-[general]
-animations=true
-
-[keyboard]
-autohide=false
-layout=de
-popovers=true
-
-[textarea]
-obscured=true
-
 [theme]
 default=$1
 
 [input]
-keyboard=true
 pointer=false
 touchscreen=false
 EOF
 }
 
-function nuke_config() {
+# Hide cursor
+echo -e '\033[?25l'
+
+function clean_up() {
     rm -f $config
+
+    # Show cursor
+    echo -e '\033[?25h'
 }
 
-trap "nuke_config" EXIT
+trap clean_up EXIT
 
 rm -rf "$outdir"
 mkdir "$outdir"
 
-readme="# Unl0kr themes"$'\n'
+readme="# Buffyboard themes"$'\n'
 
 for theme in ${themes[@]}; do
     write_config $theme
@@ -79,13 +73,21 @@ for theme in ${themes[@]}; do
     readme="$readme"$'\n'"## $theme"$'\n\n'
     
     for res in ${resolutions[@]}; do
-        CRYPTTAB_SOURCE=/dev/sda1 $executable -g $res -C $config &
+        $executable -g $res -C $config > /dev/null 2>&1 &
         pid=$!
 
         sleep 3 # Wait for UI to render
 
         cat /dev/fb0 > "$outdir/$theme-$res"
-        convert -size $fb_res -depth $fb_depth $fb_format:"$outdir/$theme-$res" -crop $res+0+0 "$outdir/$theme-$res.png"
+        convert -size $fb_res \
+            -depth $fb_depth \
+            screenshot-background.png \
+            $fb_format:"$outdir/$theme-$res" \
+            -crop $res+0+0 \
+            -gravity NorthWest \
+            -composite \
+            "$outdir/$theme-$res.png"
+
         rm "$outdir/$theme-$res"
         kill -15 $pid
 
