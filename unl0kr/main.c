@@ -78,7 +78,7 @@ static void set_theme(bool is_alternate);
  *
  * @param is_alternate true if the alternate theme should be selected, false if the default theme should be selected
  */
-static const bb_theme * get_theme(bool is_alternate);
+static const bbx_theme * get_theme(bool is_alternate);
 
 /**
  * Handle LV_EVENT_CLICKED events from the show/hide password toggle button.
@@ -220,11 +220,11 @@ static void toggle_theme(void) {
 }
 
 static void set_theme(bool is_alternate) {
-    bb_theme_apply(get_theme(is_alternate));
+    bbx_theme_apply(get_theme(is_alternate));
 }
 
-static const bb_theme * get_theme(bool is_alternate) {
-    return bb_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id];
+static const bbx_theme * get_theme(bool is_alternate) {
+    return bbx_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id];
 }
 
 static void toggle_pw_btn_clicked_cb(lv_event_t *event) {
@@ -363,11 +363,11 @@ int main(int argc, char *argv[]) {
 
     /* Set up log level */
     if (cli_opts.verbose) {
-        bb_log_set_level(BB_LOG_LEVEL_VERBOSE);
+        bbx_log_set_level(BBX_LOG_LEVEL_VERBOSE);
     }
 
     /* Announce ourselves */
-    bb_log(BB_LOG_LEVEL_VERBOSE, "unl0kr %s", UL_VERSION);
+    bbx_log(BBX_LOG_LEVEL_VERBOSE, "unl0kr %s", UL_VERSION);
 
     /* Parse config files */
     ul_config_init_opts(&conf_opts);
@@ -385,7 +385,7 @@ int main(int argc, char *argv[]) {
 
     /* Initialise LVGL and set up logging callback */
     lv_init();
-    lv_log_register_print_cb(bb_log_print_cb);
+    lv_log_register_print_cb(bbx_log_print_cb);
 
     /* Start the tick thread */
     pthread_t ticker;
@@ -410,7 +410,7 @@ int main(int argc, char *argv[]) {
         break;
 #endif /* LV_USE_LINUX_DRM */
     default:
-        bb_log(BB_LOG_LEVEL_ERROR, "Unable to find suitable backend");
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Unable to find suitable backend");
         exit(EXIT_FAILURE);
     }
 
@@ -430,13 +430,13 @@ int main(int argc, char *argv[]) {
 
     /* Prepare for routing physical keyboard input into the textarea */
     lv_group_t *keyboard_input_group = lv_group_create();
-    bb_indev_set_keyboard_input_group(keyboard_input_group);
+    bbx_indev_set_keyboard_input_group(keyboard_input_group);
 
     /* Start input device monitor and auto-connect available devices */
-    bb_indev_start_monitor_and_autoconnect(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
+    bbx_indev_start_monitor_and_autoconnect(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
 
     /* Hide the on-screen keyboard by default if a physical keyboard is connected */
-    if (conf_opts.keyboard.autohide && bb_indev_is_keyboard_connected()) {
+    if (conf_opts.keyboard.autohide && bbx_indev_is_keyboard_connected()) {
         is_keyboard_hidden = true;
     }
 
@@ -462,7 +462,7 @@ int main(int argc, char *argv[]) {
 
     /* Header flexbox */
     lv_obj_t *header = lv_obj_create(container);
-    lv_obj_add_flag(header, BB_WIDGET_HEADER);
+    lv_obj_add_flag(header, BBX_WIDGET_HEADER);
     lv_theme_apply(header); /* Force re-apply theme after setting flag so that the widget can be identified */
     lv_obj_set_flex_flow(header, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(header, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -561,7 +561,7 @@ int main(int argc, char *argv[]) {
     lv_obj_add_event_cb(keyboard, keyboard_ready_cb, LV_EVENT_READY, NULL);
     lv_obj_set_pos(keyboard, 0, is_keyboard_hidden ? keyboard_height : 0);
     lv_obj_set_size(keyboard, hor_res, keyboard_height);
-    bb_theme_prepare_keyboard(keyboard);
+    bbx_theme_prepare_keyboard(keyboard);
 
     /* Apply textarea options */
     set_password_obscured(conf_opts.textarea.obscured);

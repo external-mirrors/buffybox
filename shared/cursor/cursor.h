@@ -4,12 +4,12 @@
  */
 
 
-#ifndef BB_CURSOR_H
-#define BB_CURSOR_H
+#ifndef BBX_CURSOR_H
+#define BBX_CURSOR_H
 
 #include "lvgl/lvgl.h"
 
 /* Image description of the mouse cursor */
-extern const lv_img_dsc_t bb_cursor_img_dsc;
+extern const lv_img_dsc_t bbx_cursor_img_dsc;
 
-#endif /* BB_CURSOR_H */
+#endif /* BBX_CURSOR_H */

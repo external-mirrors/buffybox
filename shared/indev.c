@@ -169,7 +169,7 @@ static void connect_udev_device(struct udev_device *device) {
     /* Obtain and verify device node */
     const char *node = udev_device_get_devnode(device);
     if (!node || strncmp(node, INPUT_DEVICE_NODE_PREFIX, strlen(INPUT_DEVICE_NODE_PREFIX)) != 0) {
-        bb_log(BB_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
+        bbx_log(BBX_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
         return;
     }
 
@@ -181,7 +181,7 @@ static void connect_devnode(const char *node) {
     /* Check if the device is already connected */
     for (int i = 0; i < num_connected_devices; ++i) {
         if (strcmp(devices[i]->node, node) == 0) {
-            bb_log(BB_LOG_LEVEL_WARNING, "Ignoring already connected input device %s", node);
+            bbx_log(BBX_LOG_LEVEL_WARNING, "Ignoring already connected input device %s", node);
             return;
         }
     }
@@ -191,7 +191,7 @@ static void connect_devnode(const char *node) {
         /* Re-allocate array */
         struct input_device **tmp = realloc(devices, (2 * num_devices + 1) * sizeof(struct input_device *));
         if (!tmp) {
-            bb_log(BB_LOG_LEVEL_ERROR, "Could not reallocate memory for input device array");
+            bbx_log(BBX_LOG_LEVEL_ERROR, "Could not reallocate memory for input device array");
             return;
         }
         devices = tmp;
@@ -214,14 +214,14 @@ static void connect_devnode(const char *node) {
     /* Initialise the indev and obtain the libinput device */
     device->indev = lv_libinput_create(LV_INDEV_TYPE_NONE, device->node);
     if (!device->indev) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
         disconnect_idx(num_connected_devices);
         return;
     }
     lv_libinput_t *dsc = lv_indev_get_driver_data(device->indev);
     struct libinput_device *device_libinput = dsc->libinput_device;
     if (!device_libinput) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Aborting connection of input device %s because libinput failed to connect it", node);
         disconnect_idx(num_connected_devices);
         return;
     }
@@ -231,7 +231,7 @@ static void connect_devnode(const char *node) {
 
     /* If the device doesn't have any supported capabilities, exit */
     if ((device->capability & allowed_capability) == LV_LIBINPUT_CAPABILITY_NONE)  {
-        bb_log(BB_LOG_LEVEL_WARNING, "Aborting connection of input device %s because it has no allowed capabilities", node);
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Aborting connection of input device %s because it has no allowed capabilities", node);
         disconnect_idx(num_connected_devices);
         return;
     }
@@ -269,14 +269,14 @@ static void connect_devnode(const char *node) {
     /* Increment connected device count */
     num_connected_devices++;
 
-    bb_log(BB_LOG_LEVEL_VERBOSE, "Connected input device %s (%s)", node, capability_to_str(device->capability));
+    bbx_log(BBX_LOG_LEVEL_VERBOSE, "Connected input device %s (%s)", node, capability_to_str(device->capability));
 }
 
 static void disconnect_udev_device(struct udev_device *device) {
     /* Obtain and verify device node */
     const char *node = udev_device_get_devnode(device);
     if (!node || strncmp(node, INPUT_DEVICE_NODE_PREFIX, strlen(INPUT_DEVICE_NODE_PREFIX)) != 0) {
-        bb_log(BB_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
+        bbx_log(BBX_LOG_LEVEL_VERBOSE, "Ignoring unsupported input device %s", udev_device_get_syspath(device));
         return;
     }
 
@@ -296,7 +296,7 @@ static void disconnect_devnode(const char *node) {
 
     /* If no matching device was found, exit */
     if (idx < 0) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Ignoring already disconnected input device %s", node);
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Ignoring already disconnected input device %s", node);
         return;
     }
 
@@ -316,7 +316,7 @@ static void disconnect_devnode(const char *node) {
     /* Decrement connected device count */
     --num_connected_devices;
 
-    bb_log(BB_LOG_LEVEL_VERBOSE, "Disconnected input device %s", node);
+    bbx_log(BBX_LOG_LEVEL_VERBOSE, "Disconnected input device %s", node);
 }
 
 static void disconnect_idx(int idx) {
@@ -354,7 +354,7 @@ static void set_mouse_cursor(struct input_device *device) {
     /* Initialise cursor image if needed */
     if (!cursor_obj) {
         cursor_obj = lv_img_create(lv_scr_act());
-        lv_img_set_src(cursor_obj, &bb_cursor_img_dsc);
+        lv_img_set_src(cursor_obj, &bbx_cursor_img_dsc);
     }
 
     /* Apply the cursor image */
@@ -363,7 +363,7 @@ static void set_mouse_cursor(struct input_device *device) {
 
 static void query_device_monitor(lv_timer_t *timer) {
     LV_UNUSED(timer);
-    bb_indev_query_monitor();
+    bbx_indev_query_monitor();
 }
 
 
@@ -371,7 +371,7 @@ static void query_device_monitor(lv_timer_t *timer) {
  * Public functions
  */
 
-void bb_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen) {
+void bbx_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen) {
     allowed_capability = LV_LIBINPUT_CAPABILITY_NONE;
     if (keyboard) {
         allowed_capability |= LV_LIBINPUT_CAPABILITY_KEYBOARD;
@@ -384,7 +384,7 @@ void bb_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool to
     }
 }
 
-void bb_indev_set_keyboard_input_group(lv_group_t *group) {
+void bbx_indev_set_keyboard_input_group(lv_group_t *group) {
     /* Store the group */
     keyboard_input_group = group;
 
@@ -396,21 +396,21 @@ void bb_indev_set_keyboard_input_group(lv_group_t *group) {
     }
 }
 
-void bb_indev_start_monitor_and_autoconnect(bool keyboard, bool pointer, bool touchscreen) {
-    bb_indev_set_allowed_device_capability(keyboard, pointer, touchscreen);
-    bb_indev_start_monitor();
+void bbx_indev_start_monitor_and_autoconnect(bool keyboard, bool pointer, bool touchscreen) {
+    bbx_indev_set_allowed_device_capability(keyboard, pointer, touchscreen);
+    bbx_indev_start_monitor();
     lv_timer_create(query_device_monitor, 1000, NULL);
-    bb_indev_auto_connect();
+    bbx_indev_auto_connect();
 }
 
-void bb_indev_auto_connect() {
-    bb_log(BB_LOG_LEVEL_VERBOSE, "Auto-connecting supported input devices");
+void bbx_indev_auto_connect() {
+    bbx_log(BBX_LOG_LEVEL_VERBOSE, "Auto-connecting supported input devices");
 
     /* Make sure udev context is initialised */
     if (!context) {
         context = udev_new();
         if (!context) {
-            bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev context");
+            bbx_log(BBX_LOG_LEVEL_WARNING, "Could not create udev context");
             return;
         }
     }
@@ -431,7 +431,7 @@ void bb_indev_auto_connect() {
         /* Create udev device */
         struct udev_device *device = udev_device_new_from_syspath(context, path);
         if (!device) {
-            bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev device for %s", path);
+            bbx_log(BBX_LOG_LEVEL_WARNING, "Could not create udev device for %s", path);
             continue;
         }
 
@@ -446,51 +446,51 @@ void bb_indev_auto_connect() {
     udev_enumerate_unref(enumerate);
 }
 
-void bb_indev_start_monitor() {
+void bbx_indev_start_monitor() {
     /* Make sure udev context is initialised */
     if (!context) {
         context = udev_new();
         if (!context) {
-            bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev context");
+            bbx_log(BBX_LOG_LEVEL_WARNING, "Could not create udev context");
             return;
         }
     }
 
     /* Check if monitor is already running */
     if (monitor) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Not starting udev monitor because it is already running");
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Not starting udev monitor because it is already running");
         return;
     }
 
     /* Create new monitor */
     monitor = udev_monitor_new_from_netlink(context, "udev");
     if (!monitor) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Could not create udev monitor");
-        bb_indev_stop_monitor();
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not create udev monitor");
+        bbx_indev_stop_monitor();
         return;
     }
 
     /* Apply input subsystem filter */
     if (udev_monitor_filter_add_match_subsystem_devtype(monitor, "input", NULL) < 0) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Could not add input subsystem filter for udev monitor");
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not add input subsystem filter for udev monitor");
     }
 
     /* Start monitor */
     if (udev_monitor_enable_receiving(monitor) < 0) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Could not enable udev monitor");
-        bb_indev_stop_monitor();
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not enable udev monitor");
+        bbx_indev_stop_monitor();
         return;
     }
 
     /* Obtain monitor file descriptor */
     if ((monitor_fd = udev_monitor_get_fd(monitor)) < 0) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Could not acquire file descriptor for udev monitor");
-        bb_indev_stop_monitor();
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not acquire file descriptor for udev monitor");
+        bbx_indev_stop_monitor();
         return;
     }
 }
 
-void bb_indev_stop_monitor() {
+void bbx_indev_stop_monitor() {
     /* Unreference monitor */
     if (monitor) {
         udev_monitor_unref(monitor);
@@ -509,10 +509,10 @@ void bb_indev_stop_monitor() {
     }
 }
 
-void bb_indev_query_monitor() {
+void bbx_indev_query_monitor() {
     /* Make sure the monitor is running */
     if (!monitor) {
-        bb_log(BB_LOG_LEVEL_ERROR, "Cannot query udev monitor because it is not running");
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Cannot query udev monitor because it is not running");
         return;
     }
 
@@ -547,7 +547,7 @@ void bb_indev_query_monitor() {
     }
 }
 
-bool bb_indev_is_keyboard_connected() {
+bool bbx_indev_is_keyboard_connected() {
     for (int i = 0; i < num_connected_devices; ++i) {
         if (is_keyboard_device(devices[i])) {
             return true;

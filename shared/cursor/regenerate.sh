@@ -7,7 +7,7 @@
 npm i
 
 ./node_modules/lv_img_conv/lv_img_conv.js -f \
-    -i bb_cursor_img_dsc \
+    -i bbx_cursor_img_dsc \
     -c CF_TRUE_COLOR_ALPHA \
     -o cursor.c \
     cursor.png

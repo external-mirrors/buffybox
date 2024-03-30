@@ -95,7 +95,7 @@ static void find_files(const char *path, char ***found, int *num_found) {
     /* Open directory */
     DIR *d = opendir(path);
     if (!d) {
-        bb_log(BB_LOG_LEVEL_WARNING, "Could not read contents of folder %s", path);
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not read contents of folder %s", path);
         return;
     }
 
@@ -110,7 +110,7 @@ static void find_files(const char *path, char ***found, int *num_found) {
         /* Grow output array */
         char **tmp = realloc(*found, (*num_found + 1) * sizeof(char *));
         if (!tmp) {
-            bb_log(BB_LOG_LEVEL_ERROR, "Could not reallocate memory for configuration file paths");
+            bbx_log(BBX_LOG_LEVEL_ERROR, "Could not reallocate memory for configuration file paths");
             break;
         }
         *found = tmp;
@@ -122,7 +122,7 @@ static void find_files(const char *path, char ***found, int *num_found) {
         /* Allocate memory for full path */
         char *found_path = malloc(path_length + name_length + 2); /* +1 for path separator and null terminator, respectively */
         if (!found_path) {
-            bb_log(BB_LOG_LEVEL_ERROR, "Could not allocate memory for configuration file path");
+            bbx_log(BBX_LOG_LEVEL_ERROR, "Could not allocate memory for configuration file path");
             break;
         }
 
@@ -145,8 +145,8 @@ static int parsing_handler(void* user_data, const char* section, const char* key
 
     if (strcmp(section, "theme") == 0) {
         if (strcmp(key, "default") == 0) {
-            bb_themes_theme_id_t id = bb_themes_find_theme_with_name(value);
-            if (id != BB_THEMES_THEME_NONE) {
+            bbx_themes_theme_id_t id = bbx_themes_find_theme_with_name(value);
+            if (id != BBX_THEMES_THEME_NONE) {
                 opts->theme.default_id = id;
                 return 1;
             }
@@ -169,7 +169,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
         }
     }
 
-    bb_log(BB_LOG_LEVEL_ERROR, "Ignoring invalid config value \"%s\" for key \"%s\" in section \"%s\"", value, key, section);
+    bbx_log(BBX_LOG_LEVEL_ERROR, "Ignoring invalid config value \"%s\" for key \"%s\" in section \"%s\"", value, key, section);
     return 1; /* Return 1 (true) so that we can use the return value of ini_parse exclusively for file-level errors (e.g. file not found) */
 }
 
@@ -193,7 +193,7 @@ static bool parse_bool(const char *value, bool *result) {
  */
 
 void bb_config_init_opts(bb_config_opts *opts) {
-    opts->theme.default_id = BB_THEMES_THEME_BREEZY_DARK;
+    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
     opts->input.pointer = true;
     opts->input.touchscreen = true;
     opts->quirks.fbdev_force_refresh = false;
@@ -223,8 +223,8 @@ void bb_config_parse_files(const char **files, int num_files, bb_config_opts *op
 }
 
 void bb_config_parse_file(const char *path, bb_config_opts *opts) {
-    bb_log(BB_LOG_LEVEL_VERBOSE, "Parsing config file %s", path);
+    bbx_log(BBX_LOG_LEVEL_VERBOSE, "Parsing config file %s", path);
     if (ini_parse(path, parsing_handler, opts) != 0) {
-        bb_log(BB_LOG_LEVEL_ERROR, "Ignoring invalid config file %s", path);
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Ignoring invalid config file %s", path);
     }
 }

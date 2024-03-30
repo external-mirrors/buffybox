@@ -55,9 +55,9 @@ typedef struct {
  */
 typedef struct {
     /* Default theme */
-    bb_themes_theme_id_t default_id;
+    bbx_themes_theme_id_t default_id;
     /* Alternate theme */
-    bb_themes_theme_id_t alternate_id;
+    bbx_themes_theme_id_t alternate_id;
 } ul_config_opts_theme;
 
 /**

@@ -16,7 +16,7 @@
  */
 typedef struct {
     /* Default theme */
-    bb_themes_theme_id_t default_id;
+    bbx_themes_theme_id_t default_id;
 } bb_config_opts_theme;
 
 /**

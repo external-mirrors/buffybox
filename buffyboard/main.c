@@ -248,10 +248,10 @@ int main(int argc, char *argv[]) {
     }
 
     /* Start input device monitor and auto-connect available devices */
-    bb_indev_start_monitor_and_autoconnect(false, conf_opts.input.pointer, conf_opts.input.touchscreen);
+    bbx_indev_start_monitor_and_autoconnect(false, conf_opts.input.pointer, conf_opts.input.touchscreen);
 
     /* Initialise theme */
-    bb_theme_apply(bb_themes_themes[conf_opts.theme.default_id]);
+    bbx_theme_apply(bbx_themes_themes[conf_opts.theme.default_id]);
 
     /* Add keyboard */
     keyboard = lv_keyboard_create(lv_scr_act());
@@ -265,7 +265,7 @@ int main(int argc, char *argv[]) {
     lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_set_pos(keyboard, 0, 0);
     lv_obj_set_size(keyboard, LV_HOR_RES, LV_VER_RES);
-    bb_theme_prepare_keyboard(keyboard);
+    bbx_theme_prepare_keyboard(keyboard);
 
     /* Apply default keyboard layout */
     sq2lv_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);

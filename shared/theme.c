@@ -16,7 +16,7 @@
  * Static variables
  */
 
-static bb_theme current_theme;
+static bbx_theme current_theme;
 static lv_theme_t lv_theme;
 
 static struct {
@@ -55,7 +55,7 @@ static bool are_styles_initialised = false;
  *
  * @param theme theme to derive the styles from
  */
-static void init_styles(const bb_theme *theme);
+static void init_styles(const bbx_theme *theme);
 
 /**
  * Initialise or reset a style.
@@ -84,9 +84,9 @@ static void keyboard_draw_task_added_cb(lv_event_t *event);
  * Static functions
  */
 
-static void init_styles(const bb_theme *theme) {
+static void init_styles(const bbx_theme *theme) {
     reset_style(&(styles.widget));
-    lv_style_set_text_font(&(styles.widget), &bb_font_32);
+    lv_style_set_text_font(&(styles.widget), &bbx_font_32);
 
     reset_style(&(styles.window));
     lv_style_set_bg_opa(&(styles.window), LV_OPA_COVER);
@@ -236,7 +236,7 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return;
     }
 
-    if (lv_obj_has_flag(obj, BB_WIDGET_HEADER)) {
+    if (lv_obj_has_flag(obj, BBX_WIDGET_HEADER)) {
         lv_obj_add_style(obj, &(styles.header), 0);
         return;
     }
@@ -329,7 +329,7 @@ static void keyboard_draw_task_added_cb(lv_event_t *event) {
         return;
     }
 
-    bb_theme_key *key = NULL;
+    bbx_theme_key *key = NULL;
 
     if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
         key = &(current_theme.keyboard.keys.key_mod_inact);
@@ -364,21 +364,21 @@ static void keyboard_draw_task_added_cb(lv_event_t *event) {
  * Public functions
  */
 
-void bb_theme_prepare_keyboard(lv_obj_t *keyboard) {
+void bbx_theme_prepare_keyboard(lv_obj_t *keyboard) {
     lv_obj_add_event_cb(keyboard, keyboard_draw_task_added_cb, LV_EVENT_DRAW_TASK_ADDED, NULL);
     lv_obj_add_flag(keyboard, LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS);
 }
 
-void bb_theme_apply(const bb_theme *theme) {
+void bbx_theme_apply(const bbx_theme *theme) {
     if (!theme) {
-        bb_log(BB_LOG_LEVEL_ERROR, "Could not apply theme from NULL pointer");
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Could not apply theme from NULL pointer");
         return;
     }
 
     lv_theme.disp = NULL;
-    lv_theme.font_small = &bb_font_32;
-    lv_theme.font_normal = &bb_font_32;
-    lv_theme.font_large = &bb_font_32;
+    lv_theme.font_small = &bbx_font_32;
+    lv_theme.font_normal = &bbx_font_32;
+    lv_theme.font_large = &bbx_font_32;
     lv_theme.apply_cb = apply_theme_cb;
 
     current_theme = *theme;

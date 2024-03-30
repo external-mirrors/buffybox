@@ -4,30 +4,30 @@
  */
 
 
-#ifndef BB_THEMES_H
-#define BB_THEMES_H
+#ifndef BBX_THEMES_H
+#define BBX_THEMES_H
 
 #include "theme.h"
 
-/* Theme IDs, values can be used as indexes into the bb_themes_themes array */
+/* Theme IDs, values can be used as indexes into the bbx_themes_themes array */
 typedef enum {
-    BB_THEMES_THEME_NONE = -1,
-    BB_THEMES_THEME_BREEZY_LIGHT = 0,
-    BB_THEMES_THEME_BREEZY_DARK = 1,
-    BB_THEMES_THEME_PMOS_LIGHT = 2,
-    BB_THEMES_THEME_PMOS_DARK = 3
-} bb_themes_theme_id_t;
+    BBX_THEMES_THEME_NONE = -1,
+    BBX_THEMES_THEME_BREEZY_LIGHT = 0,
+    BBX_THEMES_THEME_BREEZY_DARK = 1,
+    BBX_THEMES_THEME_PMOS_LIGHT = 2,
+    BBX_THEMES_THEME_PMOS_DARK = 3
+} bbx_themes_theme_id_t;
 
 /* Themes */
-extern const int bb_themes_num_themes;
-extern const bb_theme *bb_themes_themes[];
+extern const int bbx_themes_num_themes;
+extern const bbx_theme *bbx_themes_themes[];
 
 /**
  * Find the first theme with a given name.
  *
  * @param name theme name
- * @return ID of the first matching theme or BB_THEMES_THEME_NONE if no theme matched
+ * @return ID of the first matching theme or BBX_THEMES_THEME_NONE if no theme matched
  */
-bb_themes_theme_id_t bb_themes_find_theme_with_name(const char *name);
+bbx_themes_theme_id_t bbx_themes_find_theme_with_name(const char *name);
 
-#endif /* BB_THEMES_H */
+#endif /* BBX_THEMES_H */

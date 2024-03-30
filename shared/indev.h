@@ -4,8 +4,8 @@
  */
 
 
-#ifndef BB_INDEV_H
-#define BB_INDEV_H
+#ifndef BBX_INDEV_H
+#define BBX_INDEV_H
 
 #include "lvgl/lvgl.h"
 
@@ -18,14 +18,14 @@
  * @param pointer if true, allow connection of pointer devices
  * @param touchscreen if true, allow connection of touchscreen devices
  */
-void bb_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen);
+void bbx_indev_set_allowed_device_capability(bool keyboard, bool pointer, bool touchscreen);
 
 /**
  * Set the group for receiving input from keyboard devices.
  * 
  * @param group group that should receive input
  */
-void bb_indev_set_keyboard_input_group(lv_group_t *group);
+void bbx_indev_set_keyboard_input_group(lv_group_t *group);
 
 /**
  * Start the udev device monitor and auto-connect currently available devices.
@@ -34,33 +34,33 @@ void bb_indev_set_keyboard_input_group(lv_group_t *group);
  * @param pointer if true, allow connection of pointer devices
  * @param touchscreen if true, allow connection of touchscreen devices
  */
-void bb_indev_start_monitor_and_autoconnect(bool keyboard, bool pointer, bool touchscreen);
+void bbx_indev_start_monitor_and_autoconnect(bool keyboard, bool pointer, bool touchscreen);
 
 /**
  * Auto-connect currently available keyboard, pointer and touchscreen input devices.
  */
-void bb_indev_auto_connect();
+void bbx_indev_auto_connect();
 
 /**
  * Start the udev device monitor.
  */
-void bb_indev_start_monitor();
+void bbx_indev_start_monitor();
 
 /**
  * Stop the udev device monitor.
  */
-void bb_indev_stop_monitor();
+void bbx_indev_stop_monitor();
 
 /**
  * Query the udev device monitor and (dis)connect added or removed devices
  */
-void bb_indev_query_monitor();
+void bbx_indev_query_monitor();
 
 /**
  * Check if any keyboard devices are connected.
  *
  * @return true if at least one keyboard device is connected, false otherwise
  */
-bool bb_indev_is_keyboard_connected();
+bool bbx_indev_is_keyboard_connected();
 
-#endif /* BB_INDEV_H */
+#endif /* BBX_INDEV_H */

@@ -16,7 +16,7 @@
  */
 
 /* Breezy light (based on KDE Breeze color palette, see https://develop.kde.org/hig/style/color/default/) */
-static const bb_theme breezy_light = {
+static const bbx_theme breezy_light = {
     .name = "breezy-light",
     .window = {
         .bg_color = 0xeff0f1
@@ -174,7 +174,7 @@ static const bb_theme breezy_light = {
 
 
 /* Breezy dark (based on KDE Breeze Dark color palette, see https://develop.kde.org/hig/style/color/dark/) */
-static const bb_theme breezy_dark = {
+static const bbx_theme breezy_dark = {
     .name = "breezy-dark",
     .window = {
         .bg_color = 0x31363b
@@ -331,7 +331,7 @@ static const bb_theme breezy_dark = {
 };
 
 /* pmOS light (based on palette https://coolors.co/009900-395e66-db504a-e3b505-ebf5ee) */
-static const bb_theme pmos_light = {
+static const bbx_theme pmos_light = {
     .name = "pmos-light",
     .window = {
         .bg_color = 0xf2f7f8,
@@ -488,7 +488,7 @@ static const bb_theme pmos_light = {
 };
 
 /* pmOS dark (based on palette https://coolors.co/009900-395e66-db504a-e3b505-ebf5ee) */
-static const bb_theme pmos_dark = {
+static const bbx_theme pmos_dark = {
     .name = "pmos-dark",
     .window = {
         .bg_color = 0x070c0d
@@ -648,21 +648,21 @@ static const bb_theme pmos_dark = {
  * Public interface
  */
 
-const int bb_themes_num_themes = 4;
-const bb_theme *bb_themes_themes[] = {
+const int bbx_themes_num_themes = 4;
+const bbx_theme *bbx_themes_themes[] = {
     &breezy_light,
     &breezy_dark,
     &pmos_light,
     &pmos_dark
 };
 
-bb_themes_theme_id_t bb_themes_find_theme_with_name(const char *name) {
-    for (int i = 0; i < bb_themes_num_themes; ++i) {
-        if (strcmp(bb_themes_themes[i]->name, name) == 0) {
-            bb_log(BB_LOG_LEVEL_VERBOSE, "Found theme: %s\n", name);
+bbx_themes_theme_id_t bbx_themes_find_theme_with_name(const char *name) {
+    for (int i = 0; i < bbx_themes_num_themes; ++i) {
+        if (strcmp(bbx_themes_themes[i]->name, name) == 0) {
+            bbx_log(BBX_LOG_LEVEL_VERBOSE, "Found theme: %s\n", name);
             return i;
         }
     }
-    bb_log(BB_LOG_LEVEL_WARNING, "Theme %s not found\n", name);
-    return BB_THEMES_THEME_NONE;
+    bbx_log(BBX_LOG_LEVEL_WARNING, "Theme %s not found\n", name);
+    return BBX_THEMES_THEME_NONE;
 }

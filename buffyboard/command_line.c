@@ -100,7 +100,7 @@ void bb_cli_parse_opts(int argc, char *argv[], bb_cli_opts *opts) {
         case 'C':
             opts->config_files = realloc(opts->config_files, (opts->num_config_files + 1) * sizeof(char *));
             if (!opts->config_files) {
-                bb_log(BB_LOG_LEVEL_ERROR, "Could not allocate memory for config file paths");
+                bbx_log(BBX_LOG_LEVEL_ERROR, "Could not allocate memory for config file paths");
                 exit(EXIT_FAILURE);
             }
             opts->config_files[opts->num_config_files] = optarg;
@@ -109,14 +109,14 @@ void bb_cli_parse_opts(int argc, char *argv[], bb_cli_opts *opts) {
         case 'g':
             if (sscanf(optarg, "%ix%i@%i,%i", &(opts->hor_res), &(opts->ver_res), &(opts->x_offset), &(opts->y_offset)) != 4) {
                 if (sscanf(optarg, "%ix%i", &(opts->hor_res), &(opts->ver_res)) != 2) {
-                    bb_log(BB_LOG_LEVEL_ERROR, "Invalid geometry argument \"%s\"\n", optarg);
+                    bbx_log(BBX_LOG_LEVEL_ERROR, "Invalid geometry argument \"%s\"\n", optarg);
                     exit(EXIT_FAILURE);
                 }
             }
             break;
         case 'd':
             if (sscanf(optarg, "%i", &(opts->dpi)) != 1) {
-                bb_log(BB_LOG_LEVEL_ERROR, "Invalid dpi argument \"%s\"\n", optarg);
+                bbx_log(BBX_LOG_LEVEL_ERROR, "Invalid dpi argument \"%s\"\n", optarg);
                 exit(EXIT_FAILURE);
             }
             break;

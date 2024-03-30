@@ -15,18 +15,18 @@
  * Static variables
  */
 
-static bb_log_level log_level = BB_LOG_LEVEL_ERROR;
+static bbx_log_level log_level = BBX_LOG_LEVEL_ERROR;
 
 
 /**
  * Public functions
  */
 
-void bb_log_set_level(bb_log_level level) {
+void bbx_log_set_level(bbx_log_level level) {
     log_level = level;
 }
 
-void bb_log(bb_log_level level, const char *format, ...) {
+void bbx_log(bbx_log_level level, const char *format, ...) {
     if (level > log_level) {
         return;
     }
@@ -42,7 +42,7 @@ void bb_log(bb_log_level level, const char *format, ...) {
     }
 }
 
-void bb_log_print_cb(lv_log_level_t level, const char *msg) {
+void bbx_log_print_cb(lv_log_level_t level, const char *msg) {
     LV_UNUSED(level);
-    bb_log(BB_LOG_LEVEL_VERBOSE, msg);
+    bbx_log(BBX_LOG_LEVEL_VERBOSE, msg);
 }

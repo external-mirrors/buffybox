@@ -17,11 +17,11 @@
 #define LV_ATTRIBUTE_MEM_ALIGN
 #endif
 
-#ifndef LV_ATTRIBUTE_IMG_BB_CURSOR_IMG_DSC
-#define LV_ATTRIBUTE_IMG_BB_CURSOR_IMG_DSC
+#ifndef LV_ATTRIBUTE_IMG_BBX_CURSOR_IMG_DSC
+#define LV_ATTRIBUTE_IMG_BBX_CURSOR_IMG_DSC
 #endif
 
-const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_BB_CURSOR_IMG_DSC uint8_t bb_cursor_img_dsc_map[] = {
+const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_BBX_CURSOR_IMG_DSC uint8_t bbx_cursor_img_dsc_map[] = {
 #if LV_COLOR_DEPTH == 1 || LV_COLOR_DEPTH == 8
   /*Pixel format: Alpha 8 bit, Red: 3 bit, Green: 3 bit, Blue: 2 bit*/
   0xff, 0xf7, 0xff, 0x51, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -107,9 +107,9 @@ const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_BB_CURSOR
 #endif
 };
 
-const lv_img_dsc_t bb_cursor_img_dsc = {
+const lv_img_dsc_t bbx_cursor_img_dsc = {
   .header.cf = LV_COLOR_FORMAT_NATIVE_WITH_ALPHA,
   .header.w = 12,
   .header.h = 18,
-  .data = bb_cursor_img_dsc_map,
+  .data = bbx_cursor_img_dsc_map,
 };

@@ -28,10 +28,10 @@ const char *ul_backends_backends[] = {
 ul_backends_backend_id_t ul_backends_find_backend_with_name(const char *name) {
     for (int i = 0; ul_backends_backends[i] != NULL; ++i) {
         if (strcmp(ul_backends_backends[i], name) == 0) {
-            bb_log(BB_LOG_LEVEL_VERBOSE, "Found backend: %s\n", name);
+            bbx_log(BBX_LOG_LEVEL_VERBOSE, "Found backend: %s\n", name);
             return i;
         }
     }
-    bb_log(BB_LOG_LEVEL_WARNING, "Backend %s not found\n", name);
+    bbx_log(BBX_LOG_LEVEL_WARNING, "Backend %s not found\n", name);
     return UL_BACKENDS_BACKEND_NONE;
 }
