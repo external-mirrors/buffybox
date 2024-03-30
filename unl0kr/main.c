@@ -9,11 +9,11 @@
 #include "config.h"
 #include "unl0kr.h"
 #include "terminal.h"
-#include "theme.h"
-#include "themes.h"
 
 #include "../shared/indev.h"
 #include "../shared/log.h"
+#include "../shared/theme.h"
+#include "../shared/themes.h"
 #include "../squeek2lvgl/sq2lv.h"
 
 #include "lvgl/lvgl.h"
@@ -220,11 +220,11 @@ static void toggle_theme(void) {
 }
 
 static void set_theme(bool is_alternate) {
-    ul_theme_apply(get_theme(is_alternate));
+    bb_theme_apply(get_theme(is_alternate));
 }
 
 static const ul_theme * get_theme(bool is_alternate) {
-    return ul_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id];
+    return bb_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id];
 }
 
 static void toggle_pw_btn_clicked_cb(lv_event_t *event) {
@@ -462,7 +462,7 @@ int main(int argc, char *argv[]) {
 
     /* Header flexbox */
     lv_obj_t *header = lv_obj_create(container);
-    lv_obj_add_flag(header, UL_WIDGET_HEADER);
+    lv_obj_add_flag(header, BB_WIDGET_HEADER);
     lv_theme_apply(header); /* Force re-apply theme after setting flag so that the widget can be identified */
     lv_obj_set_flex_flow(header, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(header, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -561,7 +561,7 @@ int main(int argc, char *argv[]) {
     lv_obj_add_event_cb(keyboard, keyboard_ready_cb, LV_EVENT_READY, NULL);
     lv_obj_set_pos(keyboard, 0, is_keyboard_hidden ? keyboard_height : 0);
     lv_obj_set_size(keyboard, hor_res, keyboard_height);
-    ul_theme_prepare_keyboard(keyboard);
+    bb_theme_prepare_keyboard(keyboard);
 
     /* Apply textarea options */
     set_password_obscured(conf_opts.textarea.obscured);

@@ -13,11 +13,4 @@
 #define BB_VERSION "?" /* Just to silence IDE warning. Real version injected by meson during build. */
 #endif
 
-
-/**
- * Fonts
- */
-
-LV_FONT_DECLARE(font_32);
-
 #endif /* BB_BUFFYBOARD_H */

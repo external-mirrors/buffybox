@@ -14,6 +14,7 @@ add_project_arguments('-DBB_VERSION="@0@"'.format(meson.project_version()), lang
 
 buffyboard_sources = [
   'command_line.c',
+  'config.c',
   'font_32.c',
   'main.c',
   'sq2lv_layouts.c',
@@ -25,6 +26,8 @@ shared_sources = [
   '../shared/cursor/cursor.c',
   '../shared/indev.c',
   '../shared/log.c',
+  '../shared/theme.c',
+  '../shared/themes.c',
 ]
 
 squeek2lvgl_sources = [
@@ -38,6 +41,7 @@ executable(
   sources: buffyboard_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
   include_directories: ['..'],
   dependencies: [
+    dependency('inih'),
     dependency('libinput'),
     dependency('libudev'),
     meson.get_compiler('c').find_library('m', required: false),

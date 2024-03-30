@@ -9,7 +9,7 @@
 
 #include "backends.h"
 
-#include "themes.h"
+#include "../shared/themes.h"
 
 #include "sq2lv_layouts.h"
 
@@ -55,9 +55,9 @@ typedef struct {
  */
 typedef struct {
     /* Default theme */
-    ul_themes_theme_id_t default_id;
+    bb_themes_theme_id_t default_id;
     /* Alternate theme */
-    ul_themes_theme_id_t alternate_id;
+    bb_themes_theme_id_t alternate_id;
 } ul_config_opts_theme;
 
 /**

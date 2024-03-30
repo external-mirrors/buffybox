@@ -22,13 +22,41 @@ Here are a few highlights of what already works:
 - Key chords with one or more modifiers terminated by a single non-modifier (e.g. `CTRL-c`)
 - Highlighting of active modifiers
 - Automatic resizing (and later reset) of active VT to prevent overlap with keyboard
+- Theming support
 
-For a growing collection of demo videos, see the [wiki].
+# Usage
+
+You can get an overview of available command line options by running it with the `-h` or `--help` argument.
+
+```
+$ buffyboard --help
+Usage: buffyboard [OPTION]
+
+Mandatory arguments to long options are mandatory for short options too.
+  -C, --config-override  Path to a config override file. Can be supplied
+                         multiple times. Config files are merged in the
+                         following order:
+                         * /etc/buffyboard.conf
+                         * /etc/buffyboard.conf.d/* (alphabetically)
+                         * Override files (in supplied order)
+  -r, --rotate=[0-3]     Rotate the UI to the given orientation. The
+                         values match the ones provided by the kernel in
+                         /sys/class/graphics/fbcon/rotate.
+                         * 0 - normal orientation (0 degree)
+                         * 1 - clockwise orientation (90 degrees)
+                         * 2 - upside down orientation (180 degrees)
+                         * 3 - counterclockwise orientation (270 degrees)
+  -h, --help             Print this message and exit
+  -V, --version          Print the buffyboard version and exit
+```
+
+For an example configuration file, see [buffyboard.conf].
 
 # Development
 
 ## Dependencies
 
+- [inih]
 - [lvgl] (git submodule / linked statically)
 - [squeek2lvgl] (git submodule / linked statically)
 - [libinput]
@@ -65,18 +93,7 @@ With meson <0.55 use `ninja` instead of `meson compile`.
 In order to work with [LVGL], fonts need to be converted to bitmaps, stored as C arrays. Buffyboard currently uses a combination of the [OpenSans] font for text and the [FontAwesome] font for pictograms. For both fonts only limited character ranges are included to reduce the binary size. To (re)generate the C file containing the combined font, run the following command
 
 ```
-$ npx lv_font_conv --bpp 4 --size 32 --no-compress -o font_32.c --format lvgl \
-    --font OpenSans-Regular.ttf \
-      --range '0x0020-0x007F' \
-      --range '0x00A0-0x00FF' \
-      --range '0x0100-0x017F' \
-      --range '0x0370-0x03FF' \
-      --range '0x2000-0x206F' \
-      --range '0x20A0-0x20CF' \
-      --range '0x2200-0x22FF' \
-    --font FontAwesome5-Solid+Brands+Regular.woff \
-      --range '0xF001,0xF008,0xF00B,0xF00C,0xF00D,0xF011,0xF013,0xF015,0xF019,0xF01C,0xF021,0xF026,0xF027,0xF028,0xF03E,0xF0E0,0xF304,0xF043,0xF048,0xF04B,0xF04C,0xF04D,0xF051,0xF052,0xF053,0xF054,0xF067,0xF068,0xF06E,0xF070,0xF071,0xF074,0xF077,0xF078,0xF079,0xF07B,0xF093,0xF095,0xF0C4,0xF0C5,0xF0C7,0xF0C9,0xF0E7,0xF0EA,0xF0F3,0xF11C,0xF124,0xF158,0xF1EB,0xF240,0xF241,0xF242,0xF243,0xF244,0xF287,0xF293,0xF2ED,0xF55A,0xF7C2,0xF8A2' \
-      --range '0xF35B'
+$ ./regenerate-fonts.sh
 ```
 
 Below is a short explanation of the different unicode ranges used above.
@@ -91,7 +108,8 @@ Below is a short explanation of the different unicode ranges used above.
   - Mathematical operators (`0x2200-0x22FF`)
 - [FontAwesome]
   - Standard `LV_SYMBOL_*` glyphs (`0xF001,0xF008,0xF00B,0xF00C,0xF00D,0xF011,0xF013,0xF015,0xF019,0xF01C,0xF021,0xF026,0xF027,0xF028,0xF03E,0xF0E0,0xF304,0xF043,0xF048,0xF04B,0xF04C,0xF04D,0xF051,0xF052,0xF053,0xF054,0xF067,0xF068,0xF06E,0xF070,0xF071,0xF074,0xF077,0xF078,0xF079,0xF07B,0xF093,0xF095,0xF0C4,0xF0C5,0xF0C7,0xF0C9,0xF0E7,0xF0EA,0xF0F3,0xF11C,0xF124,0xF158,0xF1EB,0xF240,0xF241,0xF242,0xF243,0xF244,0xF287,0xF293,0xF2ED,0xF55A,0xF7C2,0xF8A2`)
-  - [arrow-alt-circle-up] (`0xF35B`)
+  - [adjust](https://fontawesome.com/v5/icons/adjust) (`0xF042`)
+  - [arrow-alt-circle-up](https://fontawesome.com/v5/icons/arrow-alt-circle-up) (`0xF35B`)
 
 ## Keyboard layouts
 
@@ -128,7 +146,9 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [LVGL]: https://lvgl.io
 [OpenSans]: https://fonts.google.com/specimen/Open+Sans
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
+[buffyboard.conf]: ./buffyboard.conf
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
+[inih]: https://github.com/benhoyt/inih
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
 [libudev]: https://github.com/systemd/systemd/tree/main/src/libudev
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
@@ -140,4 +160,3 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master
 [v1 milestone]: https://gitlab.com/cherrypicker/buffyboard/-/milestones/1
-[wiki]: https://gitlab.com/cherrypicker/buffyboard/-/wikis/home

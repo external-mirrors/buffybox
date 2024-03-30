@@ -3,7 +3,7 @@ build-buffyboard:
   tags:
     - saas-linux-small-amd64
   script:
-    - apk -q add git build-base meson linux-headers libinput-dev eudev-dev
+    - apk -q add git build-base meson linux-headers inih-dev libinput-dev eudev-dev
     - cd buffyboard
     - git submodule init
     - git submodule update

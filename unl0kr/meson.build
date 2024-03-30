@@ -20,14 +20,14 @@ unl0kr_sources = [
   'main.c',
   'sq2lv_layouts.c',
   'terminal.c',
-  'theme.c',
-  'themes.c',
 ]
 
 shared_sources = [
   '../shared/cursor/cursor.c',
   '../shared/indev.c',
   '../shared/log.c',
+  '../shared/theme.c',
+  '../shared/themes.c',
 ]
 
 squeek2lvgl_sources = [
