@@ -3,6 +3,7 @@
  **/
 
 #include "sq2lv_layouts.h"
+#include "../squeek2lvgl/sq2lv.h"
 #include <linux/input.h>
 
 #define SQ2LV_SYMBOL_SHIFT "\xef\x8d\x9b"

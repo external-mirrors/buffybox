@@ -29,6 +29,7 @@ For a growing collection of demo videos, see the [wiki].
 
 ## Dependencies
 
+- [inih]
 - [lvgl] (git submodule / linked statically)
 - [squeek2lvgl] (git submodule / linked statically)
 - [libinput]
@@ -129,6 +130,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [OpenSans]: https://fonts.google.com/specimen/Open+Sans
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
+[inih]: https://github.com/benhoyt/inih
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
 [libudev]: https://github.com/systemd/systemd/tree/main/src/libudev
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer

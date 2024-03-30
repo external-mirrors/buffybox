@@ -4,15 +4,15 @@
  */
 
 
-#ifndef UL_THEME_H
-#define UL_THEME_H
+#ifndef BB_THEME_H
+#define BB_THEME_H
 
 #include "lvgl/lvgl.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#define UL_WIDGET_HEADER LV_OBJ_FLAG_USER_1
+#define BB_WIDGET_HEADER LV_OBJ_FLAG_USER_1
 
 /**
  * Theming structs
@@ -21,7 +21,7 @@
 /* Window theme */
 typedef struct {
     uint32_t bg_color;
-} ul_theme_window;
+} bb_theme_window;
 
 /* Header theme */
 typedef struct {
@@ -30,30 +30,30 @@ typedef struct {
     uint32_t border_color;
     lv_coord_t pad;
     lv_coord_t gap;
-} ul_theme_header;
+} bb_theme_header;
 
 /* Key theme for one specific key type and state */
 typedef struct {
     uint32_t fg_color;
     uint32_t bg_color;
     uint32_t border_color;
-} ul_theme_key_state;
+} bb_theme_key_state;
 
 /* Key theme for one specific key type and all states */
 typedef struct {
-    ul_theme_key_state normal;
-    ul_theme_key_state pressed;
-} ul_theme_key;
+    bb_theme_key_state normal;
+    bb_theme_key_state pressed;
+} bb_theme_key;
 
 /* Key theme */
 typedef struct {
     lv_coord_t border_width;
     lv_coord_t corner_radius;
-    ul_theme_key key_char;
-    ul_theme_key key_non_char;
-    ul_theme_key key_mod_act;
-    ul_theme_key key_mod_inact;
-} ul_theme_keys;
+    bb_theme_key key_char;
+    bb_theme_key key_non_char;
+    bb_theme_key key_mod_act;
+    bb_theme_key key_mod_inact;
+} bb_theme_keys;
 
 /* Keyboard theme */
 typedef struct {
@@ -62,31 +62,31 @@ typedef struct {
     uint32_t border_color;
     lv_coord_t pad;
     lv_coord_t gap;
-    ul_theme_keys keys;
-} ul_theme_keyboard;
+    bb_theme_keys keys;
+} bb_theme_keyboard;
 
 /* Button theme for one specific button state */
 typedef struct {
     uint32_t fg_color;
     uint32_t bg_color;
     uint32_t border_color;
-} ul_theme_button_state;
+} bb_theme_button_state;
 
 /* Button theme */
 typedef struct {
     lv_coord_t border_width;
     lv_coord_t corner_radius;
     lv_coord_t pad;
-    ul_theme_button_state normal;
-    ul_theme_button_state pressed;
-} ul_theme_button;
+    bb_theme_button_state normal;
+    bb_theme_button_state pressed;
+} bb_theme_button;
 
 /* Text area cursor theme */
 typedef struct {
     lv_coord_t width;
     uint32_t color;
     int period;
-} ul_theme_textarea_cursor;
+} bb_theme_textarea_cursor;
 
 /* Text area theme */
 typedef struct {
@@ -97,8 +97,8 @@ typedef struct {
     lv_coord_t corner_radius;
     lv_coord_t pad;
     uint32_t placeholder_color;
-    ul_theme_textarea_cursor cursor;
-} ul_theme_textarea;
+    bb_theme_textarea_cursor cursor;
+} bb_theme_textarea;
 
 /* Dropdown list theme */
 typedef struct {
@@ -110,29 +110,29 @@ typedef struct {
     uint32_t border_color;
     lv_coord_t corner_radius;
     lv_coord_t pad;
-} ul_theme_dropdown_list;
+} bb_theme_dropdown_list;
 
 /* Dropdown theme */
 typedef struct {
-    ul_theme_button button;
-    ul_theme_dropdown_list list;
-} ul_theme_dropdown;
+    bb_theme_button button;
+    bb_theme_dropdown_list list;
+} bb_theme_dropdown;
 
 /* Label */
 typedef struct {
     uint32_t fg_color;
-} ul_theme_label;
+} bb_theme_label;
 
 /* Message box buttons theme */
 typedef struct {
     lv_coord_t gap;
-} ul_theme_msgbox_buttons;
+} bb_theme_msgbox_buttons;
 
 /* Message box dimming theme */
 typedef struct {
     uint32_t color;
     short opacity;
-} ul_theme_msgbox_dimming;
+} bb_theme_msgbox_dimming;
 
 /* Message box theme */
 typedef struct {
@@ -143,35 +143,35 @@ typedef struct {
     lv_coord_t corner_radius;
     lv_coord_t pad;
     lv_coord_t gap;
-    ul_theme_msgbox_buttons buttons;
-    ul_theme_msgbox_dimming dimming;
-} ul_theme_msgbox;
+    bb_theme_msgbox_buttons buttons;
+    bb_theme_msgbox_dimming dimming;
+} bb_theme_msgbox;
 
 /* Progress bar indicator theme */
 typedef struct {
     uint32_t bg_color;
-} ul_theme_bar_indicator;
+} bb_theme_bar_indicator;
 
 /* Progress bar theme */
 typedef struct {
     lv_coord_t border_width;
     uint32_t border_color;
     lv_coord_t corner_radius;
-    ul_theme_bar_indicator indicator;
-} ul_theme_bar;
+    bb_theme_bar_indicator indicator;
+} bb_theme_bar;
 
 /* Full theme */
 typedef struct {
     char *name;
-    ul_theme_window window;
-    ul_theme_header header;
-    ul_theme_keyboard keyboard;
-    ul_theme_button button;
-    ul_theme_textarea textarea;
-    ul_theme_dropdown dropdown;
-    ul_theme_label label;
-    ul_theme_msgbox msgbox;
-    ul_theme_bar bar;
+    bb_theme_window window;
+    bb_theme_header header;
+    bb_theme_keyboard keyboard;
+    bb_theme_button button;
+    bb_theme_textarea textarea;
+    bb_theme_dropdown dropdown;
+    bb_theme_label label;
+    bb_theme_msgbox msgbox;
+    bb_theme_bar bar;
 } ul_theme;
 
 /**
@@ -179,13 +179,13 @@ typedef struct {
  *
  * @param keyboard keyboard widget
  */
-void ul_theme_prepare_keyboard(lv_obj_t *keyboard);
+void bb_theme_prepare_keyboard(lv_obj_t *keyboard);
 
 /**
  * Apply a UI theme.
  *
  * @param theme the theme to apply
  */
-void ul_theme_apply(const ul_theme *theme);
+void bb_theme_apply(const ul_theme *theme);
 
-#endif /* UL_THEME_H */
+#endif /* BB_THEME_H */

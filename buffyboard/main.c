@@ -6,6 +6,7 @@
 
 #include "buffyboard.h"
 #include "command_line.h"
+#include "config.h"
 #include "sq2lv_layouts.h"
 #include "terminal.h"
 #include "uinput_device.h"
@@ -13,6 +14,8 @@
 #include "lvgl/lvgl.h"
 
 #include "../shared/indev.h"
+#include "../shared/theme.h"
+#include "../shared/themes.h"
 #include "../squeek2lvgl/sq2lv.h"
 
 #include <limits.h>
@@ -29,10 +32,10 @@
  */
 
 bb_cli_opts cli_opts;
+bb_config_opts conf_opts;
 
 static bool resize_terminals = false;
 static lv_obj_t *keyboard = NULL;
-static lv_style_t style_text_normal;
 
 
 /**
@@ -62,20 +65,6 @@ static void sigaction_handler(int signum);
  * @param timer the timer object
  */
 static void terminal_resize_timer_cb(lv_timer_t *timer);
-
-/**
- * Set the UI theme.
- * 
- * @param is_dark true if the dark theme should be applied, false if the light theme should be applied
- */
-static void set_theme(bool is_dark);
-
-/**
- * Handle LV_EVENT_DRAW_TASK_ADDED events from the keyboard widget.
- *
- * @param event the event object
- */
-static void keyboard_draw_task_added_cb(lv_event_t *event);
 
 /**
  * Handle LV_EVENT_VALUE_CHANGED events from the keyboard widget.
@@ -117,48 +106,6 @@ static void sigaction_handler(int signum) {
 static void terminal_resize_timer_cb(lv_timer_t *timer) {
     if (resize_terminals) {
         bb_terminal_shrink_current();
-    }
-}
-
-static void set_theme(bool is_dark) {
-    lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_CYAN), is_dark, &font_32);
-}
-
-static void keyboard_draw_task_added_cb(lv_event_t *event) {
-    lv_obj_t *obj = lv_event_get_target(event);
-    lv_buttonmatrix_t *btnm = (lv_buttonmatrix_t *)obj;
-    lv_draw_task_t *draw_task = lv_event_get_draw_task(event);
-    lv_draw_dsc_base_t *dsc = draw_task->draw_dsc;
-
-    if (dsc->part != LV_PART_ITEMS) {
-        return;
-    }
-
-    lv_draw_fill_dsc_t *fill_dsc = lv_draw_task_get_fill_dsc(draw_task);
-    if (!fill_dsc) {
-        return;
-    }
-
-    if (lv_btnmatrix_get_selected_btn(obj) == dsc->id1 && lv_obj_has_state(obj, LV_STATE_PRESSED)) {
-        if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
-            fill_dsc->color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
-        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
-            fill_dsc->color = lv_palette_lighten(LV_PALETTE_TEAL, 1);
-        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
-            fill_dsc->color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 3);
-        } else {
-            fill_dsc->color = lv_palette_lighten(LV_PALETTE_BLUE_GREY, 1);
-        }
-    } else {
-        if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
-            fill_dsc->color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 4);
-        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_ACTIVE) == SQ2LV_CTRL_MOD_ACTIVE) {
-            fill_dsc->color = lv_palette_main(LV_PALETTE_TEAL);
-        } else if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_NON_CHAR) == SQ2LV_CTRL_NON_CHAR) {
-            fill_dsc->color = lv_palette_darken(LV_PALETTE_BLUE_GREY, 4);
-        } else {
-            fill_dsc->color = lv_palette_main(LV_PALETTE_BLUE_GREY);
-        }
     }
 }
 
@@ -233,6 +180,12 @@ int main(int argc, char *argv[]) {
     /* Parse command line options */
     bb_cli_parse_opts(argc, argv, &cli_opts);
 
+    /* Parse config files */
+    bb_config_init_opts(&conf_opts);
+    bb_config_parse_file("/etc/buffyboard.conf", &conf_opts);
+    bb_config_parse_directory("/etc/buffyboard.conf.d", &conf_opts);
+    bb_config_parse_files(cli_opts.config_files, cli_opts.num_config_files, &conf_opts);
+
     /* Prepare for terminal resizing and reset */
     resize_terminals = bb_terminal_init(2.0f / 3.0f);
     if (resize_terminals) {
@@ -258,6 +211,9 @@ int main(int argc, char *argv[]) {
     /* Initialise display */
     lv_display_t *disp = lv_linux_fbdev_create();
     lv_linux_fbdev_set_file(disp, "/dev/fb0");
+    if (conf_opts.quirks.fbdev_force_refresh) {
+        lv_linux_fbdev_set_force_refresh(disp, true);
+    }
     int32_t hor_res_phys = lv_display_get_horizontal_resolution(disp);
     int32_t ver_res_phys = lv_display_get_vertical_resolution(disp);
     lv_display_set_physical_resolution(disp, hor_res_phys, ver_res_phys);
@@ -282,23 +238,22 @@ int main(int argc, char *argv[]) {
     /* Start input device monitor and auto-connect available devices */
     bb_indev_start_monitor_and_autoconnect(false, true, true);
 
-    /* Initialise theme and styles */
-    set_theme(true);
-    lv_style_init(&style_text_normal);
-    lv_style_set_text_font(&style_text_normal, &font_32);
+    /* Initialise theme */
+    bb_theme_apply(bb_themes_themes[conf_opts.general.theme_id]);
 
     /* Add keyboard */
     keyboard = lv_keyboard_create(lv_scr_act());
-    // lv_buttonmatrix_set_popovers(keyboard, true);
+    uint32_t num_keyboard_events = lv_obj_get_event_count(keyboard);
+    for(uint32_t i = 0; i < num_keyboard_events; ++i) {
+        if(lv_event_dsc_get_cb(lv_obj_get_event_dsc(keyboard, i)) == lv_keyboard_def_event_cb) {
+            lv_obj_remove_event(keyboard, i);
+            break;
+        }
+    }
+    lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_set_pos(keyboard, 0, 0);
     lv_obj_set_size(keyboard, LV_HOR_RES, LV_VER_RES);
-    lv_obj_add_style(keyboard, &style_text_normal, 0);
-
-    /* Set up keyboard event handlers */
-    lv_obj_remove_event_cb(keyboard, lv_keyboard_def_event_cb);
-    lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(keyboard, keyboard_draw_task_added_cb, LV_EVENT_DRAW_TASK_ADDED, NULL);
-    lv_obj_add_flag(keyboard, LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS);
+    bb_theme_prepare_keyboard(keyboard);
 
     /* Apply default keyboard layout */
     sq2lv_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
@@ -306,10 +261,9 @@ int main(int argc, char *argv[]) {
     /* Start timer for periodically resizing terminals */
     lv_timer_create(terminal_resize_timer_cb, 1000,  NULL);
 
-    /* Run lvgl in "tickless" mode */
+    /* Periodically run timer / task handler */
     while(1) {
-        lv_task_handler();
-        usleep(5000);
+        lv_timer_periodic_handler();
     }
 
     return 0;

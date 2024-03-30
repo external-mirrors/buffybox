@@ -6,7 +6,7 @@
 
 #include "themes.h"
 
-#include "../shared/log.h"
+#include "log.h"
 
 #include <string.h>
 
@@ -16,7 +16,7 @@
  */
 
 /* Breezy light (based on KDE Breeze color palette, see https://develop.kde.org/hig/style/color/default/) */
-static const ul_theme ul_themes_breezy_light = {
+static const ul_theme bb_themes_breezy_light = {
     .name = "breezy-light",
     .window = {
         .bg_color = 0xeff0f1
@@ -174,7 +174,7 @@ static const ul_theme ul_themes_breezy_light = {
 
 
 /* Breezy dark (based on KDE Breeze Dark color palette, see https://develop.kde.org/hig/style/color/dark/) */
-static const ul_theme ul_themes_breezy_dark = {
+static const ul_theme bb_themes_breezy_dark = {
     .name = "breezy-dark",
     .window = {
         .bg_color = 0x31363b
@@ -331,7 +331,7 @@ static const ul_theme ul_themes_breezy_dark = {
 };
 
 /* pmOS light (based on palette https://coolors.co/009900-395e66-db504a-e3b505-ebf5ee) */
-static const ul_theme ul_themes_pmos_light = {
+static const ul_theme bb_themes_pmos_light = {
     .name = "pmos-light",
     .window = {
         .bg_color = 0xf2f7f8,
@@ -488,7 +488,7 @@ static const ul_theme ul_themes_pmos_light = {
 };
 
 /* pmOS dark (based on palette https://coolors.co/009900-395e66-db504a-e3b505-ebf5ee) */
-static const ul_theme ul_themes_pmos_dark = {
+static const ul_theme bb_themes_pmos_dark = {
     .name = "pmos-dark",
     .window = {
         .bg_color = 0x070c0d
@@ -648,21 +648,21 @@ static const ul_theme ul_themes_pmos_dark = {
  * Public interface
  */
 
-const int ul_themes_num_themes = 4;
-const ul_theme *ul_themes_themes[] = {
-    &ul_themes_breezy_light,
-    &ul_themes_breezy_dark,
-    &ul_themes_pmos_light,
-    &ul_themes_pmos_dark
+const int bb_themes_num_themes = 4;
+const ul_theme *bb_themes_themes[] = {
+    &bb_themes_breezy_light,
+    &bb_themes_breezy_dark,
+    &bb_themes_pmos_light,
+    &bb_themes_pmos_dark
 };
 
-ul_themes_theme_id_t ul_themes_find_theme_with_name(const char *name) {
-    for (int i = 0; i < ul_themes_num_themes; ++i) {
-        if (strcmp(ul_themes_themes[i]->name, name) == 0) {
+bb_themes_theme_id_t bb_themes_find_theme_with_name(const char *name) {
+    for (int i = 0; i < bb_themes_num_themes; ++i) {
+        if (strcmp(bb_themes_themes[i]->name, name) == 0) {
             bb_log(BB_LOG_LEVEL_VERBOSE, "Found theme: %s\n", name);
             return i;
         }
     }
     bb_log(BB_LOG_LEVEL_WARNING, "Theme %s not found\n", name);
-    return UL_THEMES_THEME_NONE;
+    return BB_THEMES_THEME_NONE;
 }

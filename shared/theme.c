@@ -6,10 +6,8 @@
 
 #include "theme.h"
 
-#include "sq2lv_layouts.h"
-#include "unl0kr.h"
-
-#include "../shared/log.h"
+#include "log.h"
+#include "../squeek2lvgl/sq2lv.h"
 
 #include "lvgl/lvgl.h"
 
@@ -238,7 +236,7 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return;
     }
 
-    if (lv_obj_has_flag(obj, UL_WIDGET_HEADER)) {
+    if (lv_obj_has_flag(obj, BB_WIDGET_HEADER)) {
         lv_obj_add_style(obj, &(styles.header), 0);
         return;
     }
@@ -331,7 +329,7 @@ static void keyboard_draw_task_added_cb(lv_event_t *event) {
         return;
     }
 
-    ul_theme_key *key = NULL;
+    bb_theme_key *key = NULL;
 
     if ((btnm->ctrl_bits[dsc->id1] & SQ2LV_CTRL_MOD_INACTIVE) == SQ2LV_CTRL_MOD_INACTIVE) {
         key = &(current_theme.keyboard.keys.key_mod_inact);
@@ -366,12 +364,12 @@ static void keyboard_draw_task_added_cb(lv_event_t *event) {
  * Public functions
  */
 
-void ul_theme_prepare_keyboard(lv_obj_t *keyboard) {
+void bb_theme_prepare_keyboard(lv_obj_t *keyboard) {
     lv_obj_add_event_cb(keyboard, keyboard_draw_task_added_cb, LV_EVENT_DRAW_TASK_ADDED, NULL);
     lv_obj_add_flag(keyboard, LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS);
 }
 
-void ul_theme_apply(const ul_theme *theme) {
+void bb_theme_apply(const ul_theme *theme) {
     if (!theme) {
         bb_log(BB_LOG_LEVEL_ERROR, "Could not apply theme from NULL pointer");
         return;

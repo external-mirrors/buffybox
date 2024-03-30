@@ -92,7 +92,7 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
 
     int opt, index = 0;
 
-    while ((opt = getopt_long(argc, argv, "c:C:g:d:hvV", long_opts, &index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "C:g:d:hvV", long_opts, &index)) != -1) {
         switch (opt) {
         case 'C':
             opts->config_files = realloc(opts->config_files, (opts->num_config_files + 1) * sizeof(char *));

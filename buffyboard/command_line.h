@@ -13,6 +13,10 @@
  * Options parsed from command line arguments
  */
 typedef struct {
+    /* Number of config files */
+    int num_config_files;
+    /* Paths of config file */
+    const char **config_files;
     /* Display rotation */
     lv_display_rotation_t rotation;
 } bb_cli_opts;
