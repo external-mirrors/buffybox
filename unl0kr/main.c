@@ -296,7 +296,7 @@ static void shutdown_mbox_confirmed_cb(lv_event_t *event) {
 }
 
 static void shutdown_mbox_declined_cb(lv_event_t *event) {
-    // Find the containing message box for the clicked button
+    /* Find the containing message box for the clicked button */
     lv_obj_t *obj = lv_event_get_target(event);
     while (obj && !lv_obj_check_type(obj, &lv_msgbox_class)) {
         obj = lv_obj_get_parent(obj);

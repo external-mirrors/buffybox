@@ -123,11 +123,6 @@ typedef struct {
     uint32_t fg_color;
 } bbx_theme_label;
 
-/* Message box buttons theme */
-typedef struct {
-    lv_coord_t gap;
-} bbx_theme_msgbox_buttons;
-
 /* Message box dimming theme */
 typedef struct {
     uint32_t color;
@@ -143,7 +138,6 @@ typedef struct {
     lv_coord_t corner_radius;
     lv_coord_t pad;
     lv_coord_t gap;
-    bbx_theme_msgbox_buttons buttons;
     bbx_theme_msgbox_dimming dimming;
 } bbx_theme_msgbox;
 

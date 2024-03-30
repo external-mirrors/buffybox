@@ -154,9 +154,6 @@ static const bbx_theme breezy_light = {
         .corner_radius = 0,
         .pad = 20,
         .gap = 20,
-        .buttons = {
-            .gap = 5
-        },
         .dimming = {
             .color = 0x232629,
             .opacity = 178
@@ -312,9 +309,6 @@ static const bbx_theme breezy_dark = {
         .corner_radius = 0,
         .pad = 20,
         .gap = 20,
-        .buttons = {
-            .gap = 5
-        },
         .dimming = {
             .color = 0x232629,
             .opacity = 178
@@ -469,9 +463,6 @@ static const bbx_theme pmos_light = {
         .corner_radius = 3,
         .pad = 20,
         .gap = 20,
-        .buttons = {
-            .gap = 10
-        },
         .dimming = {
             .color = 0x070c0d,
             .opacity = 225
@@ -626,9 +617,6 @@ static const bbx_theme pmos_dark = {
         .corner_radius = 3,
         .pad = 20,
         .gap = 20,
-        .buttons = {
-            .gap = 10
-        },
         .dimming = {
             .color = 0x070c0d,
             .opacity = 225

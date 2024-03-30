@@ -37,7 +37,6 @@ static struct {
     lv_style_t label;
     lv_style_t msgbox;
     lv_style_t msgbox_label;
-    lv_style_t msgbox_btnmatrix;
     lv_style_t msgbox_background;
     lv_style_t bar;
     lv_style_t bar_indicator;
@@ -197,10 +196,6 @@ static void init_styles(const bbx_theme *theme) {
     lv_style_set_text_align(&(styles.msgbox_label), LV_TEXT_ALIGN_CENTER);
     lv_style_set_pad_bottom(&(styles.msgbox_label), lv_dpx(theme->msgbox.gap));
 
-    reset_style(&(styles.msgbox_btnmatrix));
-    lv_style_set_pad_gap(&(styles.msgbox_btnmatrix), lv_dpx(theme->msgbox.buttons.gap));
-    lv_style_set_min_width(&(styles.msgbox_btnmatrix), LV_PCT(100));
-
     reset_style(&(styles.msgbox_background));
     lv_style_set_bg_color(&(styles.msgbox_background), lv_color_hex(theme->msgbox.dimming.color));
     lv_style_set_bg_opa(&(styles.msgbox_background), theme->msgbox.dimming.opacity);
@@ -295,10 +290,9 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return; /* Inherit styling from message box */
     }
 
-    if (lv_obj_check_type(obj, &lv_buttonmatrix_class) && lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_class)) {
-        lv_obj_add_style(obj, &(styles.msgbox_btnmatrix), 0);
-        lv_obj_add_style(obj, &(styles.button), LV_PART_ITEMS);
-        lv_obj_add_style(obj, &(styles.button_pressed), LV_PART_ITEMS | LV_STATE_PRESSED);
+    if (lv_obj_check_type(obj, &lv_msgbox_footer_button_class)) {
+        lv_obj_add_style(obj, &(styles.button), 0);
+        lv_obj_add_style(obj, &(styles.button_pressed), LV_STATE_PRESSED);
         return;
     }
 
