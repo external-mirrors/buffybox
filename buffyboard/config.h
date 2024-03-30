@@ -17,7 +17,17 @@
 typedef struct {
     /* Default theme */
     bb_themes_theme_id_t default_id;
-} ul_config_opts_theme;
+} bb_config_opts_theme;
+
+/**
+ * Options related to input devices
+ */
+typedef struct {
+    /* If true and a pointer device is connected, use it for input */
+    bool pointer;
+    /* If true and a touchscreen device is connected, use it for input */
+    bool touchscreen;
+} bb_config_opts_input;
 
 /**
  * (Normally unneeded) quirky options
@@ -32,7 +42,9 @@ typedef struct {
  */
 typedef struct {
     /* Options related to the theme */
-    ul_config_opts_theme theme;
+    bb_config_opts_theme theme;
+    /* Options related to input devices */
+    bb_config_opts_input input;
     /* Options related to (normally unneeded) quirks */
     bb_config_opts_quirks quirks;
 } bb_config_opts;

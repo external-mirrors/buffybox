@@ -24,6 +24,14 @@ Here are a few highlights of what already works:
 - Automatic resizing (and later reset) of active VT to prevent overlap with keyboard
 - Theming support
 
+Screenshots of the currently available themes may be found in the [screenshots] folder.
+
+<img src="screenshots/breezy-light-540x960.png" alt="540x960" height="300"/>
+<img src="screenshots/breezy-dark-540x960.png" alt="540x960" height="300"/>
+<br>
+<img src="screenshots/pmos-light-800x480.png" alt="800x480" height="300"/>
+<img src="screenshots/pmos-dark-800x480.png" alt="800x480" height="300"/>
+
 # Usage
 
 You can get an overview of available command line options by running it with the `-h` or `--help` argument.
@@ -33,21 +41,25 @@ $ buffyboard --help
 Usage: buffyboard [OPTION]
 
 Mandatory arguments to long options are mandatory for short options too.
-  -C, --config-override  Path to a config override file. Can be supplied
-                         multiple times. Config files are merged in the
-                         following order:
-                         * /etc/buffyboard.conf
-                         * /etc/buffyboard.conf.d/* (alphabetically)
-                         * Override files (in supplied order)
-  -r, --rotate=[0-3]     Rotate the UI to the given orientation. The
-                         values match the ones provided by the kernel in
-                         /sys/class/graphics/fbcon/rotate.
-                         * 0 - normal orientation (0 degree)
-                         * 1 - clockwise orientation (90 degrees)
-                         * 2 - upside down orientation (180 degrees)
-                         * 3 - counterclockwise orientation (270 degrees)
-  -h, --help             Print this message and exit
-  -V, --version          Print the buffyboard version and exit
+  -C, --config-override     Path to a config override file. Can be supplied
+                            multiple times. Config files are merged in the
+                            following order:
+                            * /etc/buffyboard.conf
+                            * /etc/buffyboard.conf.d/* (alphabetically)
+                            * Override files (in supplied order)
+  -g, --geometry=NxM[@X,Y]  Force a display size of N horizontal times M
+                            vertical pixels, offset horizontally by X
+                            pixels and vertically by Y pixels
+  -d  --dpi=N               Override the display's DPI value
+  -r, --rotate=[0-3]        Rotate the UI to the given orientation. The
+                            values match the ones provided by the kernel in
+                            /sys/class/graphics/fbcon/rotate.
+                            * 0 - normal orientation (0 degree)
+                            * 1 - clockwise orientation (90 degrees)
+                            * 2 - upside down orientation (180 degrees)
+                            * 3 - counterclockwise orientation (270 degrees)
+  -h, --help                Print this message and exit
+  -V, --version             Print the buffyboard version and exit
 ```
 
 For an example configuration file, see [buffyboard.conf].
@@ -155,6 +167,7 @@ The [FontAwesome] font is licensed under the Open Font License version 1.1.
 [lv_sim_emscripten]: https://github.com/lvgl/lv_sim_emscripten/blob/master/mouse_cursor_icon.c
 [lvgl]: https://github.com/lvgl/lvgl
 [open issues]: https://gitlab.com/cherrypicker/buffyboard/-/issues
+[screenshots]: ./screenshots
 [squeek2lvgl]: https://gitlab.com/cherrypicker/squeek2lvgl]
 [squeekboard layouts]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml

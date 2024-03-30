@@ -151,6 +151,16 @@ static int parsing_handler(void* user_data, const char* section, const char* key
                 return 1;
             }
         }
+    } else if (strcmp(section, "input") == 0) {
+        if (strcmp(key, "pointer") == 0) {
+            if (parse_bool(value, &(opts->input.pointer))) {
+                return 1;
+            }
+        } else if (strcmp(key, "touchscreen") == 0) {
+            if (parse_bool(value, &(opts->input.touchscreen))) {
+                return 1;
+            }
+        }
     } else if (strcmp(section, "quirks") == 0) {
         if (strcmp(key, "fbdev_force_refresh") == 0) {
             if (parse_bool(value, &(opts->quirks.fbdev_force_refresh))) {
@@ -184,6 +194,8 @@ static bool parse_bool(const char *value, bool *result) {
 
 void bb_config_init_opts(bb_config_opts *opts) {
     opts->theme.default_id = BB_THEMES_THEME_BREEZY_DARK;
+    opts->input.pointer = true;
+    opts->input.touchscreen = true;
     opts->quirks.fbdev_force_refresh = false;
 }
 
