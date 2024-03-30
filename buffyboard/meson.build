@@ -24,6 +24,7 @@ buffyboard_sources = [
 shared_sources = [
   '../shared/cursor/cursor.c',
   '../shared/fonts/font_32.c',
+  '../shared/config.c',
   '../shared/indev.c',
   '../shared/log.c',
   '../shared/theme.c',
