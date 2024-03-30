@@ -48,7 +48,6 @@ Mandatory arguments to long options are mandatory for short options too.
                          * 3 - counterclockwise orientation (270 degrees)
   -h, --help             Print this message and exit
   -V, --version          Print the buffyboard version and exit
-
 ```
 
 For an example configuration file, see [buffyboard.conf].
@@ -91,7 +90,7 @@ With meson <0.55 use `ninja` instead of `meson compile`.
 
 ## Fonts
 
-In order to work with [LVGL], fonts need to be converted to bitmaps, stored as C arrays. Unl0kr currently uses a combination of the [OpenSans] font for text and the [FontAwesome] font for pictograms. For both fonts only limited character ranges are included to reduce the binary size. To (re)generate the C file containing the combined font, run the following command
+In order to work with [LVGL], fonts need to be converted to bitmaps, stored as C arrays. Buffyboard currently uses a combination of the [OpenSans] font for text and the [FontAwesome] font for pictograms. For both fonts only limited character ranges are included to reduce the binary size. To (re)generate the C file containing the combined font, run the following command
 
 ```
 $ ./regenerate-fonts.sh
