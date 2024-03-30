@@ -20,7 +20,7 @@ typedef enum {
 
 /* Themes */
 extern const int bb_themes_num_themes;
-extern const ul_theme *bb_themes_themes[];
+extern const bb_theme *bb_themes_themes[];
 
 /**
  * Find the first theme with a given name.

@@ -78,7 +78,7 @@ static void set_theme(bool is_alternate);
  *
  * @param is_alternate true if the alternate theme should be selected, false if the default theme should be selected
  */
-static const ul_theme * get_theme(bool is_alternate);
+static const bb_theme * get_theme(bool is_alternate);
 
 /**
  * Handle LV_EVENT_CLICKED events from the show/hide password toggle button.
@@ -223,7 +223,7 @@ static void set_theme(bool is_alternate) {
     bb_theme_apply(get_theme(is_alternate));
 }
 
-static const ul_theme * get_theme(bool is_alternate) {
+static const bb_theme * get_theme(bool is_alternate) {
     return bb_themes_themes[is_alternate ? conf_opts.theme.alternate_id : conf_opts.theme.default_id];
 }
 

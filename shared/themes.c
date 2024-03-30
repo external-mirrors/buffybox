@@ -16,7 +16,7 @@
  */
 
 /* Breezy light (based on KDE Breeze color palette, see https://develop.kde.org/hig/style/color/default/) */
-static const ul_theme bb_themes_breezy_light = {
+static const bb_theme bb_themes_breezy_light = {
     .name = "breezy-light",
     .window = {
         .bg_color = 0xeff0f1
@@ -174,7 +174,7 @@ static const ul_theme bb_themes_breezy_light = {
 
 
 /* Breezy dark (based on KDE Breeze Dark color palette, see https://develop.kde.org/hig/style/color/dark/) */
-static const ul_theme bb_themes_breezy_dark = {
+static const bb_theme bb_themes_breezy_dark = {
     .name = "breezy-dark",
     .window = {
         .bg_color = 0x31363b
@@ -331,7 +331,7 @@ static const ul_theme bb_themes_breezy_dark = {
 };
 
 /* pmOS light (based on palette https://coolors.co/009900-395e66-db504a-e3b505-ebf5ee) */
-static const ul_theme bb_themes_pmos_light = {
+static const bb_theme bb_themes_pmos_light = {
     .name = "pmos-light",
     .window = {
         .bg_color = 0xf2f7f8,
@@ -488,7 +488,7 @@ static const ul_theme bb_themes_pmos_light = {
 };
 
 /* pmOS dark (based on palette https://coolors.co/009900-395e66-db504a-e3b505-ebf5ee) */
-static const ul_theme bb_themes_pmos_dark = {
+static const bb_theme bb_themes_pmos_dark = {
     .name = "pmos-dark",
     .window = {
         .bg_color = 0x070c0d
@@ -649,7 +649,7 @@ static const ul_theme bb_themes_pmos_dark = {
  */
 
 const int bb_themes_num_themes = 4;
-const ul_theme *bb_themes_themes[] = {
+const bb_theme *bb_themes_themes[] = {
     &bb_themes_breezy_light,
     &bb_themes_breezy_dark,
     &bb_themes_pmos_light,

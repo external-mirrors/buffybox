@@ -172,7 +172,7 @@ typedef struct {
     bb_theme_label label;
     bb_theme_msgbox msgbox;
     bb_theme_bar bar;
-} ul_theme;
+} bb_theme;
 
 /**
  * Prepare a keyboard widget to be themed with a theme.
@@ -186,6 +186,6 @@ void bb_theme_prepare_keyboard(lv_obj_t *keyboard);
  *
  * @param theme the theme to apply
  */
-void bb_theme_apply(const ul_theme *theme);
+void bb_theme_apply(const bb_theme *theme);
 
 #endif /* BB_THEME_H */

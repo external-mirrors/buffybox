@@ -16,7 +16,7 @@
  * Static variables
  */
 
-static ul_theme current_theme;
+static bb_theme current_theme;
 static lv_theme_t lv_theme;
 
 static struct {
@@ -55,7 +55,7 @@ static bool are_styles_initialised = false;
  *
  * @param theme theme to derive the styles from
  */
-static void init_styles(const ul_theme *theme);
+static void init_styles(const bb_theme *theme);
 
 /**
  * Initialise or reset a style.
@@ -84,7 +84,7 @@ static void keyboard_draw_task_added_cb(lv_event_t *event);
  * Static functions
  */
 
-static void init_styles(const ul_theme *theme) {
+static void init_styles(const bb_theme *theme) {
     reset_style(&(styles.widget));
     lv_style_set_text_font(&(styles.widget), &font_32);
 
@@ -369,7 +369,7 @@ void bb_theme_prepare_keyboard(lv_obj_t *keyboard) {
     lv_obj_add_flag(keyboard, LV_OBJ_FLAG_SEND_DRAW_TASK_EVENTS);
 }
 
-void bb_theme_apply(const ul_theme *theme) {
+void bb_theme_apply(const bb_theme *theme) {
     if (!theme) {
         bb_log(BB_LOG_LEVEL_ERROR, "Could not apply theme from NULL pointer");
         return;
