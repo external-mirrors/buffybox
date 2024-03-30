@@ -15,7 +15,6 @@ add_project_arguments('-DBB_VERSION="@0@"'.format(meson.project_version()), lang
 buffyboard_sources = [
   'command_line.c',
   'config.c',
-  'font_32.c',
   'main.c',
   'sq2lv_layouts.c',
   'terminal.c',
@@ -24,6 +23,7 @@ buffyboard_sources = [
 
 shared_sources = [
   '../shared/cursor/cursor.c',
+  '../shared/fonts/font_32.c',
   '../shared/indev.c',
   '../shared/log.c',
   '../shared/theme.c',

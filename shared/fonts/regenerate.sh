@@ -18,7 +18,8 @@ npx lv_font_conv --bpp 4 --size 32 --no-compress -o font_32.c --format lvgl \
       --range '0xF042' \
       --range '0xF35B'
 
-# Fix type qualifier for compatibility with LV_FONT_DECLARE
-sed 's/^lv_font_t font_32/const lv_font_t font_32/g' font_32.c \
+# Fix type qualifier for compatibility with LV_FONT_DECLARE and add prefix
+sed 's/^lv_font_t /const lv_font_t /g' font_32.c \
+    | sed 's/lv_font_t font_32/lv_font_t bb_font_32/g' \
     > font_32.c.tmp
 mv font_32.c.tmp font_32.c

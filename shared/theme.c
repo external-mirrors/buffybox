@@ -86,7 +86,7 @@ static void keyboard_draw_task_added_cb(lv_event_t *event);
 
 static void init_styles(const bb_theme *theme) {
     reset_style(&(styles.widget));
-    lv_style_set_text_font(&(styles.widget), &font_32);
+    lv_style_set_text_font(&(styles.widget), &bb_font_32);
 
     reset_style(&(styles.window));
     lv_style_set_bg_opa(&(styles.window), LV_OPA_COVER);
@@ -376,9 +376,9 @@ void bb_theme_apply(const bb_theme *theme) {
     }
 
     lv_theme.disp = NULL;
-    lv_theme.font_small = &font_32;
-    lv_theme.font_normal = &font_32;
-    lv_theme.font_large = &font_32;
+    lv_theme.font_small = &bb_font_32;
+    lv_theme.font_normal = &bb_font_32;
+    lv_theme.font_large = &bb_font_32;
     lv_theme.apply_cb = apply_theme_cb;
 
     current_theme = *theme;

@@ -36,6 +36,8 @@ Once the upload completes, create a new release on GitLab and attach the URL of 
 
 This project is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
+For the license of bundled images and fonts, see [shared/cursor] and [shared/fonts].
+
 [#buffybox:matrix.org]: https://matrix.to/#/#buffybox:matrix.org
 [buffyboard]: ./buffyboard
 [git-archive-all]: https://github.com/Kentzo/git-archive-all
@@ -43,5 +45,7 @@ This project is licensed under the GNU General Public License as published by th
 [shared]: ./shared
 [squeek2lvgl]: ./squeek2lvgl
 [Squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard
+[shared/cursor]: ./shared/cursor
+[shared/fonts]: ./shared/fonts
 [unl0kr]: ./unl0kr
 [unl0kr#42]: https://gitlab.com/cherrypicker/unl0kr/-/issues/42
