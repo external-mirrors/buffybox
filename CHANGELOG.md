@@ -15,6 +15,7 @@ If a change only affects particular applications, they are listed in parentheses
 - feat(buffyboard): Add fbdev force-refresh quirk via config
 - feat(buffyboard): Allow disabling input devices via config
 - feat(buffyboard): Add CLI flags for overriding geometry & DPI
+- misc: Update lvgl to git master (2023-03-30)
 
 ## 3.0.0 (2024-03-22)
 
