@@ -296,8 +296,18 @@ static void shutdown_mbox_confirmed_cb(lv_event_t *event) {
 }
 
 static void shutdown_mbox_declined_cb(lv_event_t *event) {
-    lv_obj_t *mbox = lv_event_get_target(event);
-    lv_msgbox_close(mbox);
+    // Find the containing message box for the clicked button
+    lv_obj_t *obj = lv_event_get_target(event);
+    while (obj && !lv_obj_check_type(obj, &lv_msgbox_class)) {
+        obj = lv_obj_get_parent(obj);
+    }
+
+    if (!obj) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Could not find containing message box for clicked button");
+        return;
+    }
+
+    lv_msgbox_close(obj);
 }
 
 static void keyboard_value_changed_cb(lv_event_t *event) {
