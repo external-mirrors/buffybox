@@ -143,11 +143,11 @@ static void find_files(const char *path, char ***found, int *num_found) {
 static int parsing_handler(void* user_data, const char* section, const char* key, const char* value) {
     bb_config_opts *opts = (bb_config_opts *)user_data;
 
-    if (strcmp(section, "general") == 0) {
-        if (strcmp(key, "theme") == 0) {
+    if (strcmp(section, "theme") == 0) {
+        if (strcmp(key, "default") == 0) {
             bb_themes_theme_id_t id = bb_themes_find_theme_with_name(value);
             if (id != BB_THEMES_THEME_NONE) {
-                opts->general.theme_id = id;
+                opts->theme.default_id = id;
                 return 1;
             }
         }
@@ -183,7 +183,7 @@ static bool parse_bool(const char *value, bool *result) {
  */
 
 void bb_config_init_opts(bb_config_opts *opts) {
-    opts->general.theme_id = BB_THEMES_THEME_BREEZY_DARK;
+    opts->theme.default_id = BB_THEMES_THEME_BREEZY_DARK;
     opts->quirks.fbdev_force_refresh = false;
 }
 

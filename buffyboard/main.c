@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
     bb_indev_start_monitor_and_autoconnect(false, true, true);
 
     /* Initialise theme */
-    bb_theme_apply(bb_themes_themes[conf_opts.general.theme_id]);
+    bb_theme_apply(bb_themes_themes[conf_opts.theme.default_id]);
 
     /* Add keyboard */
     keyboard = lv_keyboard_create(lv_scr_act());

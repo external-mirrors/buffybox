@@ -12,12 +12,12 @@
 #include "sq2lv_layouts.h"
 
 /**
- * General options
+ * Options related to the theme
  */
 typedef struct {
-    /* Theme */
-    bb_themes_theme_id_t theme_id;
-} bb_config_opts_general;
+    /* Default theme */
+    bb_themes_theme_id_t default_id;
+} ul_config_opts_theme;
 
 /**
  * (Normally unneeded) quirky options
@@ -31,8 +31,8 @@ typedef struct {
  * Options parsed from config file(s)
  */
 typedef struct {
-    /* General options */
-    bb_config_opts_general general;
+    /* Options related to the theme */
+    ul_config_opts_theme theme;
     /* Options related to (normally unneeded) quirks */
     bb_config_opts_quirks quirks;
 } bb_config_opts;
