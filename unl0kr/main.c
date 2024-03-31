@@ -406,6 +406,7 @@ int main(int argc, char *argv[]) {
     switch (conf_opts.general.backend) {
 #if LV_USE_LINUX_FBDEV
     case UL_BACKENDS_BACKEND_FBDEV:
+        bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using framebuffer backend");
         disp = lv_linux_fbdev_create();
         lv_linux_fbdev_set_file(disp, "/dev/fb0");
         if (conf_opts.quirks.fbdev_force_refresh) {
@@ -415,6 +416,7 @@ int main(int argc, char *argv[]) {
 #endif /* LV_USE_LINUX_FBDEV */
 #if LV_USE_LINUX_DRM
     case UL_BACKENDS_BACKEND_DRM:
+        bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using DRM backend");
         disp = lv_linux_drm_create();
         lv_linux_drm_set_file(disp, "/dev/dri/card0", -1);
         break;

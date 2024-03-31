@@ -4,20 +4,30 @@ build-buffyboard:
     - saas-linux-small-amd64
   script:
     - apk -q add git build-base meson linux-headers inih-dev libinput-dev eudev-dev
-    - cd buffyboard
     - git submodule init
     - git submodule update
+    - cd buffyboard
     - meson _build
     - meson compile -C _build
 
-build-unl0kr:
+build-and-test-unl0kr-with-drm:
   image: alpine:3.19
   tags:
     - saas-linux-small-amd64
   script:
-    - apk -q add git build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev libdrm-dev scdoc
-    - cd unl0kr
+    - apk -q add git bash build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev libdrm-dev scdoc
     - git submodule init
     - git submodule update
-    - meson _build
-    - meson compile -C _build
+    - cd unl0kr
+    - ./test/test-with-drm.sh
+
+build-and-test-unl0kr-without-drm:
+  image: alpine:3.19
+  tags:
+    - saas-linux-small-amd64
+  script:
+    - apk -q add git bash build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev scdoc
+    - git submodule init
+    - git submodule update
+    - cd unl0kr
+    - ./test/test-without-drm.sh
