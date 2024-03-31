@@ -2,8 +2,6 @@
 
 # Change this depending on what device you're generating the screenshots on
 fb_res=1920x1080
-fb_depth=8
-fb_format=rgba
 
 executable=$1
 outdir=screenshots
@@ -14,6 +12,8 @@ themes=(
     breezy-dark
     pmos-light
     pmos-dark
+    nord-light
+    nord-dark
 )
 
 resolutions=(
@@ -79,14 +79,14 @@ for theme in ${themes[@]}; do
     readme="$readme"$'\n'"## $theme"$'\n\n'
     
     for res in ${resolutions[@]}; do
-        CRYPTTAB_SOURCE=/dev/sda1 $executable -g $res -C $config &
+        $executable -g $res -C $config &
         pid=$!
 
         sleep 3 # Wait for UI to render
 
-        cat /dev/fb0 > "$outdir/$theme-$res"
-        convert -size $fb_res -depth $fb_depth $fb_format:"$outdir/$theme-$res" -crop $res+0+0 "$outdir/$theme-$res.png"
-        rm "$outdir/$theme-$res"
+        ../../fbcat/fbcat /dev/fb0 > "$outdir/$theme-$res.ppm"
+        convert -size $fb_res "$outdir/$theme-$res.ppm" -crop $res+0+0 "$outdir/$theme-$res.png"
+        rm "$outdir/$theme-$res.ppm"
         kill -15 $pid
 
         readme="$readme<img src=\"$theme-$res.png\" alt=\"$res\" height=\"300\"/>"$'\n'

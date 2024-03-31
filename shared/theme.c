@@ -285,7 +285,11 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return;
     }
 
-    if (lv_obj_check_type(obj, &lv_label_class) && (lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_class) || lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_content_class))) {
+    if (lv_obj_check_type(obj, &lv_label_class) &&
+            (lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_class)
+             || lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_header_class)
+             || lv_obj_check_type(lv_obj_get_parent(obj), &lv_msgbox_content_class)))
+    {
         lv_obj_add_style(obj, &(styles.msgbox_label), 0);
         return; /* Inherit styling from message box */
     }

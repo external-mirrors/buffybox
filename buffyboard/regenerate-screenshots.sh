@@ -2,8 +2,6 @@
 
 # Change this depending on what device you're generating the screenshots on
 fb_res=1920x1080
-fb_depth=8
-fb_format=rgba
 
 executable=$1
 outdir=screenshots
@@ -14,6 +12,8 @@ themes=(
     breezy-dark
     pmos-light
     pmos-dark
+    nord-light
+    nord-dark
 )
 
 resolutions=(
@@ -50,14 +50,8 @@ touchscreen=false
 EOF
 }
 
-# Hide cursor
-echo -e '\033[?25l'
-
 function clean_up() {
     rm -f $config
-
-    # Show cursor
-    echo -e '\033[?25h'
 }
 
 trap clean_up EXIT
@@ -66,6 +60,8 @@ rm -rf "$outdir"
 mkdir "$outdir"
 
 readme="# Buffyboard themes"$'\n'
+
+clear # Blank the screen
 
 for theme in ${themes[@]}; do
     write_config $theme
@@ -78,17 +74,16 @@ for theme in ${themes[@]}; do
 
         sleep 3 # Wait for UI to render
 
-        cat /dev/fb0 > "$outdir/$theme-$res"
+        ../../fbcat/fbcat /dev/fb0 > "$outdir/$theme-$res.ppm"
         convert -size $fb_res \
-            -depth $fb_depth \
+            $outdir/$theme-$res.ppm \
             screenshot-background.png \
-            $fb_format:"$outdir/$theme-$res" \
             -crop $res+0+0 \
             -gravity NorthWest \
             -composite \
             "$outdir/$theme-$res.png"
 
-        rm "$outdir/$theme-$res"
+        rm "$outdir/$theme-$res.ppm"
         kill -15 $pid
 
         readme="$readme<img src=\"$theme-$res.png\" alt=\"$res\" height=\"300\"/>"$'\n'

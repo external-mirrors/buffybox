@@ -47,3 +47,27 @@
 <img src="pmos-dark-1280x800.png" alt="1280x800" height="300"/>
 <img src="pmos-dark-1440x720.png" alt="1440x720" height="300"/>
 <img src="pmos-dark-1920x1080.png" alt="1920x1080" height="300"/>
+
+## nord-light
+
+<img src="nord-light-480x800.png" alt="480x800" height="300"/>
+<img src="nord-light-800x480.png" alt="800x480" height="300"/>
+<img src="nord-light-540x960.png" alt="540x960" height="300"/>
+<img src="nord-light-960x540.png" alt="960x540" height="300"/>
+<img src="nord-light-768x1024.png" alt="768x1024" height="300"/>
+<img src="nord-light-1024x768.png" alt="1024x768" height="300"/>
+<img src="nord-light-1280x800.png" alt="1280x800" height="300"/>
+<img src="nord-light-1440x720.png" alt="1440x720" height="300"/>
+<img src="nord-light-1920x1080.png" alt="1920x1080" height="300"/>
+
+## nord-dark
+
+<img src="nord-dark-480x800.png" alt="480x800" height="300"/>
+<img src="nord-dark-800x480.png" alt="800x480" height="300"/>
+<img src="nord-dark-540x960.png" alt="540x960" height="300"/>
+<img src="nord-dark-960x540.png" alt="960x540" height="300"/>
+<img src="nord-dark-768x1024.png" alt="768x1024" height="300"/>
+<img src="nord-dark-1024x768.png" alt="1024x768" height="300"/>
+<img src="nord-dark-1280x800.png" alt="1280x800" height="300"/>
+<img src="nord-dark-1440x720.png" alt="1440x720" height="300"/>
+<img src="nord-dark-1920x1080.png" alt="1920x1080" height="300"/>
