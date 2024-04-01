@@ -14,6 +14,7 @@
 #include "lvgl/lvgl.h"
 
 #include "../shared/indev.h"
+#include "../shared/log.h"
 #include "../shared/theme.h"
 #include "../shared/themes.h"
 #include "../squeek2lvgl/sq2lv.h"
@@ -179,6 +180,11 @@ static void pop_checked_modifier_keys(void) {
 int main(int argc, char *argv[]) {
     /* Parse command line options */
     bb_cli_parse_opts(argc, argv, &cli_opts);
+
+    /* Set up log level */
+    if (cli_opts.verbose) {
+        bbx_log_set_level(BBX_LOG_LEVEL_VERBOSE);
+    }
 
     /* Parse config files */
     bb_config_init_opts(&conf_opts);

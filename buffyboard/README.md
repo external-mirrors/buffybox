@@ -59,6 +59,7 @@ Mandatory arguments to long options are mandatory for short options too.
                             * 2 - upside down orientation (180 degrees)
                             * 3 - counterclockwise orientation (270 degrees)
   -h, --help                Print this message and exit
+  -v, --verbose             Enable more detailed logging output on STDERR
   -V, --version             Print the buffyboard version and exit
 ```
 

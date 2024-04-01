@@ -45,6 +45,7 @@ static void init_opts(bb_cli_opts *opts) {
     opts->y_offset = 0;
     opts->dpi = 0;
     opts->rotation = LV_DISPLAY_ROTATION_0;
+    opts->verbose = false;
 }
 
 static void print_usage() {
@@ -71,6 +72,7 @@ static void print_usage() {
         "                            * 2 - upside down orientation (180 degrees)\n"
         "                            * 3 - counterclockwise orientation (270 degrees)\n"
         "  -h, --help                Print this message and exit\n"
+        "  -v, --verbose             Enable more detailed logging output on STDERR\n"
         "  -V, --version             Print the buffyboard version and exit\n");
         /*-------------------------------- 78 CHARS --------------------------------*/
 }
@@ -89,13 +91,14 @@ void bb_cli_parse_opts(int argc, char *argv[], bb_cli_opts *opts) {
         { "dpi",             required_argument, NULL, 'd' },
         { "rotate",          required_argument, NULL, 'r' },
         { "help",            no_argument,       NULL, 'h' },
+        { "verbose",         no_argument,       NULL, 'v' },
         { "version",         no_argument,       NULL, 'V' },
         { NULL, 0, NULL, 0 }
     };
 
     int opt, index = 0;
 
-    while ((opt = getopt_long(argc, argv, "C:g:d:r:hV", long_opts, &index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "C:g:d:r:hvV", long_opts, &index)) != -1) {
         switch (opt) {
         case 'C':
             opts->config_files = realloc(opts->config_files, (opts->num_config_files + 1) * sizeof(char *));
@@ -145,6 +148,9 @@ void bb_cli_parse_opts(int argc, char *argv[], bb_cli_opts *opts) {
         case 'h':
             print_usage();
             exit(EXIT_SUCCESS);
+        case 'v':
+            opts->verbose = true;
+            break;
         case 'V':
             fprintf(stderr, "buffyboard %s\n", BB_VERSION);
             exit(0);

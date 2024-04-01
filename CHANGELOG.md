@@ -15,6 +15,7 @@ If a change only affects particular applications, they are listed in parentheses
 - feat(buffyboard): Add fbdev force-refresh quirk via config
 - feat(buffyboard): Allow disabling input devices via config
 - feat(buffyboard): Add CLI flags for overriding geometry & DPI
+- feat(buffyboard): Add CLI flag for verbose logging
 - fix(unl0kr): Shutdown message box doesn't close on decline
 - fix(unl0kr): Shutdown message box buttons and label are unstyled
 - fix(unl0kr): Build fails when DRM is disabled
