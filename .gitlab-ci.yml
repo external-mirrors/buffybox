@@ -1,14 +1,13 @@
-build-buffyboard:
+build-and-test-buffyboard:
   image: alpine:3.19
   tags:
     - saas-linux-small-amd64
   script:
-    - apk -q add git build-base meson linux-headers inih-dev libinput-dev eudev-dev
+    - apk -q add git bash build-base meson linux-headers inih-dev libinput-dev eudev-dev
     - git submodule init
     - git submodule update
     - cd buffyboard
-    - meson _build
-    - meson compile -C _build
+    - ./test/test-all.sh
 
 build-and-test-unl0kr-with-drm:
   image: alpine:3.19
