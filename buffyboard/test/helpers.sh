@@ -2,11 +2,11 @@
 
 source "$(dirname "${BASH_SOURCE[0]}")/../../test/helpers.sh"
 
-function run_unl0kr_async() {
+function run_buffyboard_async() {
     local log=$1
     local conf=$2
 
-    ./_build/unl0kr -v -C "$conf" > "$log" 2>&1 &
+    ./_build/buffyboard -v -C "$conf" > "$log" 2>&1 &
     pid=$!
     sleep 3
 
@@ -14,12 +14,12 @@ function run_unl0kr_async() {
     wait $pid > /dev/null 2>&1
 }
 
-function run_unl0kr_sync() {
+function run_buffyboard_sync() {
     local log=$1
     shift
     local conf=$2
     shift
     local args=$@
 
-    ./_build/unl0kr -v -C "$conf" $@ > "$log" 2>&1
+    ./_build/buffyboard -v -C "$conf" $@ > "$log" 2>&1
 }
