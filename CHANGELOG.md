@@ -19,7 +19,7 @@ If a change only affects particular applications, they are listed in parentheses
 - fix(unl0kr): Shutdown message box doesn't close on decline
 - fix(unl0kr): Shutdown message box buttons and label are unstyled
 - fix(unl0kr): Build fails when DRM is disabled
-- misc: Update lvgl to git master (2023-03-30)
+- misc: Update lvgl to git master (2023-04-10)
 
 ## 3.0.0 (2024-03-22)
 
