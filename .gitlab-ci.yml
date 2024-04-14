@@ -30,3 +30,13 @@ build-and-test-unl0kr-without-drm:
     - git submodule update
     - cd unl0kr
     - ./test/test-without-drm.sh
+
+build-iskey:
+  image: alpine:3.19
+  tags:
+    - saas-linux-small-amd64
+  script:
+    - apk -q add git bash build-base meson linux-headers libevdev-dev
+    - cd iskey
+    - meson setup _build
+    - meson compile -C _build
