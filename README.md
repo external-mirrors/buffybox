@@ -14,6 +14,8 @@ BuffyBox is a suite of graphical applications for the terminal.
 
 **[squeek2lvgl]** – Converter for transforming [Squeekboard] layouts into [LVGL]-compatible C code
 
+**[iskey]** - A utility for checking for key presses in bash scripts.
+
 **[shared]** – Internal code that is shared by some or all applications in the suite but not meant to be used externally 
 
 ## Contributing
@@ -44,6 +46,7 @@ For the license of bundled images and fonts, see [shared/cursor] and [shared/fon
 [LVGL]: https://github.com/lvgl/lvgl
 [shared]: ./shared
 [squeek2lvgl]: ./squeek2lvgl
+[iskey]: ./iskey
 [Squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard
 [shared/cursor]: ./shared/cursor
 [shared/fonts]: ./shared/fonts
