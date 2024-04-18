@@ -137,17 +137,15 @@ Unl0kr uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerat
 $ ./regenerate-layouts.sh
 ```
 
-from the root of the repository.
-
 ## Generating screenshots
 
-To generate screenshots in a variety of common sizes, build unl0kr and then run
+To generate screenshots in a variety of common sizes, install [fbcat], build unl0kr and then run
 
 ```
 $ sudo ./regenerate-screenshots _build/unl0kr
 ```
 
-where `_build/unl0kr` is the location of the unl0kr binary. Note that you may have to adapt some of the settings inside the script depending on the device you're using to generate the screenshots.
+where `_build/unl0kr` is the location of the unl0kr binary.
 
 ## Screen recording
 
@@ -164,6 +162,7 @@ The [lv_port_linux_frame_buffer] project served as a starting point for the code
 [LVGL]: https://lvgl.io
 [adjust]: https://fontawesome.com/v5.15/icons/adjust?style=solid
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
+[fbcat]: https://github.com/jwilk/fbcat
 [inih]: https://github.com/benhoyt/inih
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
 [libudev]: https://github.com/systemd/systemd/tree/main/src/libudev

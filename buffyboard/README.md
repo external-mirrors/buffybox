@@ -109,7 +109,15 @@ Buffyboard uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regen
 $ ./regenerate-layouts.sh
 ```
 
-from the root of the repository.
+## Generating screenshots
+
+To generate screenshots in a variety of common sizes, install [fbcat], build buffyboard and then run
+
+```
+$ sudo ./regenerate-screenshots _build/buffyboard
+```
+
+where `_build/buffyboard` is the location of the buffyboard binary.
 
 # Acknowledgements
 
@@ -127,6 +135,7 @@ Buffyboard was inspired by [fbkeyboard].
 [LVGL]: https://lvgl.io
 [arrow-alt-circle-up]: https://fontawesome.com/v5.15/icons/arrow-alt-circle-up?style=solid
 [buffyboard.conf]: ./buffyboard.conf
+[fbcat]: https://github.com/jwilk/fbcat
 [fbkeyboard]: https://github.com/bakonyiferenc/fbkeyboard
 [inih]: https://github.com/benhoyt/inih
 [libinput]: https://gitlab.freedesktop.org/libinput/libinput
