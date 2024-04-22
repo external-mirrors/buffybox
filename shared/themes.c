@@ -632,16 +632,170 @@ static const bbx_theme pmos_dark = {
     }
 };
 
+static const bbx_theme adwaita_dark = {
+    .name = "adwaita-dark",
+    .window = {
+        .bg_color = 0x151515
+    },
+    .header = {
+        .bg_color = 0x242424,
+        .border_width = 0,
+        .border_color = 0x242424,
+        .pad = 10,
+        .gap = 10
+    },
+    .keyboard = {
+        .bg_color = 0x242424,
+        .border_width = 2,
+        .border_color = 0x242424,
+        .pad = 20,
+        .gap = 10,
+        .keys = {
+            .border_width = 1,
+            .corner_radius = 5,
+            .key_char = {
+                .normal = {
+                    .fg_color = 0xDEDDDA,
+                    .bg_color = 0x464448,
+                    .border_color = 0x464448
+                },
+                .pressed = {
+                    .fg_color = 0xDEDDDA,
+                    .bg_color = 0x747077,
+                    .border_color = 0x747077
+                }
+            },
+            .key_non_char = {
+                .normal = {
+                    .fg_color = 0xDEDDDA,
+                    .bg_color = 0x3A3A3A,
+                    .border_color = 0x3A3A3A
+                },
+                .pressed = {
+                    .fg_color = 0xDEDDDA,
+                    .bg_color = 0x666666,
+                    .border_color = 0x666666
+                }
+            },
+            .key_mod_act = {
+                .normal = {
+                    .fg_color = 0x1E1E1E,
+                    .bg_color = 0x747077,
+                    .border_color = 0x747077
+                },
+                .pressed = {
+                    .fg_color = 0xDEDDDA,
+                    .bg_color = 0x464448,
+                    .border_color = 0x464448
+                }
+            },
+            .key_mod_inact = {
+                .normal = {
+                    .fg_color = 0xDEDDDA,
+                    .bg_color = 0x3A3A3A,
+                    .border_color = 0x3A3A3A
+                },
+                .pressed = {
+                    .fg_color = 0xDEDDDA,
+                    .bg_color = 0x3A3A3A,
+                    .border_color = 0x3A3A3A
+                }
+            }
+        }
+    },
+    .button = {
+        .border_width = 1,
+        .corner_radius = 5,
+        .pad = 8,
+        .normal = {
+            .fg_color = 0xDEDDDA,
+            .bg_color = 0x3A3A3A,
+            .border_color = 0x3A3A3A
+        },
+        .pressed = {
+            .fg_color = 0xDEDDDA,
+            .bg_color = 0x666666,
+            .border_color = 0x666666
+        }
+    },
+    .textarea = {
+        .fg_color = 0xDEDDDA,
+        .bg_color = 0x282828,
+        .border_width = 1,
+        .border_color = 0x1C71D8,
+        .corner_radius = 10,
+        .pad = 8,
+        .placeholder_color = 0x1C71D8,
+        .cursor = {
+            .width = 2,
+            .color = 0xDEDDDA,
+            .period = 700
+        }
+    },
+    .dropdown = {
+        .button = {
+            .border_width = 1,
+            .corner_radius = 5,
+            .pad = 8,
+            .normal = {
+                .fg_color = 0xDEDDDA,
+                .bg_color = 0x3A3A3A,
+                .border_color = 0x3A3A3A
+            },
+            .pressed = {
+                .fg_color = 0xDEDDDA,
+                .bg_color = 0x666666,
+                .border_color = 0x666666
+            }
+        },
+        .list = {
+            .fg_color = 0xDEDDDA,
+            .bg_color = 0x383838,
+            .selection_fg_color = 0xDEDDDA,
+            .selection_bg_color = 0x5E5E5E,
+            .border_width = 1,
+            .border_color = 0x383838,
+            .corner_radius = 5,
+            .pad = 8
+        }
+    },
+    .label = {
+        .fg_color = 0xDEDDDA,
+    },
+    .msgbox = {
+        .fg_color = 0xDEDDDA,
+        .bg_color = 0x383838,
+        .border_width = 1,
+        .border_color = 0x383838,
+        .corner_radius = 7,
+        .pad = 20,
+        .gap = 20,
+        .dimming = {
+            .color = 0x151515,
+            .opacity = 225
+        }
+    },
+    .bar = {
+        .border_width = 1,
+        .border_color = 0x1C71D8,
+        .corner_radius = 5,
+        .indicator = {
+            .bg_color = 0x1C71D8
+        }
+    }
+};
+
 /**
  * Public interface
  */
 
-const int bbx_themes_num_themes = 4;
+const int bbx_themes_num_themes = 5;
 const bbx_theme *bbx_themes_themes[] = {
     &breezy_light,
     &breezy_dark,
     &pmos_light,
-    &pmos_dark
+    &pmos_dark,
+    &adwaita_dark,
 };
 
 bbx_themes_theme_id_t bbx_themes_find_theme_with_name(const char *name) {
