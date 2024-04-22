@@ -1,5 +1,17 @@
 # Buffyboard themes
 
+## adwaita-dark
+
+<img src="adwaita-dark-480x800.png" alt="480x800" height="300"/>
+<img src="adwaita-dark-800x480.png" alt="800x480" height="300"/>
+<img src="adwaita-dark-540x960.png" alt="540x960" height="300"/>
+<img src="adwaita-dark-960x540.png" alt="960x540" height="300"/>
+<img src="adwaita-dark-768x1024.png" alt="768x1024" height="300"/>
+<img src="adwaita-dark-1024x768.png" alt="1024x768" height="300"/>
+<img src="adwaita-dark-1280x800.png" alt="1280x800" height="300"/>
+<img src="adwaita-dark-1440x720.png" alt="1440x720" height="300"/>
+<img src="adwaita-dark-1920x1080.png" alt="1920x1080" height="300"/>
+
 ## breezy-dark
 
 <img src="breezy-dark-480x800.png" alt="480x800" height="300"/>

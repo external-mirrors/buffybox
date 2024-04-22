@@ -10,7 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-Nothing at the moment.
+- feat: Add adwaita-dark theme (thanks @topjor)
 
 ## 3.1.0 (2024-04-10)
 
