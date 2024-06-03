@@ -10,8 +10,13 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+Nothing at the moment
+
+## 3.2.0 (2024-06-03)
+
 - feat: Add adwaita-dark theme (thanks @topjor)
 - feat: Add Nord themes
+- misc: Update lvgl to git master (2023-06-03)
 
 ## 3.1.0 (2024-04-10)
 
