@@ -632,6 +632,7 @@ static const bbx_theme pmos_dark = {
     }
 };
 
+/* Adwaita dark (based on https://gitlab.gnome.org/GNOME/libadwaita) */
 static const bbx_theme adwaita_dark = {
     .name = "adwaita-dark",
     .window = {
@@ -785,17 +786,344 @@ static const bbx_theme adwaita_dark = {
     }
 };
 
+/* Nord themes (based on https://www.nordtheme.com/docs/colors-and-palettes) */
+#define NORD0   0x2e3440
+#define NORD1   0x3b4252
+#define NORD2   0x434c5e
+#define NORD3   0x4c566a
+#define NORD4   0xd8dee9
+#define NORD5   0xe5e9f0
+#define NORD6   0xeceff4
+#define NORD7   0x8fbcbb
+#define NORD8   0x88c0d0
+#define NORD9   0x81a1c1
+#define NORD10  0x5e81ac
+#define NORD11  0xbf616a
+#define NORD12  0xd08770
+#define NORD13  0xebcb8b
+#define NORD14  0xa3be8c
+#define NORD15  0xb48ead
+
+static const bbx_theme nord_light = {
+    .name = "nord-light",
+    .window = {
+        .bg_color = NORD6,
+    },
+    .header = {
+        .bg_color = NORD4,
+        .border_width = 1,
+        .border_color = NORD4,
+        .pad = 20,
+        .gap = 10
+    },
+    .keyboard = {
+        .bg_color = NORD4,
+        .border_width = 1,
+        .border_color = NORD4,
+        .pad = 20,
+        .gap = 10,
+        .keys = {
+            .border_width = 1,
+            .corner_radius = 3,
+            .key_char = {
+                .normal = {
+                    .fg_color = NORD0,
+                    .bg_color = NORD9,
+                    .border_color = NORD10
+                },
+                .pressed = {
+                    .fg_color = NORD6,
+                    .bg_color = NORD10,
+                    .border_color = NORD10
+                }
+            },
+            .key_non_char = {
+                .normal = {
+                    .fg_color = NORD0,
+                    .bg_color = NORD8,
+                    .border_color = NORD10
+                },
+                .pressed = {
+                    .fg_color = NORD6,
+                    .bg_color = NORD10,
+                    .border_color = NORD10
+                }
+            },
+            .key_mod_act = {
+                .normal = {
+                    .fg_color = NORD10,
+                    .bg_color = 0xbed5da,
+                    .border_color = 0x009900
+                },
+                .pressed = {
+                    .fg_color = NORD6,
+                    .bg_color = NORD10,
+                    .border_color = NORD10
+                }
+            },
+            .key_mod_inact = {
+                .normal = {
+                    .fg_color = NORD0,
+                    .bg_color = NORD8,
+                    .border_color = NORD10
+                },
+                .pressed = {
+                    .fg_color = 0xf2f7f8,
+                    .bg_color = 0x009900,
+                    .border_color = 0x009900
+                }
+            }
+        }
+    },
+    .button = {
+        .border_width = 1,
+        .corner_radius = 3,
+        .pad = 8,
+        .normal = {
+            .fg_color = NORD0,
+            .bg_color = NORD8,
+            .border_color = NORD10
+        },
+        .pressed = {
+            .fg_color = NORD6,
+            .bg_color = NORD10,
+            .border_color = NORD10
+        }
+    },
+    .textarea = {
+        .fg_color = NORD0,
+        .bg_color = NORD5,
+        .border_width = 1,
+        .border_color = NORD0,
+        .corner_radius = 3,
+        .pad = 8,
+        .placeholder_color = NORD10,
+        .cursor = {
+            .width = 2,
+            .color = NORD0,
+            .period = 700
+        }
+    },
+    .dropdown = {
+        .button = {
+            .border_width = 1,
+            .corner_radius = 3,
+            .pad = 8,
+            .normal = {
+                .fg_color = NORD0,
+                .bg_color = NORD8,
+                .border_color = NORD10
+            },
+            .pressed = {
+                .fg_color = NORD6,
+                .bg_color = NORD10,
+                .border_color = NORD10
+            }
+        },
+        .list = {
+            .fg_color = NORD0,
+            .bg_color = NORD4,
+            .selection_fg_color = NORD6,
+            .selection_bg_color = NORD10,
+            .border_width = 1,
+            .border_color = NORD10,
+            .corner_radius = 0,
+            .pad = 8
+        }
+    },
+    .label = {
+        .fg_color = 0x070c0d
+    },
+    .msgbox = {
+        .fg_color = NORD0,
+        .bg_color = NORD4,
+        .border_width = 1,
+        .border_color = NORD10,
+        .corner_radius = 3,
+        .pad = 20,
+        .gap = 20,
+        .dimming = {
+            .color = NORD0,
+            .opacity = 225
+        }
+    },
+    .bar = {
+        .border_width = 1,
+        .border_color = 0x009900,
+        .corner_radius = 3,
+        .indicator = {
+            .bg_color = 0x009900
+        }
+    }
+};
+
+static const bbx_theme nord_dark = {
+    .name = "nord-dark",
+    .window = {
+        .bg_color = NORD0,
+    },
+    .header = {
+        .bg_color = NORD1,
+        .border_width = 1,
+        .border_color = NORD2,
+        .pad = 20,
+        .gap = 10
+    },
+    .keyboard = {
+        .bg_color = NORD1,
+        .border_width = 1,
+        .border_color = NORD2,
+        .pad = 20,
+        .gap = 10,
+        .keys = {
+            .border_width = 1,
+            .corner_radius = 3,
+            .key_char = {
+                .normal = {
+                    .fg_color = NORD0,
+                    .bg_color = NORD9,
+                    .border_color = NORD10
+                },
+                .pressed = {
+                    .fg_color = NORD6,
+                    .bg_color = NORD10,
+                    .border_color = NORD10
+                }
+            },
+            .key_non_char = {
+                .normal = {
+                    .fg_color = NORD0,
+                    .bg_color = NORD8,
+                    .border_color = NORD10
+                },
+                .pressed = {
+                    .fg_color = NORD6,
+                    .bg_color = NORD10,
+                    .border_color = NORD10
+                }
+            },
+            .key_mod_act = {
+                .normal = {
+                    .fg_color = NORD10,
+                    .bg_color = 0xbed5da,
+                    .border_color = 0x009900
+                },
+                .pressed = {
+                    .fg_color = NORD6,
+                    .bg_color = NORD10,
+                    .border_color = NORD10
+                }
+            },
+            .key_mod_inact = {
+                .normal = {
+                    .fg_color = NORD0,
+                    .bg_color = NORD8,
+                    .border_color = NORD10
+                },
+                .pressed = {
+                    .fg_color = 0xf2f7f8,
+                    .bg_color = 0x009900,
+                    .border_color = 0x009900
+                }
+            }
+        }
+    },
+    .button = {
+        .border_width = 1,
+        .corner_radius = 3,
+        .pad = 8,
+        .normal = {
+            .fg_color = NORD0,
+            .bg_color = NORD8,
+            .border_color = NORD10
+        },
+        .pressed = {
+            .fg_color = NORD6,
+            .bg_color = NORD10,
+            .border_color = NORD10
+        }
+    },
+    .textarea = {
+        .fg_color = NORD6,
+        .bg_color = NORD2,
+        .border_width = 1,
+        .border_color = NORD4,
+        .corner_radius = 3,
+        .pad = 8,
+        .placeholder_color = NORD10,
+        .cursor = {
+            .width = 2,
+            .color = NORD4,
+            .period = 700
+        }
+    },
+    .dropdown = {
+        .button = {
+            .border_width = 1,
+            .corner_radius = 3,
+            .pad = 8,
+            .normal = {
+                .fg_color = NORD0,
+                .bg_color = NORD8,
+                .border_color = NORD10
+            },
+            .pressed = {
+                .fg_color = NORD6,
+                .bg_color = NORD10,
+                .border_color = NORD10
+            }
+        },
+        .list = {
+            .fg_color = NORD6,
+            .bg_color = NORD1,
+            .selection_fg_color = NORD6,
+            .selection_bg_color = NORD10,
+            .border_width = 1,
+            .border_color = NORD10,
+            .corner_radius = 0,
+            .pad = 8
+        }
+    },
+    .label = {
+        .fg_color = 0x070c0d
+    },
+    .msgbox = {
+        .fg_color = NORD6,
+        .bg_color = NORD1,
+        .border_width = 1,
+        .border_color = NORD10,
+        .corner_radius = 3,
+        .pad = 20,
+        .gap = 20,
+        .dimming = {
+            .color = NORD0,
+            .opacity = 225
+        }
+    },
+    .bar = {
+        .border_width = 1,
+        .border_color = 0x009900,
+        .corner_radius = 3,
+        .indicator = {
+            .bg_color = 0x009900
+        }
+    }
+};
+
+
 /**
  * Public interface
  */
 
-const int bbx_themes_num_themes = 5;
+const int bbx_themes_num_themes = 7;
 const bbx_theme *bbx_themes_themes[] = {
     &breezy_light,
     &breezy_dark,
     &pmos_light,
     &pmos_dark,
     &adwaita_dark,
+    &nord_light,
+    &nord_dark
 };
 
 bbx_themes_theme_id_t bbx_themes_find_theme_with_name(const char *name) {
