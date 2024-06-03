@@ -11,7 +11,7 @@ function clean_up() {
 trap clean_up EXIT
 
 info "Running unl0kr"
-run_unl0kr "$log"
+run_unl0kr_async "$log"
 
 info "Verifying output"
 if ! grep "Using framebuffer backend" "$log"; then

@@ -18,7 +18,7 @@ backend=drm
 EOF
 
 info "Running unl0kr"
-run_unl0kr "$log" "$conf"
+run_unl0kr_async "$log" "$conf"
 
 info "Verifying output"
 if ! grep "Using framebuffer backend" "$log"; then

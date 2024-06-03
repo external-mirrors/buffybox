@@ -1,18 +1,8 @@
 #!/bin/bash
 
-function info() {
-    echo -e "[Info] $1"
-}
+source "$(dirname "${BASH_SOURCE[0]}")/../../test/helpers.sh"
 
-function error() {
-    echo -e "\e[31m[Error]\e[0m $1"
-}
-
-function ok() {
-    echo -e "\e[32m[Ok]\e[0m $1"
-}
-
-function run_unl0kr() {
+function run_unl0kr_async() {
     local log=$1
     local conf=$2
 
@@ -22,4 +12,14 @@ function run_unl0kr() {
 
     kill -9 $pid
     wait $pid > /dev/null 2>&1
+}
+
+function run_unl0kr_sync() {
+    local log=$1
+    shift
+    local conf=$2
+    shift
+    local args=$@
+
+    ./_build/unl0kr -v -C "$conf" $@ > "$log" 2>&1
 }

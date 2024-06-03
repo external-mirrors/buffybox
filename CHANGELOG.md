@@ -10,15 +10,21 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+- feat: Add adwaita-dark theme (thanks @topjor)
+- feat: Add Nord themes
+
+## 3.1.0 (2024-04-10)
+
 - feat(buffyboard): Handle input device connection/disconnection at runtime; adds new dependency libudev
 - feat(buffyboard): Allow choosing theme via config and add all themes from unl0kr
 - feat(buffyboard): Add fbdev force-refresh quirk via config
 - feat(buffyboard): Allow disabling input devices via config
 - feat(buffyboard): Add CLI flags for overriding geometry & DPI
+- feat(buffyboard): Add CLI flag for verbose logging
 - fix(unl0kr): Shutdown message box doesn't close on decline
 - fix(unl0kr): Shutdown message box buttons and label are unstyled
 - fix(unl0kr): Build fails when DRM is disabled
-- misc: Update lvgl to git master (2023-03-30)
+- misc: Update lvgl to git master (2023-04-10)
 
 ## 3.0.0 (2024-03-22)
 

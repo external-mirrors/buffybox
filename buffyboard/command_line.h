@@ -29,6 +29,8 @@ typedef struct {
     int dpi;
     /* Display rotation */
     lv_display_rotation_t rotation;
+    /* Verbose mode. If true, provide more detailed logging output on STDERR. */
+    bool verbose;
 } bb_cli_opts;
 
 /**
