@@ -44,6 +44,7 @@ static void init_opts(ul_cli_opts *opts) {
     opts->x_offset = 0;
     opts->y_offset = 0;
     opts->dpi = 0;
+    opts->rotation = LV_DISPLAY_ROTATION_0;
     opts->verbose = false;
 }
 
@@ -66,6 +67,13 @@ static void print_usage() {
         "                            vertical pixels, offset horizontally by X\n"
         "                            pixels and vertically by Y pixels\n"
         "  -d  --dpi=N               Override the display's DPI value\n"
+        "  -r, --rotate=[0-3]        Rotate the UI to the given orientation. The\n"
+        "                            values match the ones provided by the kernel in\n"
+        "                            /sys/class/graphics/fbcon/rotate.\n"
+        "                            * 0 - normal orientation (0 degree)\n"
+        "                            * 1 - clockwise orientation (90 degrees)\n"
+        "                            * 2 - upside down orientation (180 degrees)\n"
+        "                            * 3 - counterclockwise orientation (270 degrees)\n"
         "  -h, --help                Print this message and exit\n"
         "  -v, --verbose             Enable more detailed logging output on STDERR\n"
         "  -V, --version             Print the unl0kr version and exit\n");
@@ -84,6 +92,7 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
         { "config-override", required_argument, NULL, 'C' },
         { "geometry",        required_argument, NULL, 'g' },
         { "dpi",             required_argument, NULL, 'd' },
+        { "rotate",          required_argument, NULL, 'r' },
         { "help",            no_argument,       NULL, 'h' },
         { "verbose",         no_argument,       NULL, 'v' },
         { "version",         no_argument,       NULL, 'V' },
@@ -92,7 +101,7 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
 
     int opt, index = 0;
 
-    while ((opt = getopt_long(argc, argv, "C:g:d:hvV", long_opts, &index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "C:g:d:r:hvV", long_opts, &index)) != -1) {
         switch (opt) {
         case 'C':
             opts->config_files = realloc(opts->config_files, (opts->num_config_files + 1) * sizeof(char *));
@@ -117,6 +126,28 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
                 exit(EXIT_FAILURE);
             }
             break;
+        case 'r': {
+            int orientation;
+            if (sscanf(optarg, "%i", &orientation) != 1 || orientation < 0 || orientation > 3) {
+                fprintf(stderr, "Invalid orientation argument \"%s\"\n", optarg);
+                exit(EXIT_FAILURE);
+            }
+            switch (orientation) {
+                case 0:
+                    opts->rotation = LV_DISPLAY_ROTATION_0;
+                    break;
+                case 1:
+                    opts->rotation = LV_DISPLAY_ROTATION_270;
+                    break;
+                case 2:
+                    opts->rotation = LV_DISPLAY_ROTATION_180;
+                    break;
+                case 3:
+                    opts->rotation = LV_DISPLAY_ROTATION_90;
+                    break;
+            }
+            break;
+        }
         case 'h':
             print_usage();
             exit(EXIT_SUCCESS);

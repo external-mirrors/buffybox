@@ -7,6 +7,7 @@
 #ifndef UL_COMMAND_LINE_H
 #define UL_COMMAND_LINE_H
 
+#include "lvgl/lvgl.h"
 #include <stdbool.h>
 
 /**
@@ -27,6 +28,8 @@ typedef struct {
     int y_offset;
     /* DPI */
     int dpi;
+    /* Display rotation */
+    lv_display_rotation_t rotation;
     /* Verbose mode. If true, provide more detailed logging output on STDERR. */
     bool verbose;
 } ul_cli_opts;
