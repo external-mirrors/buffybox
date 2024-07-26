@@ -10,7 +10,8 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-Nothing at the moment
+- feat(buffyboard): Add man pages (!23, thanks @Jarrah)
+- misc: Unify build system (!23, thanks @Jarrah)
 
 ## 3.2.0 (2024-06-03)
 
