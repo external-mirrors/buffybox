@@ -24,7 +24,7 @@ You can join our development chat at [#buffybox:matrix.org].
 
 ## Building & running
 
-Some of unl0kr's dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
+Some dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
 
 ```
 $ git clone https://gitlab.com/postmarketOS/buffybox.git
