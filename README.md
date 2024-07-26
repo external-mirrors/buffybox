@@ -22,6 +22,31 @@ BuffyBox is a suite of graphical applications for the terminal.
 
 You can join our development chat at [#buffybox:matrix.org].
 
+## Building & running
+
+Some of unl0kr's dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
+
+```
+$ git clone https://gitlab.com/postmarketOS/buffybox.git
+$ cd buffybox
+$ git submodule init
+$ git submodule update
+```
+
+When pulling changes from the remote later, either use `git pull --recurse-submodules` or manually run `git submodule update` as needed after pulling.
+
+Once you have the sources, you can build the app and run it in a VT. Unless your user account has special privileges, `sudo` will be needed to access input device files.
+
+```
+$ meson setup _build
+$ meson compile -C _build
+$ sudo chvt 2
+$ sudo ./_build/unl0kr/unl0kr # For Unl0kr
+$ sudo ./_build/buffyboard/buffyboard # For Buffyboard
+```
+
+With meson <0\.55 use `ninja` instead of `meson compile`\.
+
 ## Making a release
 
 To make it easier for distributions to package BuffyBox, we include source tarballs including the LVGL submodule in GitLab releases. See [unl0kr#42] for more background on this.

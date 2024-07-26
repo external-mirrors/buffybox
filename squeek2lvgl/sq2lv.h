@@ -7,7 +7,7 @@
 #ifndef SQ2LV_H
 #define SQ2LV_H
 
-#include "../sq2lv_layouts.h"
+#include "sq2lv_layouts.h"
 
 /* Key attributes */
 #define SQ2LV_CTRL_NON_CHAR     (LV_BUTTONMATRIX_CTRL_CLICK_TRIG | LV_BUTTONMATRIX_CTRL_CHECKED)

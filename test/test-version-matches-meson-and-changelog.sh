@@ -34,4 +34,14 @@ if ! grep "unl0kr $meson_version" "$log"; then
     exit 1
 fi
 
+info "Running buffyboard"
+run_buffyboard_sync "$log" "$conf" -V
+
+info "Verifying output"
+if ! grep "buffyboard $meson_version" "$log"; then
+    error "Expected version $meson_version"
+    cat "$log"
+    exit 1
+fi
+
 ok
