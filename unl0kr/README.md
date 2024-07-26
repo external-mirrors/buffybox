@@ -80,30 +80,6 @@ For an example configuration file, see [unl0kr.conf].
 - evdev kernel module
 - [scdoc] (for generating the man page)
 
-## Building & running
-
-Some of unl0kr's dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
-
-```
-$ git clone https://gitlab.com/postmarketOS/buffybox.git
-$ cd buffybox
-$ git submodule init
-$ git submodule update
-```
-
-When pulling changes from the remote later, either use `git pull --recurse-submodules` or manually run `git submodule update` as needed after pulling.
-
-Once you have the sources, you can build the app and run it in a VT. Unless your user account has special privileges, `sudo` will be needed to access input device files.
-
-```
-$ meson _build
-$ meson compile -C _build
-$ sudo chvt 2
-$ sudo ./_build/unl0kr
-```
-
-With meson <0\.55 use `ninja` instead of `meson compile`\.
-
 ## Valgrind
 
 > Using C without Valgrind is like skydiving without a parachute.
@@ -111,7 +87,7 @@ With meson <0\.55 use `ninja` instead of `meson compile`\.
 To be able to use Valgrind, add `default_options: ['optimization=g']` in the `project` section of `meson.build` and rebuild. Afterwards you can run the application with Valgrind's leaks check enabled via
 
 ```
-sudo valgrind --leak-check=yes ./_build/unl0kr
+sudo valgrind --leak-check=yes ../_build/unl0kr/unl0kr
 ```
 
 ## Backends
@@ -142,10 +118,10 @@ $ ./regenerate-layouts.sh
 To generate screenshots in a variety of common sizes, install [fbcat], build unl0kr and then run
 
 ```
-$ sudo ./regenerate-screenshots _build/unl0kr
+$ sudo ./regenerate-screenshots ../_build/unl0kr/unl0kr
 ```
 
-where `_build/unl0kr` is the location of the unl0kr binary.
+where `../_build/unl0kr/unl0kr` is the location of the unl0kr binary.
 
 ## Screen recording
 

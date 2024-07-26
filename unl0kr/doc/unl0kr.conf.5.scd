@@ -58,7 +58,7 @@ will be merged in the following order:
 	The character that will be used to obscure the password. Default: bullet.
 
 ## Theme
-*default* = <breezy-light|breezy-dark|pmos-light|pmos-dark>
+*default* = <adwaita-light|adwaita-dark|breezy-light|breezy-dark|nord-light|nord-dark|pmos-light|pmos-dark>
 	Selects the default theme on boot. Can be changed at runtime to the 
 	alternative theme. Default: breezy-dark.
 

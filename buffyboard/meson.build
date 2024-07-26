@@ -2,16 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-project(
-  'buffyboard',
-  'c',
-  version: '3.2.0',
-  default_options: 'warning_level=1',
-  meson_version: '>=0.53.0'
-)
-
-add_project_arguments('-DBB_VERSION="@0@"'.format(meson.project_version()), language: ['c'])
-
 buffyboard_sources = [
   'command_line.c',
   'config.c',
@@ -35,6 +25,11 @@ squeek2lvgl_sources = [
   '../squeek2lvgl/sq2lv.c',
 ]
 
+man_files = [
+	'doc/buffyboard.1',
+	'doc/buffyboard.conf.5',
+]
+
 lvgl_sources = run_command('../find-lvgl-sources.sh', '../lvgl', check: true).stdout().strip().split('\n')
 
 executable(
@@ -49,3 +44,23 @@ executable(
   ],
   install: true
 )
+
+scdoc = dependency('scdoc')
+scdoc_prog = find_program(scdoc.get_pkgconfig_variable('scdoc'), native : true)
+sh = find_program('sh', native : true)
+foreach file : man_files
+	filename = file + '.scd'
+	section = file.split('.')[-1]
+	topic = file.split('.' + section)[-2].split('/')[-1]
+	output = '@0@.@1@'.format(topic, section)
+
+	custom_target(
+		output,
+		input : filename,
+		output : output,
+		capture : true,
+		command : [sh, '-c', scdoc_prog.path() + ' < @INPUT@'],
+		install : true,
+		install_dir : get_option('mandir') / 'man' + section
+	)
+endforeach

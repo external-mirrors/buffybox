@@ -77,30 +77,6 @@ For an example configuration file, see [buffyboard.conf].
 - evdev kernel module
 - uinput kernel module
 
-## Building & running
-
-Some of buffyboard's dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
-
-```
-$ git clone https://gitlab.com/cherrypicker/buffyboard.git
-$ cd buffyboard
-$ git submodule init
-$ git submodule update
-```
-
-When pulling changes from the remote later, either use `git pull --recurse-submodules` or manually run `git submodule update` as needed after pulling.
-
-Once you have the sources, you can build the app and run it in a VT. Unless your user account has special privileges, `sudo` will be needed to access input device files.
-
-```
-$ meson _build
-$ meson compile -C _build
-$ sudo chvt 2
-$ sudo ./_build/buffyboard
-```
-
-With meson <0.55 use `ninja` instead of `meson compile`.
-
 ## Keyboard layouts
 
 Buffyboard uses [squeekboard layouts] converted to C via [squeek2lvgl]. To regenerate the layouts, ensure that you have pipenv installed (e.g. via `pip install --user pipenv`) and then run
@@ -114,10 +90,10 @@ $ ./regenerate-layouts.sh
 To generate screenshots in a variety of common sizes, install [fbcat], build buffyboard and then run
 
 ```
-$ sudo ./regenerate-screenshots _build/buffyboard
+$ sudo ./regenerate-screenshots ../_build/unl0kr/buffyboard
 ```
 
-where `_build/buffyboard` is the location of the buffyboard binary.
+where `../_build/unl0kr/buffyboard` is the location of the buffyboard binary.
 
 # Acknowledgements
 
