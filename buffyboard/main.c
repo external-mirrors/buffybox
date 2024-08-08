@@ -211,8 +211,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    /* Initialise lvgl */
+    /* Initialise LVGL and set up logging callback */
     lv_init();
+    lv_log_register_print_cb(bbx_log_print_cb);
 
     /* Initialise display */
     lv_display_t *disp = lv_linux_fbdev_create();
