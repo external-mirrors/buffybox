@@ -32,6 +32,8 @@ man_files = [
 
 lvgl_sources = run_command('../find-lvgl-sources.sh', '../lvgl', check: true).stdout().strip().split('\n')
 
+install_data(sources: 'buffyboard.conf', install_dir : get_option('sysconfdir'))
+
 executable(
   'buffyboard',
   sources: buffyboard_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
