@@ -14,10 +14,11 @@ one option/value pair per line:
 <option>=<value>
 ```
 
-The default configuration file is at /etc/buffyboard.conf, BUFFYBOARD will use this
-configuration file if present along with overrides placed in
-/etc/buffyboard.conf.d/ and those specified with the -C option. All config files
-will be merged in the following order:
+On launch, BUFFYBOARD searches for configuration files in various locations and
+successively merges all files together into a single configuration. Files are searched
+for and, if found, merged in the following order:
+	- /usr/share/buffyboard.conf
+	- /usr/share/buffyboard.conf.d/ (alphabetically)
 	- /etc/buffyboard.conf
 	- /etc/buffyboard.conf.d/ (alphabetically)
 	- Override files (in supplied order)
