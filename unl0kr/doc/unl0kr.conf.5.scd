@@ -14,11 +14,12 @@ one option/value pair per line:
 <option>=<value>
 ```
 
-The default configuration file is at /etc/unl0kr.conf, UNL0KR will use this 
-configuration file if present along with overrides placed in 
-/etc/unl0kr.conf.d/ and those specified with the -C option. All config files 
-will be merged in the following order:
-	- /etc/unl0kr.conf 
+On launch, UNL0KR searches for configuration files in various locations and
+successively merges all files together into a single configuration. Files are searched
+for and, if found, merged in the following order:
+	- /usr/share/unl0kr.conf
+	- /usr/share/unl0kr.conf.d/ (alphabetically)
+	- /etc/unl0kr.conf
 	- /etc/unl0kr.conf.d/ (alphabetically)
 	- Override files (in supplied order)
 

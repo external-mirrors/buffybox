@@ -10,6 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+- feat: Load config from /usr/share aswell (!26, thanks @fossdd)
 - feat(buffyboard): Add man pages (!23, thanks @Jarrah)
 - misc: Unify build system (!23, thanks @Jarrah)
 - misc: Ensure stable file order during builds (!24, thanks @devrtz)

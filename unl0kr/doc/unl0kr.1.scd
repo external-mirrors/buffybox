@@ -24,6 +24,8 @@ password is printed to STDOUT. All other output happens on STDERR.
 *-C, --config-override*
 	Path to a config override file. Can be supplied multiple times. Config 
 	files are merged in the following order:
+		- /usr/share/unl0kr.conf
+		- /usr/share/unl0kr.conf.d/\* (alphabetically)
 		- /etc/unl0kr.conf
 		- /etc/unl0kr.conf.d/\* (alphabetically)
 		- Override files (in supplied order)
