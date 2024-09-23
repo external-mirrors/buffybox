@@ -30,8 +30,10 @@ man_files = [
 	'doc/unl0kr.conf.5',
 ]
 
+inih_dep = dependency('inih')
+
 unl0kr_dependencies = [
-  dependency('inih'),
+  inih_dep,
   dependency('libinput'),
   dependency('libudev'),
   dependency('xkbcommon'),
@@ -54,6 +56,33 @@ executable(
   dependencies: unl0kr_dependencies,
   install: true
 )
+
+systemd_dep = dependency('systemd', required: get_option('systemd-password-agent'))
+if systemd_dep.found()
+  executable(
+    'unl0kr-agent',
+    sources: files('unl0kr-agent.c'),
+    dependencies: inih_dep,
+    c_args: '-DUNL0KR_BINARY=' + get_option('prefix') / get_option('bindir') / 'unl0kr',
+    install: true,
+    install_dir: get_option('libexecdir')
+  )
+
+  system_unit_dir = systemd_dep.get_variable('systemd_system_unit_dir')
+
+  install_data(
+    'unl0kr-agent.path',
+    install_dir: system_unit_dir
+  )
+
+  configure_file(
+    configuration: {'LIBEXECDIR': get_option('libexecdir')},
+    input: 'unl0kr-agent.service.in',
+    output: 'unl0kr-agent.service',
+    install: true,
+    install_dir: system_unit_dir
+  )
+endif
 
 scdoc = dependency('scdoc')
 scdoc_prog = find_program(scdoc.get_pkgconfig_variable('scdoc'), native : true)

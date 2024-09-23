@@ -1,1 +1,2 @@
 option('with-drm', type : 'feature', value : 'auto', description : 'Enable DRM backend')
+option('systemd-password-agent', type : 'feature', value : 'auto', description : 'Build a systemd password agent for touchscreens')
