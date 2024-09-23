@@ -45,7 +45,14 @@ $ sudo ./_build/unl0kr/unl0kr # For Unl0kr
 $ sudo ./_build/buffyboard/buffyboard # For Buffyboard
 ```
 
-With meson <0\.55 use `ninja` instead of `meson compile`\.
+On distributions based on systemd, `unl0kr` can be used as a [password agent](https://systemd.io/PASSWORD_AGENTS/), to give systemd the ability to ask passwords on touchscreen-only devices:
+
+```
+# systemctl stop systemd-ask-password-console.path
+# systemctl stop systemd-ask-password-wall.path
+# systemctl start unl0kr-agent.path
+# systemd-ask-password --no-tty # Unl0kr is started
+```
 
 ## Making a release
 

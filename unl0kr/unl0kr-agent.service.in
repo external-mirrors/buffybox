@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Unit]
+Description=Dispatch Password Requests to unl0kr
+
+ConditionPathExists=!/run/plymouth/pid
+
+DefaultDependencies=no
+After=plymouth-start.service
+Conflicts=emergency.service
+Before=emergency.service
+Conflicts=shutdown.target initrd-switch-root.target
+Before=shutdown.target initrd-switch-root.target
+
+[Service]
+ExecStart=@LIBEXECDIR@/unl0kr-agent

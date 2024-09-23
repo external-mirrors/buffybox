@@ -1,8 +1,6 @@
 # Copyright 2021 Clayton Craft
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-depxkbcommon = dependency('xkbcommon')
-
 unl0kr_sources = files(
     'backends.c',
     'command_line.c',
@@ -32,3 +30,25 @@ executable('unl0kr',
 
 install_data('unl0kr.conf', install_dir: get_option('sysconfdir'))
 
+depsystemd = dependency('systemd', required: get_option('systemd-password-agent'))
+if depsystemd.found()
+    executable('unl0kr-agent',
+        sources: files('unl0kr-agent.c'),
+        dependencies: depinih,
+        c_args: '-DUNL0KR_BINARY="@0@"'.format(get_option('prefix') / get_option('bindir') / 'unl0kr'),
+        install: true,
+        install_dir: get_option('libexecdir')
+    )
+
+    system_unit_dir = depsystemd.get_variable(pkgconfig: 'systemd_system_unit_dir')
+
+    install_data('unl0kr-agent.path', install_dir: system_unit_dir)
+
+    configure_file(
+        configuration: {'LIBEXECDIR': get_option('prefix') / get_option('libexecdir')},
+        input: 'unl0kr-agent.service.in',
+        output: 'unl0kr-agent.service',
+        install: true,
+        install_dir: system_unit_dir
+    )
+endif
