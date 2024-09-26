@@ -6,17 +6,11 @@
 
 find "$1/src" -name 'lv_init.c' | LC_ALL=C sort
 find "$1/src/core" -name '*.c' | LC_ALL=C sort
-find "$1/src/dev" -name '*.c' | LC_ALL=C sort
 find "$1/src/display" -name '*.c' | LC_ALL=C sort
 find "$1/src/draw" -name '*.c' | LC_ALL=C sort
 find "$1/src/drivers" -name '*.c' | LC_ALL=C sort
-find "$1/src/extra" -name '*.c' | LC_ALL=C sort
-find "$1/src/extra/widgets/keyboard" -name '*.c' | LC_ALL=C sort
-find "$1/src/extra/widgets/msgbox" -name '*.c' | LC_ALL=C sort
-find "$1/src/extra/widgets/span" -name '*.c' | LC_ALL=C sort
 find "$1/src/indev" -name '*.c' | LC_ALL=C sort
 find "$1/src/font" -name '*.c' | LC_ALL=C sort
-find "$1/src/hal" -name '*.c' | LC_ALL=C sort
 find "$1/src/layouts" -name '*.c' | LC_ALL=C sort
 find "$1/src/libs" -name '*.c' | LC_ALL=C sort
 find "$1/src/misc" -name '*.c' | LC_ALL=C sort
