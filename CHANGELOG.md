@@ -15,7 +15,8 @@ If a change only affects particular applications, they are listed in parentheses
 - misc: Unify build system (!23 & !29, thanks @Jarrah & @vladimir.stoyakin)
 - misc: Ensure stable file order during builds (!24, thanks @devrtz)
 - fix: Prevent logging internal LVGL errors to stdout
-- misc: Make scdoc a native dependency to enable cross-compilation (thanks @uninsane)
+- misc: Make scdoc a native dependency to enable cross-compilation (!30, thanks @uninsane)
+- fix: Use usleep to release CPU when possible (!31, thanks @uninsane)
 
 ## 3.2.0 (2024-06-03)
 
