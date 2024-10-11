@@ -1,7 +1,5 @@
 build-and-test-with-drm:
   image: alpine:3.19
-  tags:
-    - saas-linux-small-amd64
   script:
     - apk -q add git bash build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev libdrm-dev scdoc
     - git submodule init
@@ -10,8 +8,6 @@ build-and-test-with-drm:
 
 build-and-test-without-drm:
   image: alpine:3.19
-  tags:
-    - saas-linux-small-amd64
   script:
     - apk -q add git bash build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev scdoc
     - git submodule init
@@ -20,8 +16,6 @@ build-and-test-without-drm:
 
 build-iskey:
   image: alpine:3.19
-  tags:
-    - saas-linux-small-amd64
   script:
     - apk -q add git bash build-base meson linux-headers libevdev-dev
     - cd iskey
