@@ -1,6 +1,6 @@
 project('buffybox', 'c',
     version: '3.2.0',
-    default_options: 'warning_level=3',
+    default_options: ['warning_level=3', 'b_ndebug=if-release'],
     meson_version: '>= 0.59.0'
 )
 
@@ -9,6 +9,7 @@ add_project_arguments('-DPROJECT_VERSION="@0@"'.format(meson.project_version()),
 depinih      = dependency('inih')
 deplibinput  = dependency('libinput')
 deplibudev   = dependency('libudev')
+depxkbcommon = dependency('xkbcommon') # For unl0kr only
 
 if get_option('man')
     depscdoc = dependency('scdoc', native: true)

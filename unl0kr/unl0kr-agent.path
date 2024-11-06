@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Unit]
+Description=Dispatch Password Requests to unl0kr Directory Watch
+
+ConditionPathExists=!/run/plymouth/pid
+
+DefaultDependencies=no
+After=plymouth-start.service
+Before=paths.target cryptsetup.target
+Conflicts=emergency.service
+Before=emergency.service
+Conflicts=shutdown.target
+Before=shutdown.target
+
+[Path]
+DirectoryNotEmpty=/run/systemd/ask-password
+MakeDirectory=yes

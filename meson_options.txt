@@ -1,3 +1,4 @@
 option('with-drm', type: 'feature', value: 'auto', description: 'Enable DRM backend')
 option('man', type: 'boolean', value: true, description: 'Install manual pages')
 option('systemd-buffyboard-service', type: 'feature', value: 'auto', description: 'Install systemd service file for buffyboard')
+option('systemd-password-agent', type: 'feature', value: 'auto', description: 'Build a systemd password agent for touchscreens')

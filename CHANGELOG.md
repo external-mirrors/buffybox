@@ -10,6 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+- feat: Add a systemd password agent (!33, thanks @vstoiakin)
 - feat: Load config from /usr/share aswell (!26 & !28, thanks @fossdd & @pabloyoyoista)
 - feat(buffyboard): Add man pages (!23, thanks @Jarrah)
 - misc: Unify build system (!23 & !29, thanks @Jarrah & @vladimir.stoyakin)
