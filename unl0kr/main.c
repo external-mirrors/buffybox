@@ -26,6 +26,7 @@
 #include <unistd.h>
 
 #include <sys/reboot.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 
 
@@ -420,7 +421,23 @@ int main(int argc, char *argv[]) {
     case UL_BACKENDS_BACKEND_DRM:
         bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using DRM backend");
         disp = lv_linux_drm_create();
-        lv_linux_drm_set_file(disp, "/dev/dri/card0", -1);
+
+        char *format_string = "/dev/dri/card%d";
+        char drm_path[16] = {0};
+        struct stat buffer;
+
+        for (size_t i = 0; i < 9; i++) {
+            sprintf(drm_path, format_string, i);
+
+            if (stat(drm_path, &buffer) != 0) {
+                continue;
+            }
+
+            lv_linux_drm_set_file(disp, drm_path, -1);
+
+            break;
+        }
+
         break;
 #endif /* LV_USE_LINUX_DRM */
     default:
