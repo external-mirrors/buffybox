@@ -15,16 +15,19 @@ unl0kr_dependencies = [
     depxkbcommon
 ]
 
+unl0kr_args = []
+
 deplibdrm = dependency('libdrm', required: get_option('with-drm'))
 if deplibdrm.found()
     unl0kr_dependencies += deplibdrm
-    add_project_arguments('-DLV_USE_LINUX_DRM=1', language: 'c')
+    unl0kr_args += '-DLV_USE_LINUX_DRM=1'
 endif
 
 executable('unl0kr',
     include_directories: common_include_dirs,
     sources: unl0kr_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
     dependencies: unl0kr_dependencies,
+    c_args: unl0kr_args,
     install: true
 )
 
