@@ -20,8 +20,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#define INI_STOP_ON_FIRST_ERROR 0 /* Ignore unknown keys */
-
 #include <ini.h>
 
 struct Request
@@ -164,7 +162,7 @@ int ini_parser(void* user, const char* section, const char* name, const char* va
     } else if (strcmp(name, "Silent") == 0) {
         d->silent = to_bool(value);
     } else {
-        fprintf(stderr, "The ini file contains unknown key: %s\n", name);
+        fprintf(stderr, "The ini file contains unknown key: %s = %s\n", name, value);
         return 0;
     }
 
@@ -326,8 +324,10 @@ int event_loop(pid_t pid)
             if (unl0kr_exited)
                 break;
 
-            if (timer_expired && ret != ECANCELED)
+            if (timer_expired && ret != ECANCELED) {
                 ret = ETIME;
+                fprintf(stderr, "The request has expired\n");
+            }
 
             continue;
         }
@@ -339,6 +339,7 @@ int event_loop(pid_t pid)
         }
 
         ret = ECANCELED;
+        fprintf(stderr, "The request was cancelled\n");
 
         if (timer_expired)
             continue;
