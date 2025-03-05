@@ -21,6 +21,7 @@ If a change only affects particular applications, they are listed in parentheses
 - feat(buffyboard): Add a buffyboard.service systemd service (!34, @uninsane)
 - fix(unl0kr): Select an available DRM device instead of a hard-coded one (!35, thanks @Sorcus)
 - feat(unl0kr): Enable software rotation (!32, thanks @xs5871 & @craftyguy)
+- misc(unl0kr): Optimize the main loop (!38, thanks @vstoiakin)
 
 ## 3.2.0 (2024-06-03)
 

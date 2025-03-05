@@ -18,7 +18,6 @@
 
 #include "lvgl/lvgl.h"
 
-#include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,11 +48,9 @@ lv_obj_t *keyboard = NULL;
  */
 
 /**
- * Function to invoke in the tick generation thread.
- *
- * @param args unused
+ * Provides the number of milliseconds for LVGL timers
 */
-static void *tick_thread (void *args);
+static uint32_t millis();
 
 /**
  * Handle LV_EVENT_CLICKED events from the theme toggle button.
@@ -201,13 +198,10 @@ static void sigaction_handler(int signum);
  */
 
 
-static void *tick_thread (void *args) {
-    LV_UNUSED(args);
-    while (1) {
-        usleep(5 * 1000); /* Sleep for 5 millisecond */
-        lv_tick_inc(5); /* Tell LVGL that 5 milliseconds have elapsed */
-    }
-    return NULL;
+static uint32_t millis() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
 
 static void toggle_theme_btn_clicked_cb(lv_event_t *event) {
@@ -380,6 +374,13 @@ int main(int argc, char *argv[]) {
     /* Announce ourselves */
     bbx_log(BBX_LOG_LEVEL_VERBOSE, "unl0kr %s", PROJECT_VERSION);
 
+    /* Check that we have access to the clock */
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Unable to read the clock");
+        exit(EXIT_FAILURE);
+    }
+
     /* Parse config files */
     ul_config_init_opts(&conf_opts);
     ul_config_parse_file("/usr/share/unl0kr/unl0kr.conf", &conf_opts);
@@ -399,10 +400,7 @@ int main(int argc, char *argv[]) {
     /* Initialise LVGL and set up logging callback */
     lv_init();
     lv_log_register_print_cb(bbx_log_print_cb);
-
-    /* Start the tick thread */
-    pthread_t ticker;
-    pthread_create(&ticker, NULL, tick_thread, NULL);
+    lv_tick_set_cb(millis);
 
     /* Initialise display */
     lv_display_t *disp = NULL;
@@ -610,12 +608,19 @@ int main(int argc, char *argv[]) {
     /* Periodically run timer / task handler */
     uint32_t timeout = conf_opts.general.timeout * 1000; /* ms */
     while(1) {
-        if (!timeout || lv_disp_get_inactive_time(NULL) < timeout) {
-            uint32_t time_till_next = lv_timer_handler();
-            usleep(time_till_next * 1000);
-        } else if (timeout) {
-            shutdown();
+        uint32_t time_till_next = lv_timer_handler();
+
+        if (timeout != 0) {
+            uint32_t time_idle = lv_display_get_inactive_time(NULL);
+            if (time_idle >= timeout)
+                shutdown();
+
+            uint32_t time_till_shutdown = timeout - time_idle;
+            if (time_till_shutdown < time_till_next)
+                time_till_next = time_till_shutdown;
         }
+
+        usleep(time_till_next * 1000);
     }
 
     return 0;
