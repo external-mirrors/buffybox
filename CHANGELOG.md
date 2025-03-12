@@ -20,6 +20,7 @@ If a change only affects particular applications, they are listed in parentheses
 - fix: Use usleep to release CPU when possible (!31, thanks @uninsane)
 - feat(buffyboard): Add a buffyboard.service systemd service (!34, @uninsane)
 - fix(unl0kr): Select an available DRM device instead of a hard-coded one (!35, thanks @Sorcus)
+- feat(unl0kr): Enable software rotation (!32, thanks @xs5871 & @craftyguy)
 
 ## 3.2.0 (2024-06-03)
 
