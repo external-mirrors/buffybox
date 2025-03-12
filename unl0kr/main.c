@@ -455,6 +455,9 @@ int main(int argc, char *argv[]) {
         lv_display_set_dpi(disp, cli_opts.dpi);
     }
 
+    /* Set up display rotation */
+    lv_display_set_rotation(disp, cli_opts.rotation);
+
     /* Store final display resolution for convenient later access */
     const uint32_t hor_res = lv_disp_get_hor_res(disp);
     const uint32_t ver_res = lv_disp_get_ver_res(disp);
