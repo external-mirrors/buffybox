@@ -13,6 +13,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 /**
@@ -39,6 +40,7 @@ static void print_usage();
 static void init_opts(ul_cli_opts *opts) {
     opts->num_config_files = 0;
     opts->config_files = NULL;
+    opts->message = NULL;
     opts->hor_res = -1;
     opts->ver_res = -1;
     opts->x_offset = 0;
@@ -58,6 +60,7 @@ static void print_usage() {
         "password is printed to STDOUT. All other output happens on STDERR.\n"
         "\n"
         "Mandatory arguments to long options are mandatory for short options too.\n"
+        "  -m, --message             A message that will be displayed to a user\n"
         "  -C, --config-override     Path to a config override file. Can be supplied\n"
         "                            multiple times. Config files are merged in the\n"
         "                            following order:\n"
@@ -93,6 +96,7 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
     init_opts(opts);
 
     struct option long_opts[] = {
+        { "message",         required_argument, NULL, 'm' },
         { "config-override", required_argument, NULL, 'C' },
         { "geometry",        required_argument, NULL, 'g' },
         { "dpi",             required_argument, NULL, 'd' },
@@ -105,8 +109,11 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
 
     int opt, index = 0;
 
-    while ((opt = getopt_long(argc, argv, "C:g:d:r:hnvV", long_opts, &index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "m:C:g:d:r:hnvV", long_opts, &index)) != -1) {
         switch (opt) {
+        case 'm':
+            opts->message = strdup(optarg);
+            break;
         case 'C':
             opts->config_files = realloc(opts->config_files, (opts->num_config_files + 1) * sizeof(char *));
             if (!opts->config_files) {

@@ -18,6 +18,8 @@ typedef struct {
     int num_config_files;
     /* Paths of config file */
     const char **config_files;
+    /* Message for a user */
+    const char *message;
     /* Horizontal display resolution */
     int hor_res;
     /* Vertical display resolution */

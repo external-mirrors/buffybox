@@ -40,7 +40,7 @@ static struct {
     lv_style_t msgbox_background;
     lv_style_t bar;
     lv_style_t bar_indicator;
-} styles; 
+} styles;
 
 static bool are_styles_initialised = false;
 
@@ -90,6 +90,8 @@ static void init_styles(const bbx_theme *theme) {
     reset_style(&(styles.window));
     lv_style_set_bg_opa(&(styles.window), LV_OPA_COVER);
     lv_style_set_bg_color(&(styles.window), lv_color_hex(theme->window.bg_color));
+    lv_style_set_layout(&(styles.window), LV_LAYOUT_FLEX);
+    lv_style_set_flex_flow(&(styles.window), LV_FLEX_FLOW_COLUMN);
 
     reset_style(&(styles.header));
     lv_style_set_bg_opa(&(styles.header), LV_OPA_COVER);
