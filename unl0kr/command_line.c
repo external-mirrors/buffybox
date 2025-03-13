@@ -45,6 +45,7 @@ static void init_opts(ul_cli_opts *opts) {
     opts->y_offset = 0;
     opts->dpi = 0;
     opts->rotation = LV_DISPLAY_ROTATION_0;
+    opts->newline = true;
     opts->verbose = false;
 }
 
@@ -77,6 +78,7 @@ static void print_usage() {
         "                            * 2 - upside down orientation (180 degrees)\n"
         "                            * 3 - counterclockwise orientation (270 degrees)\n"
         "  -h, --help                Print this message and exit\n"
+        "  -n                        Do not append a newline character to a password\n"
         "  -v, --verbose             Enable more detailed logging output on STDERR\n"
         "  -V, --version             Print the unl0kr version and exit\n");
         /*-------------------------------- 78 CHARS --------------------------------*/
@@ -103,7 +105,7 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
 
     int opt, index = 0;
 
-    while ((opt = getopt_long(argc, argv, "C:g:d:r:hvV", long_opts, &index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "C:g:d:r:hnvV", long_opts, &index)) != -1) {
         switch (opt) {
         case 'C':
             opts->config_files = realloc(opts->config_files, (opts->num_config_files + 1) * sizeof(char *));
@@ -153,6 +155,9 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
         case 'h':
             print_usage();
             exit(EXIT_SUCCESS);
+        case 'n':
+            opts->newline = false;
+            break;
         case 'v':
             opts->verbose = true;
             break;

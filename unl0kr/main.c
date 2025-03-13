@@ -337,7 +337,7 @@ static void textarea_ready_cb(lv_event_t *event) {
 
 static void print_password_and_exit(lv_obj_t *textarea) {
     /* Print the password to STDOUT */
-    printf("%s\n", lv_textarea_get_text(textarea));
+    printf(cli_opts.newline? "%s\n" : "%s", lv_textarea_get_text(textarea));
 
     /* Clear the screen so that when the password field was unobscured, it cannot
      * leak via stale display buffers after we've exited */
