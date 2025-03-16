@@ -418,7 +418,7 @@ int exec_unl0kr(char** ret_password)
             exit(EXIT_FAILURE);
         }
 
-        execl(UNL0KR_BINARY, "unl0kr", (char*) 0);
+        execl(UNL0KR_BINARY, UNL0KR_BINARY, "-n", (char*) 0);
 
         perror("exec() is failed");
         exit(EXIT_FAILURE);
