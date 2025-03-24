@@ -45,7 +45,7 @@ password is printed to STDOUT. All other output happens on STDERR.
 *-h, --help*
 	Print this message and exit.
 *-n*
-	Do not append a newline character to a password.
+        Do not append a newline character to a password.
 *-v, --verbose*
 	Enable more detailed logging output on STDERR.
 *-V, --version*
