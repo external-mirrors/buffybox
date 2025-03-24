@@ -1,6 +1,7 @@
 build-and-test-with-drm:
   image: alpine:3.19
   script:
+    - set -e # Stop on first error
     - apk -q add git bash build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev libdrm-dev scdoc
     - git submodule init
     - git submodule update
@@ -9,6 +10,7 @@ build-and-test-with-drm:
 build-and-test-without-drm:
   image: alpine:3.19
   script:
+    - set -e # Stop on first error
     - apk -q add git bash build-base meson linux-headers inih-dev libinput-dev libxkbcommon-dev scdoc
     - git submodule init
     - git submodule update
@@ -17,6 +19,7 @@ build-and-test-without-drm:
 build-iskey:
   image: alpine:3.19
   script:
+    - set -e # Stop on first error
     - apk -q add git bash build-base meson linux-headers libevdev-dev
     - cd iskey
     - meson setup _build
