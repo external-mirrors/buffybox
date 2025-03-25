@@ -32,7 +32,7 @@ password is printed to STDOUT. All other output happens on STDERR.
 *-g, --geometry=NxM[@X,Y]*
 	Force a display size of N horizontal times M vertical pixels, offset 
 	horizontally by X pixels and vertically by Y pixels.
-*-d  --dpi=N*               
+*-d  --dpi=N*
 	Override the display's DPI value.
 *-r, --rotate=[0-3]*
 	Rotate the UI to the given orientation. The
@@ -42,11 +42,13 @@ password is printed to STDOUT. All other output happens on STDERR.
 	* 1 - clockwise orientation (90 degrees)
 	* 2 - upside down orientation (180 degrees)
 	* 3 - counterclockwise orientation (270 degrees)
-*-h, --help*                
+*-h, --help*
 	Print this message and exit.
-*-v, --verbose*             
+*-n*
+	Do not append a newline character to a password.
+*-v, --verbose*
 	Enable more detailed logging output on STDERR.
-*-V, --version*             
+*-V, --version*
 	Print the unl0kr version and exit.
 
 # EXAMPLES

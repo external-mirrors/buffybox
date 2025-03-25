@@ -58,8 +58,10 @@ function ok() {
 
 function run_script() {
     info "Executing $1"
-    "$1"
+    rc=0
+    "$1" || rc=1
     echo
+    return $rc
 }
 
 function read_version_from_meson() {

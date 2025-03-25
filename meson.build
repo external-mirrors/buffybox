@@ -4,7 +4,11 @@ project('buffybox', 'c',
     meson_version: '>= 0.59.0'
 )
 
-add_project_arguments('-DPROJECT_VERSION="@0@"'.format(meson.project_version()), language: 'c')
+add_project_arguments(
+    '-DPROJECT_VERSION="@0@"'.format(meson.project_version()),
+    '-DLV_BIG_ENDIAN_SYSTEM=' + (host_machine.endian() == 'big'? '1' : '0'),
+    language: 'c'
+)
 
 depinih      = dependency('inih')
 deplibinput  = dependency('libinput')

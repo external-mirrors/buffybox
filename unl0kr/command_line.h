@@ -30,6 +30,8 @@ typedef struct {
     int dpi;
     /* Display rotation */
     lv_display_rotation_t rotation;
+    /* If true, append a newline character to a password */
+    bool newline;
     /* Verbose mode. If true, provide more detailed logging output on STDERR. */
     bool verbose;
 } ul_cli_opts;
