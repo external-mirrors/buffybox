@@ -22,6 +22,7 @@ If a change only affects particular applications, they are listed in parentheses
 - fix(unl0kr): Select an available DRM device instead of a hard-coded one (!35, thanks @Sorcus)
 - feat(unl0kr): Enable software rotation (!32, thanks @xs5871 & @craftyguy)
 - misc: do not hardcode endianess of a system (!41, thanks @vstoiakin)
+- misc(unl0kr): Optimize the main loop (!38, thanks @vstoiakin)
 
 ## 3.2.0 (2024-06-03)
 
