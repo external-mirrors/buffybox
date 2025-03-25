@@ -313,9 +313,6 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
  *  COMPILER SETTINGS
  *====================*/
 
-/*For big endian systems set to 1*/
-#define LV_BIG_ENDIAN_SYSTEM    0
-
 /*Define a custom attribute to `lv_tick_inc` function*/
 #define LV_ATTRIBUTE_TICK_INC
 
