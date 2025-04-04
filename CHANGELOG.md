@@ -23,6 +23,7 @@ If a change only affects particular applications, they are listed in parentheses
 - feat(unl0kr): Enable software rotation (!32, thanks @xs5871 & @craftyguy)
 - misc: do not hardcode endianess of a system (!41, thanks @vstoiakin)
 - misc(unl0kr): Optimize the main loop (!38, thanks @vstoiakin)
+- feat(unl0kr): Add the option to show a custom message to a user (!39, thanks @vstoiakin)
 
 ## 3.2.0 (2024-06-03)
 

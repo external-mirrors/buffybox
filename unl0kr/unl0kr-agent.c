@@ -418,7 +418,18 @@ int exec_unl0kr(char** ret_password)
             exit(EXIT_FAILURE);
         }
 
-        execl(UNL0KR_BINARY, UNL0KR_BINARY, "-n", (char*) 0);
+        char* argv[5];
+        int argc = 2;
+        argv[0] = UNL0KR_BINARY;
+        argv[1] = "-n";
+        if (request.message) {
+            argv[2] = "-m";
+            argv[3] = request.message;
+            argc += 2;
+        }
+        argv[argc] = NULL;
+
+        execv(UNL0KR_BINARY, argv);
 
         perror("exec() is failed");
         exit(EXIT_FAILURE);

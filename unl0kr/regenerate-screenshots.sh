@@ -80,7 +80,7 @@ while read -r theme; do
     readme="$readme"$'\n'"## $theme"$'\n\n'
     
     for res in ${resolutions[@]}; do
-        $executable -g $res -C $config &
+        $executable -m "Please enter a password to unlock the root volume" -g $res -C $config &
         pid=$!
 
         sleep 3 # Wait for UI to render

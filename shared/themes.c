@@ -1085,7 +1085,7 @@ static const bbx_theme nord_dark = {
         }
     },
     .label = {
-        .fg_color = 0x070c0d
+        .fg_color = NORD5
     },
     .msgbox = {
         .fg_color = NORD6,

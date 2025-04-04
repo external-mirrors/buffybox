@@ -40,8 +40,13 @@ bool is_alternate_theme = false;
 bool is_password_obscured = true;
 bool is_keyboard_hidden = false;
 
+lv_obj_t *container = NULL;
 lv_obj_t *keyboard = NULL;
 
+int32_t content_height_with_kb;
+int32_t content_height_without_kb;
+int32_t content_pad_bottom_with_kb;
+int32_t content_pad_bottom_without_kb;
 
 /**
  * Static prototypes
@@ -117,12 +122,13 @@ static void toggle_keyboard_hidden(void);
 static void set_keyboard_hidden(bool is_hidden);
 
 /**
- * Callback for the keyboard's vertical slide in / out animation.
+ * Callback for the pad animation.
  *
- * @param obj keyboard widget
- * @param value y position
+ * @param obj container widget
+ * @param value the current value of the pad
  */
-static void keyboard_anim_y_cb(void *obj, int32_t value);
+
+static void pad_anim_cb(void *obj, int32_t value);
 
 /**
  * Handle LV_EVENT_VALUE_CHANGED events from the keyboard layout dropdown.
@@ -249,22 +255,43 @@ static void toggle_keyboard_hidden(void) {
 
 static void set_keyboard_hidden(bool is_hidden) {
     if (!conf_opts.general.animations) {
-        lv_obj_set_y(keyboard, is_hidden ? lv_obj_get_height(keyboard) : 0);
+        lv_obj_set_height(container, is_hidden? content_height_without_kb : content_height_with_kb);
+        lv_obj_set_style_pad_bottom(container,
+            is_hidden? content_pad_bottom_without_kb : content_pad_bottom_with_kb, LV_PART_MAIN);
         return;
     }
 
     lv_anim_t keyboard_anim;
     lv_anim_init(&keyboard_anim);
-    lv_anim_set_var(&keyboard_anim, keyboard);
-    lv_anim_set_values(&keyboard_anim, is_hidden ? 0 : lv_obj_get_height(keyboard), is_hidden ? lv_obj_get_height(keyboard) : 0);
+    lv_anim_set_var(&keyboard_anim, container);
+    lv_anim_set_exec_cb(&keyboard_anim, (lv_anim_exec_xcb_t) lv_obj_set_height);
     lv_anim_set_path_cb(&keyboard_anim, lv_anim_path_ease_out);
     lv_anim_set_time(&keyboard_anim, 500);
-    lv_anim_set_exec_cb(&keyboard_anim, keyboard_anim_y_cb);
+
+    lv_anim_set_values(&keyboard_anim,
+        is_hidden? content_height_with_kb : content_height_without_kb,
+        is_hidden? content_height_without_kb : content_height_with_kb);
+
     lv_anim_start(&keyboard_anim);
+
+    if (content_pad_bottom_with_kb != content_pad_bottom_without_kb) {
+        lv_anim_t pad_anim;
+        lv_anim_init(&pad_anim);
+        lv_anim_set_var(&pad_anim, container);
+        lv_anim_set_exec_cb(&pad_anim, pad_anim_cb);
+        lv_anim_set_path_cb(&pad_anim, lv_anim_path_ease_out);
+        lv_anim_set_time(&pad_anim, 500);
+
+        lv_anim_set_values(&pad_anim,
+            is_hidden? content_pad_bottom_with_kb : content_pad_bottom_without_kb,
+            is_hidden? content_pad_bottom_without_kb : content_pad_bottom_with_kb);
+
+        lv_anim_start(&pad_anim);
+    }
 }
 
-static void keyboard_anim_y_cb(void *obj, int32_t value) {
-    lv_obj_set_y(obj, value);
+static void pad_anim_cb(void *obj, int32_t value) {
+    lv_obj_set_style_pad_bottom(obj, value, LV_PART_MAIN);
 }
 
 static void layout_dropdown_value_changed_cb(lv_event_t *event) {
@@ -456,10 +483,6 @@ int main(int argc, char *argv[]) {
     /* Set up display rotation */
     lv_display_set_rotation(disp, cli_opts.rotation);
 
-    /* Store final display resolution for convenient later access */
-    const uint32_t hor_res = lv_disp_get_hor_res(disp);
-    const uint32_t ver_res = lv_disp_get_ver_res(disp);
-
     /* Prepare for routing physical keyboard input into the textarea */
     lv_group_t *keyboard_input_group = lv_group_create();
     bbx_indev_set_keyboard_input_group(keyboard_input_group);
@@ -475,29 +498,20 @@ int main(int argc, char *argv[]) {
     /* Initialise theme */
     set_theme(is_alternate_theme);
 
-    /* Prevent scrolling when keyboard is off-screen */
-    lv_obj_clear_flag(lv_scr_act(), LV_OBJ_FLAG_SCROLLABLE);
-
     /* Figure out a few numbers for sizing and positioning */
-    const int base_keyboard_height = ver_res > hor_res ? ver_res / 3 : ver_res / 2; /* Height for 4 rows */
-    const int keyboard_height = base_keyboard_height * 1.25; /* Add space for an extra top row */
-    const int padding = keyboard_height / 10;
-    const int textarea_container_max_width = LV_MIN(hor_res, ver_res);
+    const int32_t hor_res = lv_disp_get_hor_res(disp);
+    const int32_t ver_res = lv_disp_get_ver_res(disp);
+    const int32_t keyboard_height = ver_res > hor_res ? ver_res / 2.5 : ver_res / 1.8; /* Height for 5 rows */
 
-    /* Main flexbox */
-    lv_obj_t *container = lv_obj_create(lv_scr_act());
-    lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_flex_align(container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_size(container, LV_PCT(100), ver_res - keyboard_height);
-    lv_obj_set_pos(container, 0, 0);
-    lv_obj_clear_flag(container, LV_OBJ_FLAG_SCROLLABLE);
+    /* Prevent scrolling when keyboard is off-screen */
+    lv_obj_t *screen = lv_screen_active();
+    lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
 
     /* Header flexbox */
-    lv_obj_t *header = lv_obj_create(container);
+    lv_obj_t *header = lv_obj_create(screen);
     lv_obj_add_flag(header, BBX_WIDGET_HEADER);
     lv_theme_apply(header); /* Force re-apply theme after setting flag so that the widget can be identified */
     lv_obj_set_flex_flow(header, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(header, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_size(header, LV_PCT(100), LV_SIZE_CONTENT);
 
     /* Theme switcher button */
@@ -532,19 +546,45 @@ int main(int argc, char *argv[]) {
     lv_label_set_text(shutdown_btn_label, LV_SYMBOL_POWER);
     lv_obj_center(shutdown_btn_label);
 
-    /* Flexible spacer */
-    lv_obj_t *flexible_spacer = lv_obj_create(container);
-    lv_obj_set_size(flexible_spacer, LV_PCT(100), 0);
-    lv_obj_set_flex_grow(flexible_spacer, 1);
+    lv_obj_update_layout(layout_dropdown);
+    const int32_t dropwdown_height = lv_obj_get_height(layout_dropdown);
+    lv_obj_set_size(toggle_theme_btn, dropwdown_height, dropwdown_height);
+    lv_obj_set_size(toggle_kb_btn, dropwdown_height, dropwdown_height);
+    lv_obj_set_size(shutdown_btn, dropwdown_height, dropwdown_height);
+
+    lv_obj_update_layout(header);
+    content_height_without_kb = ver_res - lv_obj_get_height(header);
+    content_height_with_kb = content_height_without_kb - keyboard_height;
+
+    /* Container for a message and an input field */
+    container = lv_obj_create(screen);
+    lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(container, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_set_size(container, LV_PCT(100), is_keyboard_hidden? content_height_without_kb : content_height_with_kb);
+
+    /* Message for a user */
+    lv_obj_t *message_label;
+    if (cli_opts.message) {
+        /* lv_label does not support wrapping and scrolling simultaneously,
+           so we place it in a scrollable container */
+        lv_obj_t *message_container = lv_obj_create(container);
+        lv_obj_set_width(message_container, LV_PCT(100));
+        lv_obj_set_flex_flow(message_container, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_flex_grow(message_container, 1);
+
+        lv_obj_t *message_spacer = lv_obj_create(message_container);
+        lv_obj_set_width(message_spacer, 0);
+        lv_obj_set_flex_grow(message_spacer, 1);
+
+        message_label = lv_label_create(message_container);
+        lv_obj_set_size(message_label, LV_PCT(100), LV_SIZE_CONTENT);
+        lv_label_set_text(message_label, cli_opts.message);
+    }
 
     /* Textarea flexbox */
     lv_obj_t *textarea_container = lv_obj_create(container);
     lv_obj_set_size(textarea_container, LV_PCT(100), LV_SIZE_CONTENT);
-    lv_obj_set_style_max_width(textarea_container, textarea_container_max_width, LV_PART_MAIN);
     lv_obj_set_flex_flow(textarea_container, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(textarea_container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_style_pad_left(textarea_container, padding, LV_PART_MAIN);
-    lv_obj_set_style_pad_right(textarea_container, padding, LV_PART_MAIN);
 
     /* Textarea */
     lv_obj_t *textarea = lv_textarea_create(textarea_container);
@@ -559,27 +599,40 @@ int main(int argc, char *argv[]) {
     /* Route physical keyboard input into textarea */
     lv_group_add_obj(keyboard_input_group, textarea);
 
+    lv_obj_update_layout(textarea);
+    const int32_t textarea_height = lv_obj_get_height(textarea);
+
     /* Reveal / obscure password button */
     lv_obj_t *toggle_pw_btn = lv_btn_create(textarea_container);
-    const int textarea_height = lv_obj_get_height(textarea);
     lv_obj_set_size(toggle_pw_btn, textarea_height, textarea_height);
     lv_obj_t *toggle_pw_btn_label = lv_label_create(toggle_pw_btn);
     lv_obj_center(toggle_pw_btn_label);
     lv_label_set_text(toggle_pw_btn_label, LV_SYMBOL_EYE_OPEN);
     lv_obj_add_event_cb(toggle_pw_btn, toggle_pw_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
 
-    /* Set header button size to match dropdown (for some reason the height is only available here) */
-    const int dropwdown_height = lv_obj_get_height(layout_dropdown);
-    lv_obj_set_size(toggle_theme_btn, dropwdown_height, dropwdown_height);
-    lv_obj_set_size(toggle_kb_btn, dropwdown_height, dropwdown_height);
-    lv_obj_set_size(shutdown_btn, dropwdown_height, dropwdown_height);
+    /* The bottom pad is used to center content when the keyboard is hidden */
+    content_pad_bottom_with_kb = 20;
+    int32_t content_pad_row = 10;
 
-    /* Fixed spacer */
-    lv_obj_t *fixed_spacer = lv_obj_create(container);
-    lv_obj_set_size(fixed_spacer, LV_PCT(100), padding);
+    lv_obj_set_style_pad_top(container, 10, LV_PART_MAIN);
+    lv_obj_set_style_pad_left(container, 20, LV_PART_MAIN);
+    lv_obj_set_style_pad_right(container, 20, LV_PART_MAIN);
+    lv_obj_set_style_pad_row(container, content_pad_row, LV_PART_MAIN);
+
+    int32_t content_native_height = textarea_height;
+    if (cli_opts.message) {
+        lv_obj_update_layout(message_label);
+        content_native_height += content_pad_row + lv_obj_get_height(message_label);
+    }
+
+    content_pad_bottom_without_kb = (content_height_without_kb - content_native_height) / 2;
+    if (content_pad_bottom_without_kb < content_pad_bottom_with_kb)
+        content_pad_bottom_without_kb = content_pad_bottom_with_kb;
+
+    lv_obj_set_style_pad_bottom(container, is_keyboard_hidden? content_pad_bottom_without_kb : content_pad_bottom_with_kb, LV_PART_MAIN);
 
     /* Keyboard (after textarea / label so that key popovers are not drawn over) */
-    keyboard = lv_keyboard_create(lv_scr_act());
+    keyboard = lv_keyboard_create(screen);
     lv_keyboard_set_mode(keyboard, LV_KEYBOARD_MODE_TEXT_LOWER);
     lv_keyboard_set_textarea(keyboard, textarea);
     uint32_t num_keyboard_events = lv_obj_get_event_count(keyboard);
@@ -591,8 +644,7 @@ int main(int argc, char *argv[]) {
     }
     lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_event_cb(keyboard, keyboard_ready_cb, LV_EVENT_READY, NULL);
-    lv_obj_set_pos(keyboard, 0, is_keyboard_hidden ? keyboard_height : 0);
-    lv_obj_set_size(keyboard, hor_res, keyboard_height);
+    lv_obj_set_size(keyboard, LV_PCT(100), keyboard_height);
     bbx_theme_prepare_keyboard(keyboard);
 
     /* Apply textarea options */

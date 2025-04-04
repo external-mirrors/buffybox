@@ -21,6 +21,8 @@ password is printed to STDOUT. All other output happens on STDERR.
 
 ## Optional
 
+*-m, --message*
+	A message that will be displayed to a user.
 *-C, --config-override*
 	Path to a config override file. Can be supplied multiple times. Config
 	files are merged in the following order:
