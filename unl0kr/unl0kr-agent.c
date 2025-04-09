@@ -118,17 +118,15 @@ bool to_bool(const char* value)
 {
     if (strcmp(value, "true") == 0) {
         return true;
-    } else if (strcmp(value, "1") == 0) {
-        return true;
-    } else if (strcmp(value, "yes") == 0) {
-        return true;
     } else if (strcmp(value, "false") == 0) {
         return false;
+    } else if (strcmp(value, "1") == 0) {
+        return true;
     } else if (strcmp(value, "0") == 0) {
         return false;
+    } else if (strcmp(value, "yes") == 0) {
+        return true;
     } else if (strcmp(value, "no") == 0) {
-        return false;
-    } else if (strcmp(value, "") == 0) {
         return false;
     } else {
         fprintf(stderr, "The value '%s' is not a boolean\n", value);
@@ -142,6 +140,11 @@ int ini_parser(void* user, const char* section, const char* name, const char* va
 
     if (strcmp(section, "Ask") != 0) {
         fprintf(stderr, "The ini file contains unknown section: %s\n", section);
+        return 0;
+    }
+
+    if (value[0] == 0x00) {
+        fprintf(stderr, "The ini file contains a key without a value: %s\n", name);
         return 0;
     }
 
