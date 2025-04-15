@@ -8,7 +8,7 @@ We're using semantic versioning and the following changelog types:
 
 If a change only affects particular applications, they are listed in parentheses after the type, e.g. feat(unl0kr).
 
-## Unreleased
+## 3.3.0 (2025-04-15)
 
 - feat: Add a systemd password agent (!33, thanks @vstoiakin)
 - feat: Load config from /usr/share aswell (!26 & !28, thanks @fossdd & @pabloyoyoista)
