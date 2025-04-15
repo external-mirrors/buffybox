@@ -26,10 +26,10 @@ typedef struct {
 /* Header theme */
 typedef struct {
     uint32_t bg_color;
-    lv_coord_t border_width;
+    int32_t border_width;
     uint32_t border_color;
-    lv_coord_t pad;
-    lv_coord_t gap;
+    int32_t pad;
+    int32_t gap;
 } bbx_theme_header;
 
 /* Key theme for one specific key type and state */
@@ -47,8 +47,8 @@ typedef struct {
 
 /* Key theme */
 typedef struct {
-    lv_coord_t border_width;
-    lv_coord_t corner_radius;
+    int32_t border_width;
+    int32_t corner_radius;
     bbx_theme_key key_char;
     bbx_theme_key key_non_char;
     bbx_theme_key key_mod_act;
@@ -58,10 +58,10 @@ typedef struct {
 /* Keyboard theme */
 typedef struct {
     uint32_t bg_color;
-    lv_coord_t border_width;
+    int32_t border_width;
     uint32_t border_color;
-    lv_coord_t pad;
-    lv_coord_t gap;
+    int32_t pad;
+    int32_t gap;
     bbx_theme_keys keys;
 } bbx_theme_keyboard;
 
@@ -74,16 +74,16 @@ typedef struct {
 
 /* Button theme */
 typedef struct {
-    lv_coord_t border_width;
-    lv_coord_t corner_radius;
-    lv_coord_t pad;
+    int32_t border_width;
+    int32_t corner_radius;
+    int32_t pad;
     bbx_theme_button_state normal;
     bbx_theme_button_state pressed;
 } bbx_theme_button;
 
 /* Text area cursor theme */
 typedef struct {
-    lv_coord_t width;
+    int32_t width;
     uint32_t color;
     int period;
 } bbx_theme_textarea_cursor;
@@ -92,10 +92,10 @@ typedef struct {
 typedef struct {
     uint32_t fg_color;
     uint32_t bg_color;
-    lv_coord_t border_width;
+    int32_t border_width;
     uint32_t border_color;
-    lv_coord_t corner_radius;
-    lv_coord_t pad;
+    int32_t corner_radius;
+    int32_t pad;
     uint32_t placeholder_color;
     bbx_theme_textarea_cursor cursor;
 } bbx_theme_textarea;
@@ -106,10 +106,10 @@ typedef struct {
     uint32_t bg_color;
     uint32_t selection_fg_color;
     uint32_t selection_bg_color;
-    lv_coord_t border_width;
+    int32_t border_width;
     uint32_t border_color;
-    lv_coord_t corner_radius;
-    lv_coord_t pad;
+    int32_t corner_radius;
+    int32_t pad;
 } bbx_theme_dropdown_list;
 
 /* Dropdown theme */
@@ -133,11 +133,11 @@ typedef struct {
 typedef struct {
     uint32_t fg_color;
     uint32_t bg_color;
-    lv_coord_t border_width;
+    int32_t border_width;
     uint32_t border_color;
-    lv_coord_t corner_radius;
-    lv_coord_t pad;
-    lv_coord_t gap;
+    int32_t corner_radius;
+    int32_t pad;
+    int32_t gap;
     bbx_theme_msgbox_dimming dimming;
 } bbx_theme_msgbox;
 
@@ -148,9 +148,9 @@ typedef struct {
 
 /* Progress bar theme */
 typedef struct {
-    lv_coord_t border_width;
+    int32_t border_width;
     uint32_t border_color;
-    lv_coord_t corner_radius;
+    int32_t corner_radius;
     bbx_theme_bar_indicator indicator;
 } bbx_theme_bar;
 

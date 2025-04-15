@@ -51,7 +51,7 @@ static lv_obj_t *keyboard = NULL;
  * @param height display height
  * @return denominator
  */
-static int keyboard_height_denominator(lv_coord_t width, lv_coord_t height);
+static int keyboard_height_denominator(int32_t width, int32_t height);
 
 /**
  * Handle termination signals sent to the process.
@@ -93,7 +93,7 @@ static void pop_checked_modifier_keys(void);
  * Static functions
  */
 
-static int keyboard_height_denominator(lv_coord_t width, lv_coord_t height) {
+static int keyboard_height_denominator(int32_t width, int32_t height) {
     return (height > width) ? 3 : 2;
 }
 
@@ -227,7 +227,7 @@ int main(int argc, char *argv[]) {
     /* Override display properties with command line options if necessary */
     lv_display_set_offset(disp, cli_opts.x_offset, cli_opts.y_offset);
     if (cli_opts.hor_res > 0 || cli_opts.ver_res > 0) {
-        lv_display_set_physical_resolution(disp, lv_disp_get_hor_res(disp), lv_disp_get_ver_res(disp));
+        lv_display_set_physical_resolution(disp, lv_display_get_horizontal_resolution(disp), lv_display_get_vertical_resolution(disp));
         lv_display_set_resolution(disp, cli_opts.hor_res, cli_opts.ver_res);
     }
     if (cli_opts.dpi > 0) {
@@ -242,14 +242,14 @@ int main(int argc, char *argv[]) {
     switch (cli_opts.rotation) {
         case LV_DISPLAY_ROTATION_0:
         case LV_DISPLAY_ROTATION_180: {
-            lv_coord_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
+            int32_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
             lv_display_set_resolution(disp, hor_res_phys, ver_res_phys / denom);
             lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_0) ? (denom - 1) * ver_res_phys / denom : 0);
             break;
         }
         case LV_DISPLAY_ROTATION_90:
         case LV_DISPLAY_ROTATION_270: {
-            lv_coord_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
+            int32_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
             lv_display_set_resolution(disp, hor_res_phys / denom, ver_res_phys);
             lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_90) ? (denom - 1) * hor_res_phys / denom : 0);
             break;
@@ -261,9 +261,10 @@ int main(int argc, char *argv[]) {
 
     /* Initialise theme */
     bbx_theme_apply(bbx_themes_themes[conf_opts.theme.default_id]);
+    lv_theme_apply(lv_screen_active());
 
     /* Add keyboard */
-    keyboard = lv_keyboard_create(lv_scr_act());
+    keyboard = lv_keyboard_create(lv_screen_active());
     uint32_t num_keyboard_events = lv_obj_get_event_count(keyboard);
     for(uint32_t i = 0; i < num_keyboard_events; ++i) {
         if(lv_event_dsc_get_cb(lv_obj_get_event_dsc(keyboard, i)) == lv_keyboard_def_event_cb) {
@@ -289,31 +290,4 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
-}
-
-
-/**
- * Tick generation
- */
-
-/**
- * Generate tick for LVGL.
- * 
- * @return tick in ms
- */
-uint32_t bb_get_tick(void) {
-    static uint64_t start_ms = 0;
-    if (start_ms == 0) {
-        struct timeval tv_start;
-        gettimeofday(&tv_start, NULL);
-        start_ms = (tv_start.tv_sec * 1000000 + tv_start.tv_usec) / 1000;
-    }
-
-    struct timeval tv_now;
-    gettimeofday(&tv_now, NULL);
-    uint64_t now_ms;
-    now_ms = (tv_now.tv_sec * 1000000 + tv_now.tv_usec) / 1000;
-
-    uint32_t time_ms = now_ms - start_ms;
-    return time_ms;
 }

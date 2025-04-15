@@ -9,9 +9,6 @@
 #include "log.h"
 #include "../squeek2lvgl/sq2lv.h"
 
-#include "lvgl/lvgl.h"
-
-
 /**
  * Static variables
  */
@@ -38,8 +35,6 @@ static struct {
     lv_style_t msgbox;
     lv_style_t msgbox_label;
     lv_style_t msgbox_background;
-    lv_style_t bar;
-    lv_style_t bar_indicator;
 } styles;
 
 static bool are_styles_initialised = false;
@@ -90,8 +85,6 @@ static void init_styles(const bbx_theme *theme) {
     reset_style(&(styles.window));
     lv_style_set_bg_opa(&(styles.window), LV_OPA_COVER);
     lv_style_set_bg_color(&(styles.window), lv_color_hex(theme->window.bg_color));
-    lv_style_set_layout(&(styles.window), LV_LAYOUT_FLEX);
-    lv_style_set_flex_flow(&(styles.window), LV_FLEX_FLOW_COLUMN);
 
     reset_style(&(styles.header));
     lv_style_set_bg_opa(&(styles.header), LV_OPA_COVER);
@@ -149,7 +142,7 @@ static void init_styles(const bbx_theme *theme) {
     lv_style_set_border_side(&(styles.textarea_cursor), LV_BORDER_SIDE_LEFT);
     lv_style_set_border_width(&(styles.textarea_cursor), lv_dpx(theme->textarea.cursor.width));
     lv_style_set_border_color(&(styles.textarea_cursor), lv_color_hex(theme->textarea.cursor.color));
-    lv_style_set_anim_time(&(styles.textarea_cursor), theme->textarea.cursor.period);
+    lv_style_set_anim_duration(&(styles.textarea_cursor), theme->textarea.cursor.period);
 
     reset_style(&(styles.dropdown));
     lv_style_set_text_color(&(styles.dropdown), lv_color_hex(theme->dropdown.button.normal.fg_color));
@@ -201,16 +194,6 @@ static void init_styles(const bbx_theme *theme) {
     reset_style(&(styles.msgbox_background));
     lv_style_set_bg_color(&(styles.msgbox_background), lv_color_hex(theme->msgbox.dimming.color));
     lv_style_set_bg_opa(&(styles.msgbox_background), theme->msgbox.dimming.opacity);
-
-    reset_style(&(styles.bar));
-    lv_style_set_border_side(&(styles.bar), LV_BORDER_SIDE_FULL);
-    lv_style_set_border_width(&(styles.bar), lv_dpx(theme->bar.border_width));
-    lv_style_set_border_color(&(styles.bar), lv_color_hex(theme->bar.border_color));
-    lv_style_set_radius(&(styles.bar), lv_dpx(theme->bar.corner_radius));
-
-    reset_style(&(styles.bar_indicator));
-    lv_style_set_bg_opa(&(styles.bar_indicator), LV_OPA_COVER);
-    lv_style_set_bg_color(&(styles.bar_indicator), lv_color_hex(theme->bar.indicator.bg_color));
 
     are_styles_initialised = true;
 }
@@ -307,14 +290,8 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return;
     }
 
-    if (lv_obj_check_type(obj, &lv_label_class) || lv_obj_check_type(obj, &lv_spangroup_class)) {
+    if (lv_obj_check_type(obj, &lv_label_class)) {
         lv_obj_add_style(obj, &(styles.label), 0);
-        return;
-    }
-
-    if (lv_obj_check_type(obj, &lv_bar_class)) {
-        lv_obj_add_style(obj, &(styles.bar), 0);
-        lv_obj_add_style(obj, &(styles.bar_indicator), LV_PART_INDICATOR);
         return;
     }
 }
@@ -341,7 +318,7 @@ static void keyboard_draw_task_added_cb(lv_event_t *event) {
         key = &(current_theme.keyboard.keys.key_char);
     }
 
-    bool pressed = lv_btnmatrix_get_selected_btn(obj) == dsc->id1 && lv_obj_has_state(obj, LV_STATE_PRESSED);
+    bool pressed = lv_buttonmatrix_get_selected_button(obj) == dsc->id1 && lv_obj_has_state(obj, LV_STATE_PRESSED);
 
     lv_draw_label_dsc_t *label_dsc = lv_draw_task_get_label_dsc(draw_task);
     if (label_dsc) {
@@ -384,7 +361,6 @@ void bbx_theme_apply(const bbx_theme *theme) {
     current_theme = *theme;
     init_styles(theme);
 
-    lv_obj_report_style_change(NULL);
-    lv_disp_set_theme(NULL, &lv_theme);
-    lv_theme_apply(lv_scr_act());
+    lv_obj_report_style_change(NULL); /* Update existing objects */
+    lv_display_set_theme(NULL, &lv_theme); /* Set a theme for future objects */
 }

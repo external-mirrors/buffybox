@@ -53,11 +53,6 @@ int32_t content_pad_bottom_without_kb;
  */
 
 /**
- * Provides the number of milliseconds for LVGL timers
-*/
-static uint32_t millis();
-
-/**
  * Handle LV_EVENT_CLICKED events from the theme toggle button.
  *
  * @param event the event object
@@ -203,13 +198,6 @@ static void sigaction_handler(int signum);
  * Static functions
  */
 
-
-static uint32_t millis() {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
-}
-
 static void toggle_theme_btn_clicked_cb(lv_event_t *event) {
     LV_UNUSED(event);
     toggle_theme();
@@ -335,8 +323,8 @@ static void shutdown_mbox_declined_cb(lv_event_t *event) {
 static void keyboard_value_changed_cb(lv_event_t *event) {
     lv_obj_t *kb = lv_event_get_target(event);
 
-    uint16_t btn_id = lv_btnmatrix_get_selected_btn(kb);
-    if (btn_id == LV_BTNMATRIX_BTN_NONE) {
+    uint16_t btn_id = lv_buttonmatrix_get_selected_button(kb);
+    if (btn_id == LV_BUTTONMATRIX_BUTTON_NONE) {
         return;
     }
 
@@ -362,7 +350,7 @@ static void print_password_and_exit(lv_obj_t *textarea) {
 
     /* Clear the screen so that when the password field was unobscured, it cannot
      * leak via stale display buffers after we've exited */
-    lv_obj_t *rect = lv_obj_create(lv_scr_act());
+    lv_obj_t *rect = lv_obj_create(lv_screen_active());
     lv_obj_set_size(rect, LV_PCT(100), LV_PCT(100));
     lv_obj_set_pos(rect, 0, 0);
     lv_obj_set_style_bg_opa(rect, LV_OPA_COVER, LV_PART_MAIN);
@@ -427,7 +415,6 @@ int main(int argc, char *argv[]) {
     /* Initialise LVGL and set up logging callback */
     lv_init();
     lv_log_register_print_cb(bbx_log_print_cb);
-    lv_tick_set_cb(millis);
 
     /* Initialise display */
     lv_display_t *disp = NULL;
@@ -473,7 +460,7 @@ int main(int argc, char *argv[]) {
     /* Override display properties with command line options if necessary */
     lv_display_set_offset(disp, cli_opts.x_offset, cli_opts.y_offset);
     if (cli_opts.hor_res > 0 || cli_opts.ver_res > 0) {
-        lv_display_set_physical_resolution(disp, lv_disp_get_hor_res(disp), lv_disp_get_ver_res(disp));
+        lv_display_set_physical_resolution(disp, lv_display_get_horizontal_resolution(disp), lv_display_get_vertical_resolution(disp));
         lv_display_set_resolution(disp, cli_opts.hor_res, cli_opts.ver_res);
     }
     if (cli_opts.dpi > 0) {
@@ -499,13 +486,15 @@ int main(int argc, char *argv[]) {
     set_theme(is_alternate_theme);
 
     /* Figure out a few numbers for sizing and positioning */
-    const int32_t hor_res = lv_disp_get_hor_res(disp);
-    const int32_t ver_res = lv_disp_get_ver_res(disp);
+    const int32_t hor_res = lv_display_get_horizontal_resolution(disp);
+    const int32_t ver_res = lv_display_get_vertical_resolution(disp);
     const int32_t keyboard_height = ver_res > hor_res ? ver_res / 2.5 : ver_res / 1.8; /* Height for 5 rows */
 
     /* Prevent scrolling when keyboard is off-screen */
     lv_obj_t *screen = lv_screen_active();
-    lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
+    lv_theme_apply(screen);
+    lv_obj_set_flex_flow(screen, LV_FLEX_FLOW_COLUMN);
+    lv_obj_remove_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
 
     /* Header flexbox */
     lv_obj_t *header = lv_obj_create(screen);
@@ -515,14 +504,14 @@ int main(int argc, char *argv[]) {
     lv_obj_set_size(header, LV_PCT(100), LV_SIZE_CONTENT);
 
     /* Theme switcher button */
-    lv_obj_t *toggle_theme_btn = lv_btn_create(header);
+    lv_obj_t *toggle_theme_btn = lv_button_create(header);
     lv_obj_add_event_cb(toggle_theme_btn, toggle_theme_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_t *toggle_theme_btn_label = lv_label_create(toggle_theme_btn);
     lv_label_set_text(toggle_theme_btn_label, UL_SYMBOL_ADJUST);
     lv_obj_center(toggle_theme_btn_label);
 
     /* Show / hide keyboard button */
-    lv_obj_t *toggle_kb_btn = lv_btn_create(header);
+    lv_obj_t *toggle_kb_btn = lv_button_create(header);
     lv_obj_add_event_cb(toggle_kb_btn, toggle_kb_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_t *toggle_kb_btn_label = lv_label_create(toggle_kb_btn);
     lv_label_set_text(toggle_kb_btn_label, LV_SYMBOL_KEYBOARD);
@@ -540,7 +529,7 @@ int main(int argc, char *argv[]) {
     lv_obj_set_flex_grow(spacer, 1);
 
     /* Shutdown button */
-    lv_obj_t *shutdown_btn = lv_btn_create(header);
+    lv_obj_t *shutdown_btn = lv_button_create(header);
     lv_obj_add_event_cb(shutdown_btn, shutdown_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_t *shutdown_btn_label = lv_label_create(shutdown_btn);
     lv_label_set_text(shutdown_btn_label, LV_SYMBOL_POWER);
@@ -561,10 +550,17 @@ int main(int argc, char *argv[]) {
     lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(container, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
     lv_obj_set_size(container, LV_PCT(100), is_keyboard_hidden? content_height_without_kb : content_height_with_kb);
+    lv_obj_set_style_pad_top(container, 10, LV_PART_MAIN);
+    lv_obj_set_style_pad_left(container, 20, LV_PART_MAIN);
+    lv_obj_set_style_pad_right(container, 20, LV_PART_MAIN);
+
+    int32_t content_pad_row = 10;
 
     /* Message for a user */
     lv_obj_t *message_label;
     if (cli_opts.message) {
+        lv_obj_set_style_pad_row(container, content_pad_row, LV_PART_MAIN);
+
         /* lv_label does not support wrapping and scrolling simultaneously,
            so we place it in a scrollable container */
         lv_obj_t *message_container = lv_obj_create(container);
@@ -603,7 +599,7 @@ int main(int argc, char *argv[]) {
     const int32_t textarea_height = lv_obj_get_height(textarea);
 
     /* Reveal / obscure password button */
-    lv_obj_t *toggle_pw_btn = lv_btn_create(textarea_container);
+    lv_obj_t *toggle_pw_btn = lv_button_create(textarea_container);
     lv_obj_set_size(toggle_pw_btn, textarea_height, textarea_height);
     lv_obj_t *toggle_pw_btn_label = lv_label_create(toggle_pw_btn);
     lv_obj_center(toggle_pw_btn_label);
@@ -612,12 +608,6 @@ int main(int argc, char *argv[]) {
 
     /* The bottom pad is used to center content when the keyboard is hidden */
     content_pad_bottom_with_kb = 20;
-    int32_t content_pad_row = 10;
-
-    lv_obj_set_style_pad_top(container, 10, LV_PART_MAIN);
-    lv_obj_set_style_pad_left(container, 20, LV_PART_MAIN);
-    lv_obj_set_style_pad_right(container, 20, LV_PART_MAIN);
-    lv_obj_set_style_pad_row(container, content_pad_row, LV_PART_MAIN);
 
     int32_t content_native_height = textarea_height;
     if (cli_opts.message) {

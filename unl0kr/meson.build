@@ -21,6 +21,8 @@ deplibdrm = dependency('libdrm', required: get_option('with-drm'))
 if deplibdrm.found()
     unl0kr_dependencies += deplibdrm
     unl0kr_args += '-DLV_USE_LINUX_DRM=1'
+else
+    unl0kr_args += '-DLV_USE_LINUX_DRM=0'
 endif
 
 executable('unl0kr',
