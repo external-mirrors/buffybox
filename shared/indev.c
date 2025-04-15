@@ -9,8 +9,6 @@
 #include "cursor/cursor.h"
 #include "log.h"
 
-#include "lvgl/src/indev/lv_indev_private.h"
-
 #include <libinput.h>
 #include <libudev.h>
 #include <limits.h>
@@ -353,8 +351,8 @@ static void set_mouse_cursor(struct input_device *device) {
 
     /* Initialise cursor image if needed */
     if (!cursor_obj) {
-        cursor_obj = lv_img_create(lv_scr_act());
-        lv_img_set_src(cursor_obj, &bbx_cursor_img_dsc);
+        cursor_obj = lv_image_create(lv_screen_active());
+        lv_image_set_src(cursor_obj, &cursor);
     }
 
     /* Apply the cursor image */
