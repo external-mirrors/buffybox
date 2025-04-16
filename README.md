@@ -27,7 +27,7 @@ You can join our development chat at [#buffybox:matrix.org].
 Some dependencies are included as git submodules in this repository. You can clone the repository and initialise the submodules with
 
 ```
-$ git clone https://gitlab.com/postmarketOS/buffybox.git
+$ git clone https://gitlab.postmarketos.org/postmarketOS/buffybox.git
 $ cd buffybox
 $ git submodule init
 $ git submodule update

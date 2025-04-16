@@ -15,13 +15,8 @@ if ! grep "## $1" CHANGELOG.md > /dev/null; then
     exit 1
 fi
 
-if ! grep -E "^\s*version:\s*'$1'" buffyboard/meson.build > /dev/null; then
+if ! grep -E "^\s*version:\s*'$1'" meson.build > /dev/null; then
     echo "Error: Version $1 differs from version in buffyboard/meson.build"
-    exit 1
-fi
-
-if ! grep -E "^\s*version:\s*'$1'" unl0kr/meson.build > /dev/null; then
-    echo "Error: Version $1 differs from version in unl0kr/meson.build"
     exit 1
 fi
 
@@ -30,4 +25,4 @@ git push --tags
 
 ./archive.sh "$2"
 
-echo "Now create a release for https://gitlab.com/postmarketOS/buffybox/-/tags/$1 and attach the uploaded archive"
+echo "Now create a release for https://gitlab.postmarketos.org/postmarketOS/buffybox-/tags/$1 and attach the uploaded archive"

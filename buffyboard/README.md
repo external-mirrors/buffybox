@@ -13,7 +13,7 @@ Buffyboard uses [LVGL] for input processing and rendering. Key events are forwar
 
 # Status
 
-We are en route to v1 which aims at providing a useable, visually pleasant application including [fbkeyboard]'s most essential features. For details about the current status, see the [v1 milestone]. You may also browse the full list of [open issues] to get an idea of what's planned beyond v1.
+We are en route to v1 which aims at providing a useable, visually pleasant application including [fbkeyboard]'s most essential features. You may browse the full list of [open issues] to get an idea of what's planned.
 
 Here are a few highlights of what already works:
 
@@ -121,10 +121,9 @@ Buffyboard was inspired by [fbkeyboard].
 [lv_port_linux_frame_buffer]: https://github.com/lvgl/lv_port_linux_frame_buffer
 [lv_sim_emscripten]: https://github.com/lvgl/lv_sim_emscripten/blob/master/mouse_cursor_icon.c
 [lvgl]: https://github.com/lvgl/lvgl
-[open issues]: https://gitlab.com/cherrypicker/buffyboard/-/issues
+[open issues]: https://gitlab.postmarketos.org/postmarketOS/buffybox/-/issues
 [screenshots]: ./screenshots
-[squeek2lvgl]: https://gitlab.com/cherrypicker/squeek2lvgl]
+[squeek2lvgl]: ../squeek2lvgl
 [squeekboard layouts]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards
 [squeekboard's US terminal layout]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/blob/master/data/keyboards/terminal/us.yaml
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard/-/tree/master
-[v1 milestone]: https://gitlab.com/cherrypicker/buffyboard/-/milestones/1
