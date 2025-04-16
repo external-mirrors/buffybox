@@ -22,6 +22,8 @@
 
 #include <ini.h>
 
+#define UNUSED(x) ((void)x)
+
 struct Request
 {
     uint64_t not_after;
@@ -238,6 +240,7 @@ int process_inotify_events()
 
     assert(ievent1->mask & IN_DELETE_SELF);
     assert(ievent2->mask & IN_IGNORED);
+    UNUSED(ievent2);
 
     assert(read(fd_inotify, buffer, buffer_size) == -1 && errno == EAGAIN); // no more events
     return 0;
@@ -246,7 +249,8 @@ int process_inotify_events()
 void sigalarm(int signo, siginfo_t *info, void *context)
 {
     assert(signo == SIGALRM);
-    (void)(context);
+    UNUSED(signo);
+    UNUSED(context);
 
     if (info->si_code == SI_TIMER) {
         assert(info->si_value.sival_ptr == &id_timer);
@@ -276,7 +280,8 @@ void sigalarm(int signo, siginfo_t *info, void *context)
 void sigchild(int signo, siginfo_t *info, void *context)
 {
     assert(signo == SIGCHLD);
-    (void)(context);
+    UNUSED(signo);
+    UNUSED(context);
 
     if (pid_unl0kr == 0)
         return;
