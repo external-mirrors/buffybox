@@ -10,12 +10,12 @@ echo "Uploading archive to GitLab..."
 response=$(curl --request POST \
     --header "PRIVATE-TOKEN: $1" \
     --form "file=@${archive}" \
-    "https://gitlab.com/api/v4/projects/52322952/uploads")
+    "https://gitlab.postmarketos.org/api/v4/projects/172/uploads")
 
 path=$(echo "${response}" | jq -r .full_path)
 
 echo "${response}"
 echo
-echo "https://gitlab.com${path}"
+echo "https://gitlab.postmarketos.org${path}"
 
 rm -f "${archive}"

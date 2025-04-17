@@ -4,7 +4,7 @@ squeek2lvgl is a Python script and an accompanying C library that make it possib
 
 To access [squeekboard]'s layout files, squeek2lvgl shallowly clones the [squeekboard] git repository into a temporary directory and purges it before exiting.
 
-**squeek2lvgl has been donated to the postmarketOS project. Development continues in https://gitlab.com/postmarketOS/buffybox.**
+**squeek2lvgl has been donated to the postmarketOS project. Development continues in https://gitlab.postmarketos.org/postmarketOS/buffybox.**
 
 ## Usage
 

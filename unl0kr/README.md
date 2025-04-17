@@ -49,6 +49,7 @@ Unl0kr values the CRYPTTAB_TRIED variable. Upon completion, the entered
 password is printed to STDOUT. All other output happens on STDERR.
 
 Mandatory arguments to long options are mandatory for short options too.
+  -m, --message             A message that will be displayed to a user
   -C, --config-override     Path to a config override file. Can be supplied
                             multiple times. Config files are merged in the
                             following order:
@@ -69,6 +70,7 @@ Mandatory arguments to long options are mandatory for short options too.
                             * 2 - upside down orientation (180 degrees)
                             * 3 - counterclockwise orientation (270 degrees)
   -h, --help                Print this message and exit
+  -n                        Do not append a newline character to a password
   -v, --verbose             Enable more detailed logging output on STDERR
   -V, --version             Print the unl0kr version and exit
 ```
@@ -157,9 +159,9 @@ The [lv_port_linux_frame_buffer] project served as a starting point for the code
 [lvgl]: https://github.com/lvgl/lvgl
 [online font converter]: https://lvgl.io/tools/fontconverter
 [osk-sdl]: https://gitlab.com/postmarketOS/osk-sdl
-[package-arch]: https://aur.archlinux.org/packages/unl0kr
+[package-arch]: https://aur.archlinux.org/packages/buffybox
 [package-debian]: https://tracker.debian.org/pkg/unl0kr
-[package-pmos]: https://gitlab.com/postmarketOS/pmaports/-/tree/master/main/unl0kr
+[package-pmos]: https://gitlab.postmarketos.org/postmarketOS/pmaports/-/tree/master/main/unl0kr
 [scdoc]: https://git.sr.ht/~sircmpwn/scdoc
 [screenshots]: ./screenshots
 [squeek2lvgl]: ../squeek2lvgl
