@@ -75,7 +75,7 @@ int *sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers);
  * @param num_scancodes pointer to an integer into which the number of scancodes will be written
  * @return pointer into an array of scancodes at the appropriate index
  */
-const int * const sq2lv_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes);
+const int *sq2lv_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes);
 #endif /* SQ2LV_SCANCODES_ENABLED */
 
 #endif /* SQ2LV_H */

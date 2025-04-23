@@ -557,7 +557,7 @@ int main(int argc, char *argv[]) {
     int32_t content_pad_row = 10;
 
     /* Message for a user */
-    lv_obj_t *message_label;
+    lv_obj_t *message_label = NULL;
     if (cli_opts.message) {
         lv_obj_set_style_pad_row(container, content_pad_row, LV_PART_MAIN);
 

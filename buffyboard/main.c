@@ -98,6 +98,7 @@ static int keyboard_height_denominator(int32_t width, int32_t height) {
 }
 
 static void sigaction_handler(int signum) {
+    LV_UNUSED(signum);
     if (resize_terminals) {
         bb_terminal_reset_all();
     }
@@ -105,6 +106,7 @@ static void sigaction_handler(int signum) {
 }
 
 static void terminal_resize_timer_cb(lv_timer_t *timer) {
+    LV_UNUSED(timer);
     if (resize_terminals) {
         bb_terminal_shrink_current();
     }
