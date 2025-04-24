@@ -585,7 +585,7 @@
 
 #define LV_USE_BAR        0
 
-#define LV_USE_BUTTON        1
+#define LV_USE_BUTTON        0
 
 #define LV_USE_BUTTONMATRIX  1
 
@@ -610,7 +610,7 @@
 
 #define LV_USE_CHECKBOX   0
 
-#define LV_USE_DROPDOWN   1
+#define LV_USE_DROPDOWN   0
 
 #define LV_USE_IMAGE      1
 
@@ -635,7 +635,7 @@
 
 #define LV_USE_MENU       0
 
-#define LV_USE_MSGBOX     1
+#define LV_USE_MSGBOX     0
 
 #define LV_USE_ROLLER     0
 
@@ -657,7 +657,7 @@
 
 #define LV_USE_TEXTAREA   1
 #if LV_USE_TEXTAREA != 0
-    #define LV_TEXTAREA_DEF_PWD_SHOW_TIME 0	/*ms*/
+    #define LV_TEXTAREA_DEF_PWD_SHOW_TIME 1500    /*ms*/
 #endif
 
 #define LV_USE_TABLE      0
@@ -697,7 +697,7 @@
  *==================*/
 
 /*A layout similar to Flexbox in CSS.*/
-#define LV_USE_FLEX 1
+#define LV_USE_FLEX 0
 
 /*A layout similar to Grid in CSS.*/
 #define LV_USE_GRID 0
