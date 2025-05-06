@@ -458,9 +458,9 @@ int exec_unl0kr(char** ret_password)
         goto exit2;
     }
 
-    if (!WIFEXITED(status)) {
+    if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
         ret = ECHILD;
-        fprintf(stderr, "unl0kr terminated abnormally\n");
+        fprintf(stderr, "unl0kr is failed\n");
         goto exit2;
     }
 
