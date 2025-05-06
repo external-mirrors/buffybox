@@ -22,19 +22,25 @@ static struct {
     lv_style_t header;
     lv_style_t keyboard;
     lv_style_t key;
+#if LV_USE_BUTTON
     lv_style_t button;
     lv_style_t button_pressed;
+#endif
     lv_style_t textarea;
     lv_style_t textarea_placeholder;
     lv_style_t textarea_cursor;
+#if LV_USE_DROPDOWN
     lv_style_t dropdown;
     lv_style_t dropdown_pressed;
     lv_style_t dropdown_list;
     lv_style_t dropdown_list_selected;
+#endif
     lv_style_t label;
+#if LV_USE_MSGBOX
     lv_style_t msgbox;
     lv_style_t msgbox_label;
     lv_style_t msgbox_background;
+#endif
 } styles;
 
 static bool are_styles_initialised = false;
@@ -110,6 +116,7 @@ static void init_styles(const bbx_theme *theme) {
     lv_style_set_border_width(&(styles.key), lv_dpx(theme->keyboard.keys.border_width));
     lv_style_set_radius(&(styles.key), lv_dpx(theme->keyboard.keys.corner_radius));
 
+#if LV_USE_BUTTON
     reset_style(&(styles.button));
     lv_style_set_text_color(&(styles.button), lv_color_hex(theme->button.normal.fg_color));
     lv_style_set_bg_opa(&(styles.button), LV_OPA_COVER);
@@ -124,6 +131,7 @@ static void init_styles(const bbx_theme *theme) {
     lv_style_set_text_color(&(styles.button_pressed), lv_color_hex(theme->button.pressed.fg_color));
     lv_style_set_bg_color(&(styles.button_pressed), lv_color_hex(theme->button.pressed.bg_color));
     lv_style_set_border_color(&(styles.button_pressed), lv_color_hex(theme->button.pressed.border_color));
+#endif
 
     reset_style(&(styles.textarea));
     lv_style_set_text_color(&(styles.textarea), lv_color_hex(theme->textarea.fg_color));
@@ -144,6 +152,7 @@ static void init_styles(const bbx_theme *theme) {
     lv_style_set_border_color(&(styles.textarea_cursor), lv_color_hex(theme->textarea.cursor.color));
     lv_style_set_anim_duration(&(styles.textarea_cursor), theme->textarea.cursor.period);
 
+#if LV_USE_DROPDOWN
     reset_style(&(styles.dropdown));
     lv_style_set_text_color(&(styles.dropdown), lv_color_hex(theme->dropdown.button.normal.fg_color));
     lv_style_set_bg_opa(&(styles.dropdown), LV_OPA_COVER);
@@ -173,10 +182,12 @@ static void init_styles(const bbx_theme *theme) {
     lv_style_set_text_color(&(styles.dropdown_list_selected), lv_color_hex(theme->dropdown.list.selection_fg_color));
     lv_style_set_bg_opa(&(styles.dropdown_list_selected), LV_OPA_COVER);
     lv_style_set_bg_color(&(styles.dropdown_list_selected), lv_color_hex(theme->dropdown.list.selection_bg_color));
+#endif
 
     reset_style(&(styles.label));
     lv_style_set_text_color(&(styles.label), lv_color_hex(theme->label.fg_color));
 
+#if LV_USE_MSGBOX
     reset_style(&(styles.msgbox));
     lv_style_set_text_color(&(styles.msgbox), lv_color_hex(theme->msgbox.fg_color));
     lv_style_set_bg_opa(&(styles.msgbox), LV_OPA_COVER);
@@ -194,6 +205,7 @@ static void init_styles(const bbx_theme *theme) {
     reset_style(&(styles.msgbox_background));
     lv_style_set_bg_color(&(styles.msgbox_background), lv_color_hex(theme->msgbox.dimming.color));
     lv_style_set_bg_opa(&(styles.msgbox_background), theme->msgbox.dimming.opacity);
+#endif
 
     are_styles_initialised = true;
 }
@@ -227,6 +239,7 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return;
     }
 
+#if LV_USE_BUTTON
     if (lv_obj_check_type(obj, &lv_button_class)) {
         lv_obj_add_style(obj, &(styles.button), 0);
         lv_obj_add_style(obj, &(styles.button_pressed), LV_STATE_PRESSED);
@@ -236,6 +249,7 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
     if (lv_obj_check_type(obj, &lv_label_class) && lv_obj_check_type(lv_obj_get_parent(obj), &lv_button_class)) {
         return; /* Inherit styling from button */
     }
+#endif
 
     if (lv_obj_check_type(obj, &lv_textarea_class)) {
         lv_obj_add_style(obj, &(styles.textarea), 0);
@@ -248,6 +262,7 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         return; /* Inherit styling from textarea */
     }
 
+#if LV_USE_DROPDOWN
     if (lv_obj_check_type(obj, &lv_dropdown_class)) {
         lv_obj_add_style(obj, &(styles.dropdown), 0);
         lv_obj_add_style(obj, &(styles.dropdown_pressed), LV_STATE_PRESSED);
@@ -264,7 +279,9 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
     if (lv_obj_check_type(obj, &lv_label_class) && lv_obj_check_type(lv_obj_get_parent(obj), &lv_dropdownlist_class)) {
         return; /* Inherit styling from dropdown list */
     }
+#endif
 
+#if LV_USE_MSGBOX
     if (lv_obj_check_type(obj, &lv_msgbox_class)) {
         lv_obj_add_style(obj, &(styles.msgbox), 0);
         return;
@@ -289,6 +306,7 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
         lv_obj_add_style(obj, &(styles.msgbox_background), 0);
         return;
     }
+#endif
 
     if (lv_obj_check_type(obj, &lv_label_class)) {
         lv_obj_add_style(obj, &(styles.label), 0);
