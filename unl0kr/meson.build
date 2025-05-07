@@ -30,10 +30,14 @@ executable('unl0kr',
     sources: unl0kr_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
     dependencies: unl0kr_dependencies,
     c_args: unl0kr_args,
-    install: true
+    install: true,
+    install_tag: 'unl0kr'
 )
 
-install_data('unl0kr.conf', install_dir: get_option('sysconfdir'))
+install_data('unl0kr.conf',
+    install_dir: get_option('sysconfdir'),
+    install_tag: 'unl0kr'
+)
 
 depsystemd = dependency('systemd', required: get_option('systemd-password-agent'))
 if depsystemd.found()
@@ -42,18 +46,23 @@ if depsystemd.found()
         dependencies: depinih,
         c_args: '-DUNL0KR_BINARY="@0@"'.format(get_option('prefix') / get_option('bindir') / 'unl0kr'),
         install: true,
-        install_dir: get_option('libexecdir')
+        install_dir: get_option('libexecdir'),
+        install_tag: 'unl0kr'
     )
 
     system_unit_dir = depsystemd.get_variable(pkgconfig: 'systemd_system_unit_dir')
 
-    install_data('unl0kr-agent.path', install_dir: system_unit_dir)
+    install_data('unl0kr-agent.path',
+        install_dir: system_unit_dir,
+        install_tag: 'unl0kr'
+    )
 
     configure_file(
         configuration: {'LIBEXECDIR': get_option('prefix') / get_option('libexecdir')},
         input: 'unl0kr-agent.service.in',
         output: 'unl0kr-agent.service',
         install: true,
-        install_dir: system_unit_dir
+        install_dir: system_unit_dir,
+        install_tag: 'unl0kr'
     )
 endif

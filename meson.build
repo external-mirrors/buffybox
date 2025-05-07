@@ -1,7 +1,7 @@
 project('buffybox', 'c',
     version: '3.3.0',
     default_options: ['warning_level=3', 'b_ndebug=if-release'],
-    meson_version: '>= 0.59.0'
+    meson_version: '>= 0.60.0'
 )
 
 add_project_arguments(
