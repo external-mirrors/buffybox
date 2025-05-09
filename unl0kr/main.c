@@ -467,9 +467,6 @@ int main(int argc, char *argv[]) {
         lv_display_set_dpi(disp, cli_opts.dpi);
     }
 
-    /* Set up display rotation */
-    lv_display_set_rotation(disp, cli_opts.rotation);
-
     /* Prepare for routing physical keyboard input into the textarea */
     lv_group_t *keyboard_input_group = lv_group_create();
     bbx_indev_set_keyboard_input_group(keyboard_input_group);
