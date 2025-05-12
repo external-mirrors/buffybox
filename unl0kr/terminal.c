@@ -24,7 +24,7 @@
 static int current_fd = -1;
 
 static int original_mode = -1;
-static long original_kb_mode = -1;
+static int original_kb_mode = -1;
 
 
 /**
