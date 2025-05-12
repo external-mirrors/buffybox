@@ -19,25 +19,25 @@ executable('buffyboard',
     include_directories: common_include_dirs,
     sources: buffyboard_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
     dependencies: buffyboard_dependencies,
-    install: true
+    install: true,
+    install_tag: 'buffyboard'
 )
 
-install_data('buffyboard.conf', install_dir: get_option('sysconfdir'))
+install_data('buffyboard.conf',
+    install_dir: get_option('sysconfdir'),
+    install_tag: 'buffyboard'
+)
 
-systemd = dependency('systemd', required: get_option('systemd-buffyboard-service'))
-if systemd.found()
-    system_unit_dir = systemd.get_variable(
-        pkgconfig: 'systemd_system_unit_dir',
-        pkgconfig_define: ['prefix', get_option('prefix')],
-    )
+depsystemd = dependency('systemd', required: get_option('systemd-buffyboard-service'))
+if depsystemd.found()
+    system_unit_dir = depsystemd.get_variable(pkgconfig: 'systemd_system_unit_dir')
 
     configure_file(
-      input : 'buffyboard.service.in',
-      output : 'buffyboard.service',
-      install : true,
-      install_dir : system_unit_dir,
-      configuration : {
-        'bindir' : get_option('prefix') / get_option('bindir'),
-      },
+        configuration: {'bindir': get_option('prefix') / get_option('bindir')},
+        input: 'buffyboard.service.in',
+        output: 'buffyboard.service',
+        install: true,
+        install_dir: system_unit_dir,
+        install_tag: 'buffyboard'
     )
 endif

@@ -54,6 +54,38 @@ On distributions based on systemd, `unl0kr` can be used as a [password agent](ht
 # systemd-ask-password --no-tty # Unl0kr is started
 ```
 
+## Packaging
+
+Create a full package:
+```
+meson setup builddir/
+meson compile -C builddir/
+meson install -C builddir/ --destdir "$pkgdir"
+```
+
+Create separate packages for Buffyboard and Unl0kr:
+```
+meson setup builddir/
+meson compile -C builddir/
+meson install -C builddir/ --tags=unl0kr --destdir "$pkgdir_unl0kr"
+meson install -C builddir/ --tags=buffyboard --destdir "$pkgdir_buffyboard"
+```
+
+Create a package for Unl0kr only:
+```
+meson setup builddir/
+meson compile -C builddir/ unl0kr/unl0kr
+meson compile -C builddir/ unl0kr/unl0kr-agent # on systemd-based distributions
+meson install -C builddir/ --tags=unl0kr --destdir "$pkgdir"
+```
+
+Create a package for Buffyboard only:
+```
+meson setup builddir/
+meson compile -C builddir/ buffyboard/buffyboard
+meson install -C builddir/ --tags=buffyboard --destdir "$pkgdir"
+```
+
 ## Making a release
 
 To make it easier for distributions to package BuffyBox, we include source tarballs including the LVGL submodule in GitLab releases. See [unl0kr#42] for more background on this.

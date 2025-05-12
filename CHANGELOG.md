@@ -11,6 +11,7 @@ If a change only affects particular applications, they are listed in parentheses
 ## Unreleased
 
 - misc: Use standard C library instead of builtin functions (!49, thanks @vstoiakin)
+- feat: Add support for split packaging of buffyboard and unl0kr (!54, thanks @vstoiakin)
 
 ## 3.3.0 (2025-04-15)
 
