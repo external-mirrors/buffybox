@@ -26,50 +26,6 @@ static int current_fd = -1;
 static int original_mode = -1;
 static int original_kb_mode = -1;
 
-
-/**
- * Static prototypes
- */
-
-/**
- * Close the current file descriptor and reopen /dev/tty0.
- * 
- * @return true if opening was successful, false otherwise
- */
-static bool reopen_current_terminal(void);
-
-/**
- * Close the current file descriptor.
- */
-static void close_current_terminal(void);
-
-
-/**
- * Static functions
- */
-
-static bool reopen_current_terminal(void) {
-    close_current_terminal();
-
-    current_fd = open("/dev/tty0", O_RDWR);
-	if (current_fd < 0) {
-        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not open /dev/tty0");
-		return false;
-	}
-
-    return true;
-}
-
-static void close_current_terminal(void) {
-    if (current_fd < 0) {
-        return;
-    }
-
-    close(current_fd);
-    current_fd = -1;
-}
-
-
 /**
  * Public functions
  */
@@ -80,11 +36,10 @@ void ul_terminal_prepare_current_terminal(bool enable_graphics_mode, bool disabl
         return;
     }
 
-    /* Reopen the current terminal */
-    reopen_current_terminal();
-
+    /* Open the current terminal */
+    current_fd = open("/dev/tty0", O_RDWR);
     if (current_fd < 0) {
-        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not prepare current terminal");
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not open /dev/tty0");
         return;
     }
 
@@ -128,5 +83,6 @@ void ul_terminal_reset_current_terminal(void) {
         bbx_log(BBX_LOG_LEVEL_WARNING, "Could not reset terminal keyboard mode");
     }
 
-    close_current_terminal();
+    close(current_fd);
+    current_fd = -1;
 }

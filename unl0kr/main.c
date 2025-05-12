@@ -25,7 +25,6 @@
 #include <unistd.h>
 
 #include <sys/reboot.h>
-#include <sys/stat.h>
 #include <sys/time.h>
 
 
@@ -192,6 +191,11 @@ static void shutdown(void);
  * @param signum the signal's number
  */
 static void sigaction_handler(int signum);
+
+/**
+ * Restore the terminal and exit from the program with EXIT_FAILURE.
+ */
+static void exit_failure();
 
 
 /**
@@ -372,6 +376,11 @@ static void sigaction_handler(int signum) {
     exit(0);
 }
 
+static void exit_failure() {
+    ul_terminal_reset_current_terminal();
+    exit(EXIT_FAILURE);
+}
+
 
 /**
  * Main
@@ -423,6 +432,10 @@ int main(int argc, char *argv[]) {
     case UL_BACKENDS_BACKEND_FBDEV:
         bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using framebuffer backend");
         disp = lv_linux_fbdev_create();
+        if (access("/dev/fb0", F_OK) != 0) {
+            bbx_log(BBX_LOG_LEVEL_ERROR, "/dev/fb0 is not available");
+            exit_failure();
+        }
         lv_linux_fbdev_set_file(disp, "/dev/fb0");
         if (conf_opts.quirks.fbdev_force_refresh) {
             lv_linux_fbdev_set_force_refresh(disp, true);
@@ -434,27 +447,28 @@ int main(int argc, char *argv[]) {
         bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using DRM backend");
         disp = lv_linux_drm_create();
 
-        char *format_string = "/dev/dri/card%d";
-        char drm_path[16] = {0};
-        struct stat buffer;
+        char drm_path[16];
+        bool found = false;
+        for (int i = 0; i < 9; i++) {
+            sprintf(drm_path, "/dev/dri/card%d", i);
 
-        for (size_t i = 0; i < 9; i++) {
-            sprintf(drm_path, format_string, i);
-
-            if (stat(drm_path, &buffer) != 0) {
-                continue;
+            if (access(drm_path, F_OK) == 0) {
+                found = true;
+                break;
             }
-
-            lv_linux_drm_set_file(disp, drm_path, -1);
-
-            break;
         }
+        if (!found) {
+            bbx_log(BBX_LOG_LEVEL_ERROR, "/dev/dri/card* are not available");
+            exit_failure();
+        }
+
+        lv_linux_drm_set_file(disp, drm_path, -1);
 
         break;
 #endif /* LV_USE_LINUX_DRM */
     default:
         bbx_log(BBX_LOG_LEVEL_ERROR, "Unable to find suitable backend");
-        exit(EXIT_FAILURE);
+        exit_failure();
     }
 
     /* Override display properties with command line options if necessary */

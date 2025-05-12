@@ -221,6 +221,10 @@ int main(int argc, char *argv[]) {
 
     /* Initialise display */
     lv_display_t *disp = lv_linux_fbdev_create();
+    if (access("/dev/fb0", F_OK) != 0) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "/dev/fb0 is not available");
+        sigaction_handler(SIGTERM);
+    }
     lv_linux_fbdev_set_file(disp, "/dev/fb0");
     if (conf_opts.quirks.fbdev_force_refresh) {
         lv_linux_fbdev_set_force_refresh(disp, true);
