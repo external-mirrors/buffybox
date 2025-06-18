@@ -10,9 +10,11 @@
 
 #include "../shared/log.h"
 
+#include <fcntl.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 
 /**
@@ -46,6 +48,37 @@ static void init_opts(bb_cli_opts *opts) {
     opts->dpi = 0;
     opts->rotation = LV_DISPLAY_ROTATION_0;
     opts->verbose = false;
+
+    int fd_rotate = open("/sys/class/graphics/fbcon/rotate", O_RDONLY);
+    if (fd_rotate < 0) {
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Can not open /sys/class/graphics/fbcon/rotate");
+        goto end;
+    }
+
+    char buffer[3];
+    int size = read(fd_rotate, buffer, sizeof(buffer));
+    if (size != 2 || buffer[1] != '\n') {
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Unexpected value of /sys/class/graphics/fbcon/rotate");
+        goto end;
+    }
+
+    switch (buffer[0]) {
+    case '0':
+        opts->rotation = LV_DISPLAY_ROTATION_0;
+        break;
+    case '1':
+        opts->rotation = LV_DISPLAY_ROTATION_270;
+        break;
+    case '2':
+        opts->rotation = LV_DISPLAY_ROTATION_180;
+        break;
+    case '3':
+        opts->rotation = LV_DISPLAY_ROTATION_90;
+        break;
+    }
+
+end:
+    close(fd_rotate);
 }
 
 static void print_usage() {
@@ -126,9 +159,9 @@ void bb_cli_parse_opts(int argc, char *argv[], bb_cli_opts *opts) {
             }
             break;
         case 'r': {
-            int orientation;
-            if (sscanf(optarg, "%i", &orientation) != 1 || orientation < 0 || orientation > 3) {
-                fprintf(stderr, "Invalid orientation argument \"%s\"\n", optarg);
+            unsigned int orientation;
+            if (sscanf(optarg, "%u", &orientation) != 1 || orientation > 3) {
+                bbx_log(BBX_LOG_LEVEL_ERROR, "Invalid orientation argument \"%s\"\n", optarg);
                 exit(EXIT_FAILURE);
             }
             switch (orientation) {
