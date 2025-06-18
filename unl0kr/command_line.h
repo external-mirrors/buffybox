@@ -8,7 +8,6 @@
 #define UL_COMMAND_LINE_H
 
 #include <stdbool.h>
-#include "lvgl/lvgl.h"
 
 /**
  * Options parsed from command line arguments
@@ -30,8 +29,6 @@ typedef struct {
     int y_offset;
     /* DPI */
     int dpi;
-    /* Display rotation */
-    lv_display_rotation_t rotation;
     /* If true, append a newline character to a password */
     bool newline;
     /* Verbose mode. If true, provide more detailed logging output on STDERR. */

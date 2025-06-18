@@ -62,13 +62,6 @@ Mandatory arguments to long options are mandatory for short options too.
                             vertical pixels, offset horizontally by X
                             pixels and vertically by Y pixels
   -d  --dpi=N               Override the display's DPI value
-  -r, --rotate=[0-3]        Rotate the UI to the given orientation. The
-                            values match the ones provided by the kernel in
-                            /sys/class/graphics/fbcon/rotate.
-                            * 0 - normal orientation (0 degree)
-                            * 1 - clockwise orientation (90 degrees)
-                            * 2 - upside down orientation (180 degrees)
-                            * 3 - counterclockwise orientation (270 degrees)
   -h, --help                Print this message and exit
   -n                        Do not append a newline character to a password
   -v, --verbose             Enable more detailed logging output on STDERR
