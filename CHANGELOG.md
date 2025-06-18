@@ -15,6 +15,7 @@ If a change only affects particular applications, they are listed in parentheses
 - feat: Add support for split packaging of buffyboard and unl0kr (!54, thanks @vstoiakin)
 - fix: Do not hang if graphics backend is not available (!57, thanks @vstoiakin)
 - fix!(unl0kr): Disable software rotation due to regressed performance (!56)
+- feat(buffyboard): Rotate the keyboard according to /sys/class/graphics/fbcon/rotate by default (!60, thanks @vstoiakin)
 
 ## 3.3.0 (2025-04-15)
 
