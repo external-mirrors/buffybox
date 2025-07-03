@@ -40,4 +40,10 @@ if depsystemd.found()
         install_dir: system_unit_dir,
         install_tag: 'buffyboard'
     )
+
+    install_data('getty-buffyboard.conf',
+        rename: 'buffyboard.conf',
+        install_dir: system_unit_dir / 'getty@.service.d',
+        install_tag: 'buffyboard'
+    )
 endif

@@ -19,13 +19,14 @@
 #include "../shared/themes.h"
 #include "../squeek2lvgl/sq2lv.h"
 
-#include <limits.h>
+#include <sys/epoll.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <sys/time.h>
 
 
 /**
@@ -35,37 +36,19 @@
 bb_cli_opts cli_opts;
 bb_config_opts conf_opts;
 
-static bool resize_terminals = false;
 static lv_obj_t *keyboard = NULL;
-
+static sig_atomic_t redraw_requested = false;
 
 /**
  * Static prototypes
  */
 
 /**
- * Compute the denominator of the keyboard height factor. The keyboard height is calculated
- * by dividing the display height by the denominator.
- *
- * @param width display width
- * @param height display height
- * @return denominator
- */
-static int keyboard_height_denominator(int32_t width, int32_t height);
-
-/**
- * Handle termination signals sent to the process.
+ * Handle signals sent to the process.
  *
  * @param signum the signal's number
  */
-static void sigaction_handler(int signum);
-
-/**
- * Callback for the terminal resizing timer.
- *
- * @param timer the timer object
- */
-static void terminal_resize_timer_cb(lv_timer_t *timer);
+static void signal_handler(int signum);
 
 /**
  * Handle LV_EVENT_VALUE_CHANGED events from the keyboard widget.
@@ -93,23 +76,14 @@ static void pop_checked_modifier_keys(void);
  * Static functions
  */
 
-static int keyboard_height_denominator(int32_t width, int32_t height) {
-    return (height > width) ? 3 : 2;
-}
-
-static void sigaction_handler(int signum) {
-    LV_UNUSED(signum);
-    if (resize_terminals) {
-        bb_terminal_reset_all();
+static void signal_handler(int signum) {
+    if (signum == SIGUSR1) {
+        redraw_requested = true;
+        return;
     }
+
+    bb_terminal_reset_all();
     exit(0);
-}
-
-static void terminal_resize_timer_cb(lv_timer_t *timer) {
-    LV_UNUSED(timer);
-    if (resize_terminals) {
-        bb_terminal_shrink_current();
-    }
 }
 
 static void keyboard_value_changed_cb(lv_event_t *event) {
@@ -196,23 +170,9 @@ int main(int argc, char *argv[]) {
     bb_config_parse_directory("/etc/buffyboard.conf.d", &conf_opts);
     bb_config_parse_files(cli_opts.config_files, cli_opts.num_config_files, &conf_opts);
 
-    /* Prepare for terminal resizing and reset */
-    resize_terminals = bb_terminal_init(2.0f / 3.0f);
-    if (resize_terminals) {
-        /* Clean up on termination */
-        struct sigaction action;
-        lv_memset(&action, 0, sizeof(action));
-        action.sa_handler = sigaction_handler;
-        sigaction(SIGINT, &action, NULL);
-        sigaction(SIGTERM, &action, NULL);
-
-        /* Resize current terminal */
-        bb_terminal_shrink_current();
-    }
-
     /* Set up uinput device */
     if (!bb_uinput_device_init(sq2lv_unique_scancodes, sq2lv_num_unique_scancodes)) {
-        return 1;
+        return EXIT_FAILURE;
     }
 
     /* Initialise LVGL and set up logging callback */
@@ -223,17 +183,19 @@ int main(int argc, char *argv[]) {
     lv_display_t *disp = lv_linux_fbdev_create();
     if (access("/dev/fb0", F_OK) != 0) {
         bbx_log(BBX_LOG_LEVEL_ERROR, "/dev/fb0 is not available");
-        sigaction_handler(SIGTERM);
+        return EXIT_FAILURE;
     }
     lv_linux_fbdev_set_file(disp, "/dev/fb0");
     if (conf_opts.quirks.fbdev_force_refresh) {
         lv_linux_fbdev_set_force_refresh(disp, true);
     }
+    lv_display_set_physical_resolution(disp,
+        lv_display_get_horizontal_resolution(disp),
+        lv_display_get_vertical_resolution(disp));
 
     /* Override display properties with command line options if necessary */
     lv_display_set_offset(disp, cli_opts.x_offset, cli_opts.y_offset);
-    if (cli_opts.hor_res > 0 || cli_opts.ver_res > 0) {
-        lv_display_set_physical_resolution(disp, lv_display_get_horizontal_resolution(disp), lv_display_get_vertical_resolution(disp));
+    if (cli_opts.hor_res > 0 && cli_opts.ver_res > 0) {
         lv_display_set_resolution(disp, cli_opts.hor_res, cli_opts.ver_res);
     }
     if (cli_opts.dpi > 0) {
@@ -241,26 +203,28 @@ int main(int argc, char *argv[]) {
     }
 
     /* Set up display rotation */
-    int32_t hor_res_phys = lv_display_get_horizontal_resolution(disp);
-    int32_t ver_res_phys = lv_display_get_vertical_resolution(disp);
-    lv_display_set_physical_resolution(disp, hor_res_phys, ver_res_phys);
     lv_display_set_rotation(disp, cli_opts.rotation);
+
+    const int32_t hor_res = lv_display_get_horizontal_resolution(disp);
+    const int32_t ver_res = lv_display_get_vertical_resolution(disp);
+    const int32_t keyboard_height = ver_res > hor_res ? ver_res / 3 : ver_res / 2;
+    const int32_t tty_height = ver_res - keyboard_height;
+
     switch (cli_opts.rotation) {
-        case LV_DISPLAY_ROTATION_0:
-        case LV_DISPLAY_ROTATION_180: {
-            int32_t denom = keyboard_height_denominator(hor_res_phys, ver_res_phys);
-            lv_display_set_resolution(disp, hor_res_phys, ver_res_phys / denom);
-            lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_0) ? (denom - 1) * ver_res_phys / denom : 0);
-            break;
-        }
-        case LV_DISPLAY_ROTATION_90:
-        case LV_DISPLAY_ROTATION_270: {
-            int32_t denom = keyboard_height_denominator(ver_res_phys, hor_res_phys);
-            lv_display_set_resolution(disp, hor_res_phys / denom, ver_res_phys);
-            lv_display_set_offset(disp, 0, (cli_opts.rotation == LV_DISPLAY_ROTATION_90) ? (denom - 1) * hor_res_phys / denom : 0);
-            break;
-        }
+    case LV_DISPLAY_ROTATION_0:
+    case LV_DISPLAY_ROTATION_180:
+        lv_display_set_resolution(disp, hor_res, keyboard_height);
+        lv_display_set_offset(disp, 0, cli_opts.rotation == LV_DISPLAY_ROTATION_0? tty_height : 0);
+        break;
+    case LV_DISPLAY_ROTATION_90:
+    case LV_DISPLAY_ROTATION_270:
+        lv_display_set_resolution(disp, keyboard_height, hor_res);
+        lv_display_set_offset(disp, cli_opts.rotation == LV_DISPLAY_ROTATION_90? tty_height : 0, 0);
+        break;
     }
+
+    /* Prepare for terminal resizing and reset */
+    bb_terminal_init(tty_height - 8, hor_res, ver_res);
 
     /* Start input device monitor and auto-connect available devices */
     bbx_indev_start_monitor_and_autoconnect(false, conf_opts.input.pointer, conf_opts.input.touchscreen);
@@ -286,13 +250,89 @@ int main(int argc, char *argv[]) {
     /* Apply default keyboard layout */
     sq2lv_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
 
-    /* Start timer for periodically resizing terminals */
-    lv_timer_create(terminal_resize_timer_cb, 1000,  NULL);
+    /* Open the file to track virtual terminals */
+    int fd_tty = open("/sys/class/tty/tty0/active", O_RDONLY|O_NOCTTY|O_CLOEXEC);
+    if (fd_tty < 0) {
+        perror("Can't open /sys/class/tty/tty0/active");
+        return EXIT_FAILURE;
+    }
+
+    int fd_epoll = epoll_create1(EPOLL_CLOEXEC);
+    if (fd_epoll == -1) {
+        perror("epoll_create1() is failed");
+        return EXIT_FAILURE;
+    }
+
+    struct epoll_event event;
+    event.events = EPOLLIN|EPOLLET;
+    event.data.fd = fd_tty;
+
+    int r = epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_tty, &event);
+    if (r == -1) {
+        perror("epoll_ctl() is failed");
+        return EXIT_FAILURE;
+    }
+
+    /* Set signal handlers */
+    struct sigaction action;
+    action.sa_handler = signal_handler;
+    action.sa_flags = 0;
+    sigfillset(&action.sa_mask);
+    sigaction(SIGINT, &action, NULL);
+    sigaction(SIGTERM, &action, NULL);
+
+    action.sa_flags = SA_RESTART;
+    sigemptyset(&action.sa_mask);
+    sigaction(SIGUSR1, &action, NULL);
+
+    sigset_t sigmask;
+    sigemptyset(&sigmask);
+    sigaddset(&sigmask, SIGUSR1);
+
+    sigprocmask(SIG_BLOCK, &sigmask, NULL);
+
+    sigemptyset(&sigmask);
 
     /* Periodically run timer / task handler */
     while(1) {
         uint32_t time_till_next = lv_timer_handler();
-        usleep(time_till_next * 1000);
+
+        int r = epoll_pwait(fd_epoll, &event, 1, time_till_next, &sigmask);
+        if (r == 0)
+            continue;
+        if (r < 0) {
+            if (errno != EINTR) {
+                perror("epoll_wait() is failed");
+                return EXIT_FAILURE;
+            }
+            if (!redraw_requested)
+                continue;
+            redraw_requested = false;
+        } else if (conf_opts.quirks.ignore_unused_terminals) {
+            lseek(fd_tty, 0, SEEK_SET);
+
+            char buffer[8];
+            ssize_t size = read(fd_tty, buffer, sizeof(buffer));
+            if (size <= 0) {
+                bbx_log(BBX_LOG_LEVEL_WARNING, "Can't read /sys/class/tty/tty0/active");
+                continue;
+            }
+            buffer[size] = 0;
+
+            unsigned int tty;
+            if (sscanf(buffer, "tty%u", &tty) != 1) {
+                bbx_log(BBX_LOG_LEVEL_WARNING, "Unexpected value of /sys/class/tty/tty0/active");
+                continue;
+            }
+
+            if (!bb_terminal_is_busy(tty)) {
+                bbx_log(BBX_LOG_LEVEL_VERBOSE, "Terminal %u isn't used, skip automatic update.", tty);
+                continue;
+            }
+        }
+
+        bb_terminal_shrink_current();
+        lv_obj_invalidate(keyboard);
     }
 
     return 0;
