@@ -35,6 +35,8 @@ typedef struct {
 typedef struct {
     /* If true and using the framebuffer backend, force a refresh on every draw operation */
     bool fbdev_force_refresh;
+    /* If true, do not automatically update the layout of new terminals and wait for SIGUSR1 */
+    bool ignore_unused_terminals;
 } bb_config_opts_quirks;
 
 /**

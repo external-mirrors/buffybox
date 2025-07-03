@@ -52,6 +52,15 @@ result.
 *-V, --version*
 	Print the unl0kr version and exit.
 
+# NOTES
+
+Some terminal commands, like _clear_ or _setfont_, can erase the keyboard or brake the layout of the terminal. In this case you should send a signal to Buffyboard or switch to another terminal to update the screen:
+
+```
+setfont solar24x32;/usr/bin/kill -s SIGUSR1 buffyboard
+setfont solar24x32;chvt $((`fgconsole`+1));chvt $((`fgconsole`-1))
+```
+
 # EXAMPLES
 
 *Execute Buffyboard using the default config*

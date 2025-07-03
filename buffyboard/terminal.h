@@ -8,24 +8,30 @@
 #define BB_TERMINAL_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /**
- * Prepare for resizing terminals by opening the current one.
+ * Prepare for resizing terminals.
  * 
- * @param factor factor (between 0 and 1) by which to adapt terminal sizes
- * @return true if the operation was successful, false otherwise. No other bb_terminal_* functions
- * must be called if false is returned.
+ * @param tty_size vertical size of the tty area in pixels
+ * @param h_display_size horizontal resolution of the display in pixels
+ * @param v_display_size vertical resolution of the display in pixels
  */
-bool bb_terminal_init(float factor);
+void bb_terminal_init(int32_t tty_size, int32_t h_display_size, int32_t v_display_size);
 
 /**
- * Shrink the height of the active terminal by the current factor.
+ * Shrink the height of the active terminal.
  */
-void bb_terminal_shrink_current(void);
+void bb_terminal_shrink_current();
 
 /**
- * Re-maximise the height of all previously resized terminals.
+ * Re-maximise the size of all active terminals.
  */
-void bb_terminal_reset_all(void);
+void bb_terminal_reset_all();
+
+/**
+ * Check whether the terminal is opened by some process
+ */
+bool bb_terminal_is_busy(unsigned int tty);
 
 #endif /* BB_TERMINAL_H */
