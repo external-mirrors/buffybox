@@ -312,7 +312,7 @@ int main(int argc, char *argv[]) {
             lseek(fd_tty, 0, SEEK_SET);
 
             char buffer[8];
-            ssize_t size = read(fd_tty, buffer, sizeof(buffer));
+            ssize_t size = read(fd_tty, buffer, sizeof(buffer) - 1);
             if (size <= 0) {
                 bbx_log(BBX_LOG_LEVEL_WARNING, "Can't read /sys/class/tty/tty0/active");
                 continue;

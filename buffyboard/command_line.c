@@ -52,7 +52,7 @@ static void init_opts(bb_cli_opts *opts) {
     int fd_rotate = open("/sys/class/graphics/fbcon/rotate", O_RDONLY);
     if (fd_rotate < 0) {
         bbx_log(BBX_LOG_LEVEL_WARNING, "Can not open /sys/class/graphics/fbcon/rotate");
-        goto end;
+        return;
     }
 
     char buffer[3];
@@ -74,6 +74,9 @@ static void init_opts(bb_cli_opts *opts) {
         break;
     case '3':
         opts->rotation = LV_DISPLAY_ROTATION_90;
+        break;
+    default:
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Unexpected value of /sys/class/graphics/fbcon/rotate");
         break;
     }
 
