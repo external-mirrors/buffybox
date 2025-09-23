@@ -18,6 +18,7 @@ If a change only affects particular applications, they are listed in parentheses
 - feat(buffyboard): Rotate the keyboard according to /sys/class/graphics/fbcon/rotate by default (!60, thanks @vstoiakin)
 - fix(buffyboard): Prevent overlap of the keyboard and the terminal (!58, thanks @vstoiakin)
 - feat(buffyboard): Add a handler for SIGUSR1 to redraw the keyboard (!58, thanks @vstoiakin)
+- feat(f0rmz): New subproject to create a form/wizard application (!62, thanks @craftyguy)
 
 ## 3.3.0 (2025-04-15)
 
