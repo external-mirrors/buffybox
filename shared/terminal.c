@@ -30,7 +30,7 @@ static int original_kb_mode = -1;
  * Public functions
  */
 
-void ul_terminal_prepare_current_terminal(bool enable_graphics_mode, bool disable_keyboard_input) {
+void bbx_terminal_prepare_current_terminal(bool enable_graphics_mode, bool disable_keyboard_input) {
     /* Exit early if there is nothing to do */
     if (!enable_graphics_mode && !disable_keyboard_input) {
         return;
@@ -66,7 +66,7 @@ void ul_terminal_prepare_current_terminal(bool enable_graphics_mode, bool disabl
     }
 }
 
-void ul_terminal_reset_current_terminal(void) {
+void bbx_terminal_reset_current_terminal(void) {
     /* If we haven't previously opened the current terminal, exit */
     if (current_fd < 0) {
         bbx_log(BBX_LOG_LEVEL_WARNING, "Could not reset current terminal");

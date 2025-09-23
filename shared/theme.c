@@ -136,7 +136,7 @@ static void init_styles(const bbx_theme *theme) {
     reset_style(&(styles.textarea));
     lv_style_set_text_color(&(styles.textarea), lv_color_hex(theme->textarea.fg_color));
     lv_style_set_bg_opa(&(styles.textarea), LV_OPA_COVER);
-    lv_style_set_bg_color(&(styles.textarea), lv_color_hex(theme->textarea.bg_color));  
+    lv_style_set_bg_color(&(styles.textarea), lv_color_hex(theme->textarea.bg_color));
     lv_style_set_border_side(&(styles.textarea), LV_BORDER_SIDE_FULL);
     lv_style_set_border_width(&(styles.textarea), lv_dpx(theme->textarea.border_width));
     lv_style_set_border_color(&(styles.textarea), lv_color_hex(theme->textarea.border_color));
@@ -230,6 +230,10 @@ static void apply_theme_cb(lv_theme_t *theme, lv_obj_t *obj) {
 
     if (lv_obj_has_flag(obj, BBX_WIDGET_HEADER)) {
         lv_obj_add_style(obj, &(styles.header), 0);
+#if LV_USE_FLEX
+        lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
+        lv_obj_set_size(obj, LV_PCT(100), LV_SIZE_CONTENT);
+#endif
         return;
     }
 

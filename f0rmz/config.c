@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Johannes Marbach
+ * Copyright 2025 Clayton Craft
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
@@ -10,12 +10,9 @@
 #include "../shared/log.h"
 #include "../squeek2lvgl/sq2lv.h"
 
-#include "lvgl/lvgl.h"
-
 #include <ini.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 /**
  * Static prototypes
@@ -32,29 +29,20 @@
  */
 static int parsing_handler(void* user_data, const char* section, const char* key, const char* value);
 
-
 /**
  * Static functions
  */
 
 static int parsing_handler(void* user_data, const char* section, const char* key, const char* value) {
-    ul_config_opts *opts = (ul_config_opts *)user_data;
+    f0_config_opts *opts = (f0_config_opts *)user_data;
 
     if (strcmp(section, "general") == 0) {
-        if (strcmp(key, "animations") == 0) {
-            if (bbx_config_parse_bool(value, &(opts->general.animations))) {
-                return 1;
-            }
-        } else if (strcmp(key, "backend") == 0) {
+        if (strcmp(key, "backend") == 0) {
             bbx_backends_backend_id_t id = bbx_backends_find_backend_with_name(value);
             if (id != BBX_BACKENDS_BACKEND_NONE) {
                 opts->general.backend = id;
                 return 1;
             }
-        } else if (strcmp(key, "timeout") == 0) {
-            /* Use a max ceiling of 60 minutes (3600 secs) */
-            opts->general.timeout = (uint16_t)LV_MIN(strtoul(value, (char **)NULL, 10), 3600);
-            return 1;
         }
     } else if (strcmp(section, "keyboard") == 0) {
         if (strcmp(key, "autohide") == 0) {
@@ -69,18 +57,6 @@ static int parsing_handler(void* user_data, const char* section, const char* key
             }
         } else if (strcmp(key, "popovers") == 0) {
             if (bbx_config_parse_bool(value, &(opts->keyboard.popovers))) {
-                return 1;
-            }
-        }
-    } else if (strcmp(section, "textarea") == 0) {
-        if (strcmp(key, "obscured") == 0) {
-            if (bbx_config_parse_bool(value, &(opts->textarea.obscured))) {
-                return 1;
-            }
-        } else if (strcmp(key, "bullet") == 0) {
-            char *bullet = strdup(value);
-            if (bullet) {
-                opts->textarea.bullet = bullet;
                 return 1;
             }
         }
@@ -126,37 +102,90 @@ static int parsing_handler(void* user_data, const char* section, const char* key
                 return 1;
             }
         }
+    } else if (strcmp(section, "intro") == 0) {
+        if (strcmp(key, "title") == 0) {
+            char *title = strdup(value);
+            if (title) {
+                opts->intro.title = title;
+                return 1;
+            }
+        } else if (strcmp(key, "body") == 0) {
+            char *body = strdup(value);
+            if (body) {
+                opts->intro.body = body;
+                return 1;
+            }
+        }
+    } else if (strncmp(section, "form.", 5) == 0) {
+        /* Extract field name */
+        const char *field_name = section + 5;
+
+        /* Find or create field */
+        f0_form_field_t *field = NULL;
+        for (int i = 0; i < opts->num_fields; i++) {
+            if (strcmp(opts->fields[i].name, field_name) == 0) {
+                field = &opts->fields[i];
+                break;
+            }
+        }
+
+        if (!field) {
+            /* Create new field */
+            opts->fields = realloc(opts->fields, (opts->num_fields + 1) * sizeof(f0_form_field_t));
+            field = &opts->fields[opts->num_fields];
+            lv_memzero(field, sizeof(f0_form_field_t));
+            field->name = strdup(field_name);
+            opts->num_fields++;
+        }
+
+        /* Parse field properties */
+        if (strcmp(key, "type") == 0) {
+            if (strcmp(value, "text") == 0) {
+                field->type = F0_FIELD_TYPE_TEXT;
+                return 1;
+            } else if (strcmp(value, "password") == 0) {
+                field->type = F0_FIELD_TYPE_PASSWORD;
+                return 1;
+            }
+        } else if (strcmp(key, "label") == 0) {
+            field->label = strdup(value);
+            return 1;
+        } else if (strcmp(key, "required") == 0) {
+            if (bbx_config_parse_bool(value, &field->required)) {
+                return 1;
+            }
+        }
     }
-
     bbx_log(BBX_LOG_LEVEL_ERROR, "Ignoring invalid config value \"%s\" for key \"%s\" in section \"%s\"", value, key, section);
-    return 1; /* Return 1 (true) so that we can use the return value of ini_parse exclusively for file-level errors (e.g. file not found) */
+    return 1; /* Return 1 (true) so that we can use the return value of ini_parse exclusively for file-level errors */
 }
-
 
 /**
  * Public functions
  */
 
-void ul_config_init_opts(ul_config_opts *opts) {
-    opts->general.animations = false;
+void f0_config_init_opts(f0_config_opts *opts) {
     opts->general.backend = bbx_backends_backends[0] == NULL ? BBX_BACKENDS_BACKEND_NONE : 0;
-    opts->general.timeout = 0;
+    opts->intro.title = "A Form!";
+    opts->intro.body = "Please complete the following form.";
+    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
+    opts->theme.alternate_id = BBX_THEMES_THEME_BREEZY_LIGHT;
     opts->keyboard.autohide = true;
     opts->keyboard.layout_id = SQ2LV_LAYOUT_US;
     opts->keyboard.popovers = true;
     opts->textarea.obscured = true;
     opts->textarea.bullet = LV_SYMBOL_BULLET;
-    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
-    opts->theme.alternate_id = BBX_THEMES_THEME_BREEZY_LIGHT;
     opts->input.keyboard = true;
     opts->input.pointer = true;
     opts->input.touchscreen = true;
     opts->quirks.fbdev_force_refresh = false;
     opts->quirks.terminal_prevent_graphics_mode = false;
     opts->quirks.terminal_allow_keyboard_input = false;
+    opts->fields = NULL;
+    opts->num_fields = 0;
 }
 
-void ul_config_parse_directory(const char *path, ul_config_opts *opts) {
+void f0_config_parse_directory(const char *path, f0_config_opts *opts) {
     /* Find files in directory */
     char **found = NULL;
     int num_found = 0;
@@ -164,7 +193,7 @@ void ul_config_parse_directory(const char *path, ul_config_opts *opts) {
 
     /* Sort and parse files */
     qsort(found, num_found, sizeof(char *), bbx_config_compare_strings);
-    ul_config_parse_files((const char **)found, num_found, opts);
+    f0_config_parse_files((const char **)found, num_found, opts);
 
     /* Free memory */
     for (int i = 0; i < num_found; ++i) {
@@ -173,13 +202,13 @@ void ul_config_parse_directory(const char *path, ul_config_opts *opts) {
     free(found);
 }
 
-void ul_config_parse_files(const char **files, int num_files, ul_config_opts *opts) {
+void f0_config_parse_files(const char **files, int num_files, f0_config_opts *opts) {
     for (int i = 0; i < num_files; ++i) {
-        ul_config_parse_file(files[i], opts);
+        f0_config_parse_file(files[i], opts);
     }
 }
 
-void ul_config_parse_file(const char *path, ul_config_opts *opts) {
+void f0_config_parse_file(const char *path, f0_config_opts *opts) {
     bbx_log(BBX_LOG_LEVEL_VERBOSE, "Parsing config file %s", path);
     if (ini_parse(path, parsing_handler, opts) != 0) {
         bbx_log(BBX_LOG_LEVEL_ERROR, "Ignoring invalid config file %s", path);

@@ -2,12 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 unl0kr_sources = files(
-    'backends.c',
     'command_line.c',
     'config.c',
     'main.c',
     'sq2lv_layouts.c',
-    'terminal.c'
 )
 
 unl0kr_dependencies = [
@@ -27,7 +25,7 @@ endif
 
 executable('unl0kr',
     include_directories: common_include_dirs,
-    sources: unl0kr_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
+    sources: unl0kr_sources + shared_sources + squeek2lvgl_sources + lvgl_sources + header_sources,
     dependencies: unl0kr_dependencies,
     c_args: unl0kr_args,
     install: true,

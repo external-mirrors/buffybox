@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
     bb_cli_parse_opts(argc, argv, &cli_opts);
 
     /* Set up log level */
-    if (cli_opts.verbose) {
+    if (cli_opts.common.verbose) {
         bbx_log_set_level(BBX_LOG_LEVEL_VERBOSE);
     }
 
@@ -194,12 +194,12 @@ int main(int argc, char *argv[]) {
         lv_display_get_vertical_resolution(disp));
 
     /* Override display properties with command line options if necessary */
-    lv_display_set_offset(disp, cli_opts.x_offset, cli_opts.y_offset);
-    if (cli_opts.hor_res > 0 && cli_opts.ver_res > 0) {
-        lv_display_set_resolution(disp, cli_opts.hor_res, cli_opts.ver_res);
+    lv_display_set_offset(disp, cli_opts.common.x_offset, cli_opts.common.y_offset);
+    if (cli_opts.common.hor_res > 0 && cli_opts.common.ver_res > 0) {
+        lv_display_set_resolution(disp, cli_opts.common.hor_res, cli_opts.common.ver_res);
     }
-    if (cli_opts.dpi > 0) {
-        lv_display_set_dpi(disp, cli_opts.dpi);
+    if (cli_opts.common.dpi > 0) {
+        lv_display_set_dpi(disp, cli_opts.common.dpi);
     }
 
     /* Set up display rotation */

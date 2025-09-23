@@ -15,7 +15,7 @@
  * Public interface
  */
 
-const char *ul_backends_backends[] = {
+const char *bbx_backends_backends[] = {
 #if LV_USE_LINUX_FBDEV
     "fbdev",
 #endif /* LV_USE_LINUX_FBDEV */
@@ -25,13 +25,13 @@ const char *ul_backends_backends[] = {
     NULL
 };
 
-ul_backends_backend_id_t ul_backends_find_backend_with_name(const char *name) {
-    for (int i = 0; ul_backends_backends[i] != NULL; ++i) {
-        if (strcmp(ul_backends_backends[i], name) == 0) {
+bbx_backends_backend_id_t bbx_backends_find_backend_with_name(const char *name) {
+    for (int i = 0; bbx_backends_backends[i] != NULL; ++i) {
+        if (strcmp(bbx_backends_backends[i], name) == 0) {
             bbx_log(BBX_LOG_LEVEL_VERBOSE, "Found backend: %s\n", name);
             return i;
         }
     }
     bbx_log(BBX_LOG_LEVEL_WARNING, "Backend %s not found\n", name);
-    return UL_BACKENDS_BACKEND_NONE;
+    return BBX_BACKENDS_BACKEND_NONE;
 }

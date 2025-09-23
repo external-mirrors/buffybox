@@ -8,29 +8,20 @@
 #define BB_COMMAND_LINE_H
 
 #include "lvgl/lvgl.h"
+#include "../shared/cli_common.h"
 
 /**
  * Options parsed from command line arguments
  */
 typedef struct {
+    /* Common cli options */
+    bbx_cli_common_opts common;
     /* Number of config files */
     int num_config_files;
     /* Paths of config file */
     const char **config_files;
-    /* Horizontal display resolution */
-    int hor_res;
-    /* Vertical display resolution */
-    int ver_res;
-    /* Horizontal display offset */
-    int x_offset;
-    /* Vertical display offset */
-    int y_offset;
-    /* DPI */
-    int dpi;
     /* Display rotation */
     lv_display_rotation_t rotation;
-    /* Verbose mode. If true, provide more detailed logging output on STDERR. */
-    bool verbose;
 } bb_cli_opts;
 
 /**
