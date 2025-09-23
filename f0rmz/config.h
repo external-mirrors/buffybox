@@ -1,14 +1,13 @@
 /**
- * Copyright 2021 Johannes Marbach
+ * Copyright 2025 Clayton Craft
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-
-#ifndef UL_CONFIG_H
-#define UL_CONFIG_H
-
+#ifndef F0_CONFIG_H
+#define F0_CONFIG_H
 
 #include "../shared/backends.h"
+#include "../shared/config.h"
 #include "../shared/themes.h"
 
 #include "sq2lv_layouts.h"
@@ -20,13 +19,9 @@
  * General options
  */
 typedef struct {
-    /* If true, use animations */
-    bool animations;
     /* Backend to use */
     bbx_backends_backend_id_t backend;
-    /* Timeout (in seconds) - once elapsed, the device will shutdown. 0 (default) to disable */
-    uint16_t timeout;
-} ul_config_opts_general;
+} f0_config_opts_general;
 
 /**
  * Options related to the keyboard
@@ -38,17 +33,7 @@ typedef struct {
     sq2lv_layout_id_t layout_id;
     /* If true, display key popovers on press */
     bool popovers;
-} ul_config_opts_keyboard;
-
-/**
- * Options related to the password textarea
- */
-typedef struct {
-    /* If true, disguise the entered text with dots */
-    bool obscured;
-    /* The character to use for disguising the entered text */
-    const char *bullet;
-} ul_config_opts_textarea;
+} f0_config_opts_keyboard;
 
 /**
  * Options related to the theme
@@ -58,7 +43,17 @@ typedef struct {
     bbx_themes_theme_id_t default_id;
     /* Alternate theme */
     bbx_themes_theme_id_t alternate_id;
-} ul_config_opts_theme;
+} f0_config_opts_theme;
+
+/**
+ * Options related to the password textarea
+ */
+typedef struct {
+    /* If true, disguise the entered text with dots */
+    bool obscured;
+    /* The character to use for disguising the entered text */
+    const char *bullet;
+} f0_config_opts_textarea;
 
 /**
  * Options related to input devices
@@ -70,7 +65,7 @@ typedef struct {
     bool pointer;
     /* If true and a touchscreen device is connected, use it for input */
     bool touchscreen;
-} ul_config_opts_input;
+} f0_config_opts_input;
 
 /**
  * (Normally unneeded) quirky options
@@ -82,56 +77,91 @@ typedef struct {
     bool terminal_prevent_graphics_mode;
     /* If true, do *not* turn off terminal keyboard input (will show entered characters) */
     bool terminal_allow_keyboard_input;
-} ul_config_opts_quirks;
+} f0_config_opts_quirks;
 
 /**
- * Options parsed from config file(s)
+ * Form configuration options
+*/
+
+/**
+ * Intro section configuration
  */
 typedef struct {
-    /* General options */
-    ul_config_opts_general general;
-    /* Options related to the keyboard */
-    ul_config_opts_keyboard keyboard;
-    /* Options related to the password textarea */
-    ul_config_opts_textarea textarea;
-    /* Options related to the theme */
-    ul_config_opts_theme theme;
-    /* Options related to input devices */
-    ul_config_opts_input input;
-    /* Options related to (normally unneeded) quirks */
-    ul_config_opts_quirks quirks;
-} ul_config_opts;
+    /* Welcome screen title */
+    const char *title;
+    /* Welcome screen body text */
+    const char *body;
+} f0_config_intro;
 
 /**
- * Initialise a config options struct with default values.
- * 
+ * Form field types
+ */
+typedef enum {
+    F0_FIELD_TYPE_TEXT,
+    F0_FIELD_TYPE_PASSWORD
+} f0_field_type_t;
+
+/**
+ * Form field definition
+ */
+typedef struct {
+    char *name;
+    f0_field_type_t type;
+    char *label;
+    bool required;
+} f0_form_field_t;
+
+typedef struct {
+    /* General options */
+    f0_config_opts_general general;
+    /* Options related to the keyboard */
+    f0_config_opts_keyboard keyboard;
+    /* Options related to the theme */
+    f0_config_opts_theme theme;
+    /* Options related to the password textarea */
+    f0_config_opts_textarea textarea;
+    /* Options related to input devices */
+    f0_config_opts_input input;
+    /* Options related to (normally unneeded) quirks */
+    f0_config_opts_quirks quirks;
+    /* Intro section */
+    f0_config_intro intro;
+    /* Form fields */
+    f0_form_field_t *fields;
+    /* Number of form fields/pages */
+    int num_fields;
+} f0_config_opts;
+
+/**
+ * Initialize config options with default values.
+ *
  * @param opts pointer to the options struct
  */
-void ul_config_init_opts(ul_config_opts *opts);
+void f0_config_init_opts(f0_config_opts *opts);
 
 /**
  * Find configuration files in a directory and parse them in alphabetic order.
- * 
+ *
  * @param path directory path
  * @param opts pointer for writing the parsed options into
  */
-void ul_config_parse_directory(const char *path, ul_config_opts *opts);
+void f0_config_parse_directory(const char *path, f0_config_opts *opts);
 
 /**
  * Parse one or more configuration files.
- * 
+ *
  * @param files paths to configuration files
  * @param num_files number of configuration files
  * @param opts pointer for writing the parsed options into
  */
-void ul_config_parse_files(const char **files, int num_files, ul_config_opts *opts);
+void f0_config_parse_files(const char **files, int num_files, f0_config_opts *opts);
 
 /**
  * Parse a configuration file.
- * 
+ *
  * @param path path to configuration file
  * @param opts pointer for writing the parsed options into
  */
-void ul_config_parse_file(const char *path, ul_config_opts *opts);
+void f0_config_parse_file(const char *path, f0_config_opts *opts);
 
-#endif /* UL_CONFIG_H */
+#endif /* F0_CONFIG_H */

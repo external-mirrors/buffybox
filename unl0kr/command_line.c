@@ -38,16 +38,11 @@ static void print_usage();
  */
 
 static void init_opts(ul_cli_opts *opts) {
+    bbx_cli_init_common_opts(&opts->common);
     opts->num_config_files = 0;
     opts->config_files = NULL;
     opts->message = NULL;
-    opts->hor_res = -1;
-    opts->ver_res = -1;
-    opts->x_offset = 0;
-    opts->y_offset = 0;
-    opts->dpi = 0;
     opts->newline = true;
-    opts->verbose = false;
 }
 
 static void print_usage() {
@@ -115,16 +110,12 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
             opts->num_config_files++;
             break;
         case 'g':
-            if (sscanf(optarg, "%ix%i@%i,%i", &(opts->hor_res), &(opts->ver_res), &(opts->x_offset), &(opts->y_offset)) != 4) {
-                if (sscanf(optarg, "%ix%i", &(opts->hor_res), &(opts->ver_res)) != 2) {
-                    bbx_log(BBX_LOG_LEVEL_ERROR, "Invalid geometry argument \"%s\"\n", optarg);
-                    exit(EXIT_FAILURE);
-                }
+            if (bbx_cli_parse_geometry(optarg, &opts->common) != 0) {
+                exit(EXIT_FAILURE);
             }
             break;
         case 'd':
-            if (sscanf(optarg, "%i", &(opts->dpi)) != 1) {
-                bbx_log(BBX_LOG_LEVEL_ERROR, "Invalid dpi argument \"%s\"\n", optarg);
+            if (bbx_cli_parse_dpi(optarg, &opts->common) != 0) {
                 exit(EXIT_FAILURE);
             }
             break;
@@ -135,11 +126,11 @@ void ul_cli_parse_opts(int argc, char *argv[], ul_cli_opts *opts) {
             opts->newline = false;
             break;
         case 'v':
-            opts->verbose = true;
+            opts->common.verbose = true;
             break;
         case 'V':
-            fprintf(stderr, "unl0kr %s\n", PROJECT_VERSION);
-            exit(0);
+            bbx_cli_print_version_and_exit("unl0kr");
+            break;
         default:
             print_usage();
             exit(EXIT_FAILURE);

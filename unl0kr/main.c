@@ -4,14 +4,17 @@
  */
 
 
-#include "backends.h"
 #include "command_line.h"
 #include "config.h"
 #include "unl0kr.h"
-#include "terminal.h"
 
+#include "../shared/backends.h"
+#include "../shared/display.h"
+#include "../shared/header.h"
 #include "../shared/indev.h"
+#include "../shared/keyboard.h"
 #include "../shared/log.h"
+#include "../shared/terminal.h"
 #include "../shared/theme.h"
 #include "../shared/themes.h"
 #include "../squeek2lvgl/sq2lv.h"
@@ -372,12 +375,12 @@ static void shutdown(void) {
 
 static void sigaction_handler(int signum) {
     LV_UNUSED(signum);
-    ul_terminal_reset_current_terminal();
+    bbx_terminal_reset_current_terminal();
     exit(0);
 }
 
 static void exit_failure() {
-    ul_terminal_reset_current_terminal();
+    bbx_terminal_reset_current_terminal();
     exit(EXIT_FAILURE);
 }
 
@@ -391,7 +394,7 @@ int main(int argc, char *argv[]) {
     ul_cli_parse_opts(argc, argv, &cli_opts);
 
     /* Set up log level */
-    if (cli_opts.verbose) {
+    if (cli_opts.common.verbose) {
         bbx_log_set_level(BBX_LOG_LEVEL_VERBOSE);
     }
 
@@ -414,7 +417,7 @@ int main(int argc, char *argv[]) {
     ul_config_parse_files(cli_opts.config_files, cli_opts.num_config_files, &conf_opts);
 
     /* Prepare current TTY and clean up on termination */
-    ul_terminal_prepare_current_terminal(!conf_opts.quirks.terminal_prevent_graphics_mode, !conf_opts.quirks.terminal_allow_keyboard_input);
+    bbx_terminal_prepare_current_terminal(!conf_opts.quirks.terminal_prevent_graphics_mode, !conf_opts.quirks.terminal_allow_keyboard_input);
     struct sigaction action;
     memset(&action, 0, sizeof(action));
     action.sa_handler = sigaction_handler;
@@ -425,60 +428,20 @@ int main(int argc, char *argv[]) {
     lv_init();
     lv_log_register_print_cb(bbx_log_print_cb);
 
-    /* Initialise display */
-    lv_display_t *disp = NULL;
-    switch (conf_opts.general.backend) {
-#if LV_USE_LINUX_FBDEV
-    case UL_BACKENDS_BACKEND_FBDEV:
-        bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using framebuffer backend");
-        disp = lv_linux_fbdev_create();
-        if (access("/dev/fb0", F_OK) != 0) {
-            bbx_log(BBX_LOG_LEVEL_ERROR, "/dev/fb0 is not available");
-            exit_failure();
-        }
-        lv_linux_fbdev_set_file(disp, "/dev/fb0");
-        if (conf_opts.quirks.fbdev_force_refresh) {
-            lv_linux_fbdev_set_force_refresh(disp, true);
-        }
-        break;
-#endif /* LV_USE_LINUX_FBDEV */
-#if LV_USE_LINUX_DRM
-    case UL_BACKENDS_BACKEND_DRM:
-        bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using DRM backend");
-        disp = lv_linux_drm_create();
+    /* Populate display config */
+    bbx_display_config_t display_config = {
+        .hor_res = cli_opts.common.hor_res,
+        .ver_res = cli_opts.common.ver_res,
+        .x_offset = cli_opts.common.x_offset,
+        .y_offset = cli_opts.common.y_offset,
+        .dpi = cli_opts.common.dpi,
+        .fbdev_force_refresh = conf_opts.quirks.fbdev_force_refresh
+    };
 
-        char drm_path[16];
-        bool found = false;
-        for (int i = 0; i < 9; i++) {
-            sprintf(drm_path, "/dev/dri/card%d", i);
-
-            if (access(drm_path, F_OK) == 0) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            bbx_log(BBX_LOG_LEVEL_ERROR, "/dev/dri/card* are not available");
-            exit_failure();
-        }
-
-        lv_linux_drm_set_file(disp, drm_path, -1);
-
-        break;
-#endif /* LV_USE_LINUX_DRM */
-    default:
-        bbx_log(BBX_LOG_LEVEL_ERROR, "Unable to find suitable backend");
+    /* Initialize display */
+    lv_display_t *disp = bbx_display_create(conf_opts.general.backend, &display_config);
+    if (!disp) {
         exit_failure();
-    }
-
-    /* Override display properties with command line options if necessary */
-    lv_display_set_offset(disp, cli_opts.x_offset, cli_opts.y_offset);
-    if (cli_opts.hor_res > 0 || cli_opts.ver_res > 0) {
-        lv_display_set_physical_resolution(disp, lv_display_get_horizontal_resolution(disp), lv_display_get_vertical_resolution(disp));
-        lv_display_set_resolution(disp, cli_opts.hor_res, cli_opts.ver_res);
-    }
-    if (cli_opts.dpi > 0) {
-        lv_display_set_dpi(disp, cli_opts.dpi);
     }
 
     /* Prepare for routing physical keyboard input into the textarea */
@@ -507,50 +470,25 @@ int main(int argc, char *argv[]) {
     lv_obj_set_flex_flow(screen, LV_FLEX_FLOW_COLUMN);
     lv_obj_remove_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
 
-    /* Header flexbox */
-    lv_obj_t *header = lv_obj_create(screen);
+    /* Configure header */
+    bbx_header_config_t header_config;
+    bbx_header_init_config(&header_config);
+    header_config.theme_symbol = UL_SYMBOL_ADJUST;
+    header_config.dropdown_options = sq2lv_layout_short_names;
+
+    bbx_header_widgets_t header_widgets;
+    lv_obj_t *header = bbx_header_create(screen, &header_config, &header_widgets);
     lv_obj_add_flag(header, BBX_WIDGET_HEADER);
-    lv_theme_apply(header); /* Force re-apply theme after setting flag so that the widget can be identified */
-    lv_obj_set_flex_flow(header, LV_FLEX_FLOW_ROW);
-    lv_obj_set_size(header, LV_PCT(100), LV_SIZE_CONTENT);
 
-    /* Theme switcher button */
-    lv_obj_t *toggle_theme_btn = lv_button_create(header);
-    lv_obj_add_event_cb(toggle_theme_btn, toggle_theme_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
-    lv_obj_t *toggle_theme_btn_label = lv_label_create(toggle_theme_btn);
-    lv_label_set_text(toggle_theme_btn_label, UL_SYMBOL_ADJUST);
-    lv_obj_center(toggle_theme_btn_label);
+    /* Add theme toggle to distinguish this widget type */
+    lv_obj_add_flag(header, BBX_WIDGET_HEADER);
+    lv_theme_apply(header);
 
-    /* Show / hide keyboard button */
-    lv_obj_t *toggle_kb_btn = lv_button_create(header);
-    lv_obj_add_event_cb(toggle_kb_btn, toggle_kb_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
-    lv_obj_t *toggle_kb_btn_label = lv_label_create(toggle_kb_btn);
-    lv_label_set_text(toggle_kb_btn_label, LV_SYMBOL_KEYBOARD);
-    lv_obj_center(toggle_kb_btn_label);
-
-    /* Keyboard layout dropdown */
-    lv_obj_t *layout_dropdown = lv_dropdown_create(header);
-    lv_dropdown_set_options(layout_dropdown, sq2lv_layout_short_names);
-    lv_obj_add_event_cb(layout_dropdown, layout_dropdown_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_set_width(layout_dropdown, 90);
-
-    /* Spacer */
-    lv_obj_t *spacer = lv_obj_create(header);
-    lv_obj_set_height(spacer, 0);
-    lv_obj_set_flex_grow(spacer, 1);
-
-    /* Shutdown button */
-    lv_obj_t *shutdown_btn = lv_button_create(header);
-    lv_obj_add_event_cb(shutdown_btn, shutdown_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
-    lv_obj_t *shutdown_btn_label = lv_label_create(shutdown_btn);
-    lv_label_set_text(shutdown_btn_label, LV_SYMBOL_POWER);
-    lv_obj_center(shutdown_btn_label);
-
-    lv_obj_update_layout(layout_dropdown);
-    const int32_t dropwdown_height = lv_obj_get_height(layout_dropdown);
-    lv_obj_set_size(toggle_theme_btn, dropwdown_height, dropwdown_height);
-    lv_obj_set_size(toggle_kb_btn, dropwdown_height, dropwdown_height);
-    lv_obj_set_size(shutdown_btn, dropwdown_height, dropwdown_height);
+    /* Attach callbacks */
+    lv_obj_add_event_cb(header_widgets.theme_toggle_btn, toggle_theme_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(header_widgets.keyboard_toggle_btn, toggle_kb_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(header_widgets.layout_dropdown, layout_dropdown_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(header_widgets.shutdown_btn, shutdown_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
 
     lv_obj_update_layout(header);
     content_height_without_kb = ver_res - lv_obj_get_height(header);
@@ -633,30 +571,22 @@ int main(int argc, char *argv[]) {
     lv_obj_set_style_pad_bottom(container, is_keyboard_hidden? content_pad_bottom_without_kb : content_pad_bottom_with_kb, LV_PART_MAIN);
 
     /* Keyboard (after textarea / label so that key popovers are not drawn over) */
-    keyboard = lv_keyboard_create(screen);
-    lv_keyboard_set_mode(keyboard, LV_KEYBOARD_MODE_TEXT_LOWER);
-    lv_keyboard_set_textarea(keyboard, textarea);
-    uint32_t num_keyboard_events = lv_obj_get_event_count(keyboard);
-    for(uint32_t i = 0; i < num_keyboard_events; ++i) {
-        if(lv_event_dsc_get_cb(lv_obj_get_event_dsc(keyboard, i)) == lv_keyboard_def_event_cb) {
-            lv_obj_remove_event(keyboard, i);
-            break;
-        }
-    }
-    lv_obj_add_event_cb(keyboard, keyboard_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
-    lv_obj_add_event_cb(keyboard, keyboard_ready_cb, LV_EVENT_READY, NULL);
-    lv_obj_set_size(keyboard, LV_PCT(100), keyboard_height);
-    bbx_theme_prepare_keyboard(keyboard);
+    bbx_keyboard_config_t keyboard_config;
+    bbx_keyboard_init_config(&keyboard_config);
+    keyboard_config.layout_id = (int)conf_opts.keyboard.layout_id;
+    keyboard_config.height = keyboard_height;
+    keyboard_config.popovers = conf_opts.keyboard.popovers;
+    keyboard_config.value_changed_callback = keyboard_value_changed_cb;
+    keyboard_config.ready_callback = keyboard_ready_cb;
+
+    keyboard = bbx_keyboard_create(screen, textarea, &keyboard_config);
 
     /* Apply textarea options */
     set_password_obscured(conf_opts.textarea.obscured);
 
     /* Apply keyboard options */
     sq2lv_switch_layout(keyboard, conf_opts.keyboard.layout_id);
-    lv_dropdown_set_selected(layout_dropdown, conf_opts.keyboard.layout_id);
-    if (conf_opts.keyboard.popovers) {
-        lv_keyboard_set_popovers(keyboard, true);
-    }
+    lv_dropdown_set_selected(header_widgets.layout_dropdown, conf_opts.keyboard.layout_id);
 
     /* Periodically run timer / task handler */
     uint32_t timeout = conf_opts.general.timeout * 1000; /* ms */

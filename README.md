@@ -10,6 +10,8 @@ BuffyBox is a suite of graphical applications for the terminal.
 
 **[unl0kr]** – Disk unlocking UI for the initramfs
 
+**[f0rmz]** – A form/setup wizard for the initramfs
+
 ### Utilities
 
 **[squeek2lvgl]** – Converter for transforming [Squeekboard] layouts into [LVGL]-compatible C code
