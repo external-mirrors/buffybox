@@ -10,6 +10,10 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+Nothing at the moment.
+
+## 3.4.0 (2025-09-24)
+
 - misc: Update LVGL to 9.3.0 (!59, thanks @vstoiakin)
 - misc: Use standard C library instead of builtin functions (!49, thanks @vstoiakin)
 - feat: Add support for split packaging of buffyboard and unl0kr (!54, thanks @vstoiakin)
