@@ -165,7 +165,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
  */
 
 void f0_config_init_opts(f0_config_opts *opts) {
-    opts->general.backend = bbx_backends_backends[0] == NULL ? BBX_BACKENDS_BACKEND_NONE : 0;
+    opts->general.backend = 0;
     opts->intro.title = "A Form!";
     opts->intro.body = "Please complete the following form.";
     opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;

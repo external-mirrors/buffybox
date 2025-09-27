@@ -6,28 +6,23 @@
 
 #include "backends.h"
 
-#include "../shared/log.h"
+#include "log.h"
 
 #include <string.h>
 
-
-/**
- * Public interface
- */
-
-const char *bbx_backends_backends[] = {
+static const char *backends[] = {
 #if LV_USE_LINUX_FBDEV
     "fbdev",
-#endif /* LV_USE_LINUX_FBDEV */
+#endif
 #if LV_USE_LINUX_DRM
     "drm",
-#endif /* LV_USE_LINUX_DRM */
+#endif
     NULL
 };
 
 bbx_backends_backend_id_t bbx_backends_find_backend_with_name(const char *name) {
-    for (int i = 0; bbx_backends_backends[i] != NULL; ++i) {
-        if (strcmp(bbx_backends_backends[i], name) == 0) {
+    for (int i = 0; backends[i] != NULL; ++i) {
+        if (strcmp(backends[i], name) == 0) {
             bbx_log(BBX_LOG_LEVEL_VERBOSE, "Found backend: %s\n", name);
             return i;
         }
