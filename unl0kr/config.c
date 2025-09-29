@@ -139,7 +139,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
 
 void ul_config_init_opts(ul_config_opts *opts) {
     opts->general.animations = false;
-    opts->general.backend = bbx_backends_backends[0] == NULL ? BBX_BACKENDS_BACKEND_NONE : 0;
+    opts->general.backend = 0;
     opts->general.timeout = 0;
     opts->keyboard.autohide = true;
     opts->keyboard.layout_id = SQ2LV_LAYOUT_US;

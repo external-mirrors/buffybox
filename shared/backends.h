@@ -7,7 +7,11 @@
 #ifndef BBX_BACKENDS_H
 #define BBX_BACKENDS_H
 
-#include "lvgl/lvgl.h"
+#include "lv_conf.h"
+
+#if LV_USE_LINUX_FBDEV == 0 && LV_USE_LINUX_DRM == 0
+#error Neither of graphical backends is enabled
+#endif
 
 /**
  * Backend identifiers
@@ -18,16 +22,11 @@ typedef enum {
     BBX_BACKENDS_BACKEND_NONE = -1,
 #if LV_USE_LINUX_FBDEV
     BBX_BACKENDS_BACKEND_FBDEV,
-#endif /* LV_USE_LINUX_FBDEV */
+#endif
 #if LV_USE_LINUX_DRM
     BBX_BACKENDS_BACKEND_DRM,
-#endif /* LV_USE_LINUX_DRM */
+#endif
 } bbx_backends_backend_id_t;
-
-/**
- * Actual backends
- */
-extern const char *bbx_backends_backends[];
 
 /**
  * Find the first backend with a given name.
