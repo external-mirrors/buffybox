@@ -1,5 +1,5 @@
 project('buffybox', 'c',
-    version: '3.4.0',
+    version: '3.4.1',
     default_options: ['warning_level=3', 'b_ndebug=if-release', 'b_lto=true'],
     meson_version: '>= 0.60.0'
 )

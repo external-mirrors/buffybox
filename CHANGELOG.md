@@ -10,7 +10,11 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-- misc: Update LVGL to master (2025-09-29) to potentially address DRM issues
+Nothing at the moment
+
+## 3.4.1 (2025-09-30)
+
+- misc: Update LVGL to master (2025-09-29) to potentially address DRM issues (!66)
 
 ## 3.4.0 (2025-09-24)
 
