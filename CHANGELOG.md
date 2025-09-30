@@ -10,7 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-Nothing at the moment.
+- misc: Update LVGL to master (2025-09-29) to potentially address DRM issues
 
 ## 3.4.0 (2025-09-24)
 
