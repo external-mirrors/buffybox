@@ -12,6 +12,10 @@ If a change only affects particular applications, they are listed in parentheses
 
 Nothing at the moment
 
+## 3.4.2 (2025-10-02)
+
+- fix(f0rmz): Add missing shutdown implementation (!67, thanks @Adrian)
+
 ## 3.4.1 (2025-09-30)
 
 - misc: Update LVGL to master (2025-09-29) to potentially address DRM issues (!66)
