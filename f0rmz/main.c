@@ -275,6 +275,11 @@ static void toggle_theme_btn_clicked_cb(lv_event_t *event) {
     toggle_theme();
 }
 
+static void shutdown(void) {
+    sync();
+    reboot(RB_POWER_OFF);
+}
+
 static void sigaction_handler(int signum) {
     bbx_terminal_reset_current_terminal();
     exit(signum);
