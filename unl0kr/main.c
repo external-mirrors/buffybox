@@ -534,7 +534,8 @@ int main(int argc, char *argv[]) {
     /* Textarea */
     lv_obj_t *textarea = lv_textarea_create(textarea_container);
     lv_textarea_set_one_line(textarea, true);
-    lv_textarea_set_password_mode(textarea, true);
+    lv_textarea_set_password_mode(textarea, conf_opts.textarea.obscured);
+    is_password_obscured = conf_opts.textarea.obscured;
     lv_textarea_set_password_bullet(textarea, conf_opts.textarea.bullet);
     lv_textarea_set_placeholder_text(textarea, "Enter password...");
     lv_obj_add_event_cb(textarea, textarea_ready_cb, LV_EVENT_READY, NULL);
@@ -580,9 +581,6 @@ int main(int argc, char *argv[]) {
     keyboard_config.ready_callback = keyboard_ready_cb;
 
     keyboard = bbx_keyboard_create(screen, textarea, &keyboard_config);
-
-    /* Apply textarea options */
-    set_password_obscured(conf_opts.textarea.obscured);
 
     /* Apply keyboard options */
     sq2lv_switch_layout(keyboard, conf_opts.keyboard.layout_id);
