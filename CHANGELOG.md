@@ -10,7 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-Nothing at the moment
+- fix(unl0kr): Two clicks were required to toggle the password when "obscured" is set to "false" in unl0kr.conf (!68, thanks @vstoiakin)
 
 ## 3.4.2 (2025-10-02)
 
