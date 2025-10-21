@@ -112,6 +112,23 @@ static int parsing_handler(void* user_data, const char* section, const char* key
                 return 1;
             }
         }
+    } else if (strcmp(section, "hardware keyboard") == 0) {
+        if (strcmp(key, "rules") == 0) {
+            opts->hw_keyboard.rules = strdup(value);
+            return 1;
+        } else if (strcmp(key, "model") == 0) {
+            opts->hw_keyboard.model = strdup(value);
+            return 1;
+        } else if (strcmp(key, "layout") == 0) {
+            opts->hw_keyboard.layout = strdup(value);
+            return 1;
+        } else if (strcmp(key, "variant") == 0) {
+            opts->hw_keyboard.variant = strdup(value);
+            return 1;
+        } else if (strcmp(key, "options") == 0) {
+            opts->hw_keyboard.options = strdup(value);
+            return 1;
+        }
     } else if (strcmp(section, "quirks") == 0) {
         if (strcmp(key, "fbdev_force_refresh") == 0) {
             if (bbx_config_parse_bool(value, &(opts->quirks.fbdev_force_refresh))) {
@@ -151,6 +168,11 @@ void ul_config_init_opts(ul_config_opts *opts) {
     opts->input.keyboard = true;
     opts->input.pointer = true;
     opts->input.touchscreen = true;
+    opts->hw_keyboard.rules = NULL;
+    opts->hw_keyboard.model = NULL;
+    opts->hw_keyboard.layout = NULL;
+    opts->hw_keyboard.variant = NULL;
+    opts->hw_keyboard.options = NULL;
     opts->quirks.fbdev_force_refresh = false;
     opts->quirks.terminal_prevent_graphics_mode = false;
     opts->quirks.terminal_allow_keyboard_input = false;

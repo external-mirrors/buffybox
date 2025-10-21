@@ -15,10 +15,15 @@ buffyboard_dependencies = [
     meson.get_compiler('c').find_library('m', required: false)
 ]
 
+buffyboard_args = [
+    '-DBBX_APP_BUFFYBOARD'
+]
+
 executable('buffyboard',
     include_directories: common_include_dirs,
     sources: buffyboard_sources + shared_sources + squeek2lvgl_sources + lvgl_sources,
     dependencies: buffyboard_dependencies,
+    c_args: buffyboard_args,
     install: true,
     install_tag: 'buffyboard'
 )

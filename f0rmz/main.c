@@ -19,12 +19,14 @@
 
 #include "lvgl/lvgl.h"
 
+#include <sys/epoll.h>
+#include <sys/reboot.h>
+#include <errno.h>
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include <sys/reboot.h>
 
 #define F0_PASSWORD_HIDDEN_DOTS  "••••••••"
 
@@ -584,9 +586,8 @@ static void show_intro_screen(void) {
     lv_obj_add_event_cb(btn, get_started_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
 
     /* Set up keyboard input for intro screen */
-    lv_group_t *intro_input_group = lv_group_create();
-    bbx_indev_set_keyboard_input_group(intro_input_group);
-    lv_group_add_obj(intro_input_group, btn);
+    lv_group_remove_all_objs(keyboard_input_group);
+    lv_group_add_obj(keyboard_input_group, btn);
     lv_obj_add_event_cb(btn, intro_key_cb, LV_EVENT_KEY, NULL);
   }
 
@@ -734,8 +735,7 @@ static void show_form_screen(void) {
     keyboard = bbx_keyboard_create(lv_screen_active(), form_textarea, &keyboard_config);
 
     /* Configuring routing for physical keyboard input into the textarea */
-    lv_group_t *keyboard_input_group = lv_group_create();
-    bbx_indev_set_keyboard_input_group(keyboard_input_group);
+    lv_group_remove_all_objs(keyboard_input_group);
     lv_group_add_obj(keyboard_input_group, form_textarea);
 }
 
@@ -831,9 +831,8 @@ static void show_summary_screen(void) {
     lv_obj_add_event_cb(finish_btn, finish_cb, LV_EVENT_CLICKED, NULL);
 
     /* Set up keyboard input for summary screen */
-    lv_group_t *summary_input_group = lv_group_create();
-    bbx_indev_set_keyboard_input_group(summary_input_group);
-    lv_group_add_obj(summary_input_group, finish_btn);
+    lv_group_remove_all_objs(keyboard_input_group);
+    lv_group_add_obj(keyboard_input_group, finish_btn);
 }
 
 int main(int argc, char *argv[]) {
@@ -879,12 +878,23 @@ int main(int argc, char *argv[]) {
         exit_failure();
     }
 
-    /* Prepare for routing physical keyboard input into the textarea */
-    lv_group_t *keyboard_input_group = lv_group_create();
-    bbx_indev_set_keyboard_input_group(keyboard_input_group);
+    int fd_epoll = epoll_create1(EPOLL_CLOEXEC);
+    if (fd_epoll == -1) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "epoll_create1() is failed");
+        exit_failure();
+    }
 
-    /* Start input device monitor and auto-connect available devices */
-    bbx_indev_start_monitor_and_autoconnect(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
+    /* Attach input devices and start monitoring for new ones */
+    struct bbx_indev_opts input_config = {
+        .keymap = &conf_opts.hw_keyboard,
+        .keyboard = conf_opts.input.keyboard,
+        .pointer = conf_opts.input.pointer,
+        .touchscreen = conf_opts.input.touchscreen
+    };
+    if (bbx_indev_init(fd_epoll, &input_config) == 0)
+        exit_failure();
+
+    bbx_indev_set_key_power_cb(shutdown);
 
     /* Hide the on-screen keyboard by default if a physical keyboard is connected */
     if (conf_opts.keyboard.autohide && bbx_indev_is_keyboard_connected()) {
@@ -906,7 +916,21 @@ int main(int argc, char *argv[]) {
     /* Main loop */
     while(1) {
         uint32_t time_till_next = lv_timer_handler();
-        usleep(time_till_next * 1000);
+
+        struct epoll_event event;
+        int r = epoll_wait(fd_epoll, &event, 1, time_till_next);
+        if (r == 0)
+            continue;
+        if (r > 0) {
+            __extension__ void (*handler)() = event.data.ptr;
+            handler();
+            continue;
+        }
+        if (errno == EINTR)
+            continue;
+
+        bbx_log(BBX_LOG_LEVEL_ERROR, "epoll_wait() is failed");
+        exit_failure();
     }
 
     return 0;

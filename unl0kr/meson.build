@@ -25,7 +25,7 @@ endif
 
 executable('unl0kr',
     include_directories: common_include_dirs,
-    sources: unl0kr_sources + shared_sources + squeek2lvgl_sources + lvgl_sources + header_sources,
+    sources: unl0kr_sources + shared_sources + shared_sources_ul_f0 + squeek2lvgl_sources + lvgl_sources,
     dependencies: unl0kr_dependencies,
     c_args: unl0kr_args,
     install: true,

@@ -21,34 +21,33 @@
 
 #include "lvgl/lvgl.h"
 
+#include <sys/epoll.h>
+#include <sys/reboot.h>
+#include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <sys/reboot.h>
-#include <sys/time.h>
-
+ul_cli_opts cli_opts;
+ul_config_opts conf_opts;
 
 /**
  * Static variables
  */
 
-ul_cli_opts cli_opts;
-ul_config_opts conf_opts;
+static bool is_alternate_theme = false;
+static bool is_password_obscured = true;
+static bool is_keyboard_hidden = false;
 
-bool is_alternate_theme = false;
-bool is_password_obscured = true;
-bool is_keyboard_hidden = false;
+static lv_obj_t *container;
+static lv_obj_t *keyboard;
 
-lv_obj_t *container = NULL;
-lv_obj_t *keyboard = NULL;
-
-int32_t content_height_with_kb;
-int32_t content_height_without_kb;
-int32_t content_pad_bottom_with_kb;
-int32_t content_pad_bottom_without_kb;
+static int32_t content_height_with_kb;
+static int32_t content_height_without_kb;
+static int32_t content_pad_bottom_with_kb;
+static int32_t content_pad_bottom_without_kb;
 
 /**
  * Static prototypes
@@ -401,13 +400,6 @@ int main(int argc, char *argv[]) {
     /* Announce ourselves */
     bbx_log(BBX_LOG_LEVEL_VERBOSE, "unl0kr %s", PROJECT_VERSION);
 
-    /* Check that we have access to the clock */
-    struct timespec ts;
-    if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
-        bbx_log(BBX_LOG_LEVEL_ERROR, "Unable to read the clock");
-        exit(EXIT_FAILURE);
-    }
-
     /* Parse config files */
     ul_config_init_opts(&conf_opts);
     ul_config_parse_file("/usr/share/unl0kr/unl0kr.conf", &conf_opts);
@@ -444,12 +436,23 @@ int main(int argc, char *argv[]) {
         exit_failure();
     }
 
-    /* Prepare for routing physical keyboard input into the textarea */
-    lv_group_t *keyboard_input_group = lv_group_create();
-    bbx_indev_set_keyboard_input_group(keyboard_input_group);
+    int fd_epoll = epoll_create1(EPOLL_CLOEXEC);
+    if (fd_epoll == -1) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "epoll_create1() is failed");
+        exit_failure();
+    }
 
-    /* Start input device monitor and auto-connect available devices */
-    bbx_indev_start_monitor_and_autoconnect(conf_opts.input.keyboard, conf_opts.input.pointer, conf_opts.input.touchscreen);
+    /* Attach input devices and start monitoring for new ones */
+    struct bbx_indev_opts input_config = {
+        .keymap = &conf_opts.hw_keyboard,
+        .keyboard = conf_opts.input.keyboard,
+        .pointer = conf_opts.input.pointer,
+        .touchscreen = conf_opts.input.touchscreen
+    };
+    if (bbx_indev_init(fd_epoll, &input_config) == 0)
+        exit_failure();
+
+    bbx_indev_set_key_power_cb(shutdown);
 
     /* Hide the on-screen keyboard by default if a physical keyboard is connected */
     if (conf_opts.keyboard.autohide && bbx_indev_is_keyboard_connected()) {
@@ -601,7 +604,20 @@ int main(int argc, char *argv[]) {
                 time_till_next = time_till_shutdown;
         }
 
-        usleep(time_till_next * 1000);
+        struct epoll_event event;
+        int r = epoll_wait(fd_epoll, &event, 1, time_till_next);
+        if (r == 0)
+            continue;
+        if (r > 0) {
+            __extension__ void (*handler)() = event.data.ptr;
+            handler();
+            continue;
+        }
+        if (errno == EINTR)
+            continue;
+
+        bbx_log(BBX_LOG_LEVEL_ERROR, "epoll_wait() is failed");
+        exit_failure();
     }
 
     return 0;

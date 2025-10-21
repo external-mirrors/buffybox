@@ -7,13 +7,13 @@
 #define F0_CONFIG_H
 
 #include "../shared/backends.h"
-#include "../shared/config.h"
 #include "../shared/themes.h"
 
 #include "sq2lv_layouts.h"
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <xkbcommon/xkbcommon.h>
 
 /**
  * General options
@@ -122,6 +122,8 @@ typedef struct {
     f0_config_opts_textarea textarea;
     /* Options related to input devices */
     f0_config_opts_input input;
+    /* Options to create a keymap for hardware keyboards */
+    struct xkb_rule_names hw_keyboard;
     /* Options related to (normally unneeded) quirks */
     f0_config_opts_quirks quirks;
     /* Intro section */
