@@ -15,6 +15,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <xkbcommon/xkbcommon.h>
 
 /**
  * General options
@@ -98,6 +99,8 @@ typedef struct {
     ul_config_opts_theme theme;
     /* Options related to input devices */
     ul_config_opts_input input;
+    /* Options to create a keymap for hardware keyboards */
+    struct xkb_rule_names hw_keyboard;
     /* Options related to (normally unneeded) quirks */
     ul_config_opts_quirks quirks;
 } ul_config_opts;

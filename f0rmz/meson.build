@@ -10,7 +10,6 @@ f0rmz_sources = files(
 
 f0rmz_dependencies = [
     common_dependencies,
-    depinih,
     depxkbcommon
 ]
 
@@ -26,7 +25,7 @@ endif
 
 executable('f0rmz',
     include_directories: common_include_dirs,
-    sources: f0rmz_sources + shared_sources + squeek2lvgl_sources + lvgl_sources + header_sources,
+    sources: f0rmz_sources + shared_sources + shared_sources_ul_f0 + squeek2lvgl_sources + lvgl_sources,
     dependencies: f0rmz_dependencies,
     c_args: f0rmz_args,
     install: true,

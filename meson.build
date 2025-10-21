@@ -13,7 +13,7 @@ add_project_arguments(
 depinih      = dependency('inih')
 deplibinput  = dependency('libinput')
 deplibudev   = dependency('libudev')
-depxkbcommon = dependency('xkbcommon') # For unl0kr only
+depxkbcommon = dependency('xkbcommon') # For unl0kr and f0rmz only
 
 if get_option('man')
     depscdoc = dependency('scdoc', native: true)
@@ -22,21 +22,23 @@ endif
 common_include_dirs = include_directories('.')
 
 shared_sources = files(
-    'shared/backends.c',
     'shared/cursor/cursor.c',
-    'shared/cli_common.c',
-    'shared/display.c',
     'shared/fonts/font_32.c',
+    'shared/cli_common.c',
     'shared/config.c',
     'shared/indev.c',
-    'shared/keyboard.c',
     'shared/log.c',
-    'shared/terminal.c',
     'shared/theme.c',
     'shared/themes.c'
 )
 
-header_sources = files('shared/header.c')
+shared_sources_ul_f0 = files(
+    'shared/backends.c',
+    'shared/display.c',
+    'shared/header.c',
+    'shared/keyboard.c',
+    'shared/terminal.c'
+)
 
 squeek2lvgl_sources = files(
     'squeek2lvgl/sq2lv.c'

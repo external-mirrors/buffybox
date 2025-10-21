@@ -5,6 +5,8 @@
 
 #include "terminal.h"
 
+#include "../shared/indev.h"
+
 #include <fcntl.h>
 #include <limits.h>
 #include <stdio.h>
@@ -40,16 +42,17 @@ void bb_terminal_shrink_current() {
     if (fd < 0)
         return;
 
-    /* KDFONTOP returns EINVAL if we are not in the text mode,
-       so we can skip this check */
-/*
     int mode;
     if (ioctl(fd, KDGETMODE, &mode) != 0)
         goto end;
 
-    if (mode != KD_TEXT)
+    if (mode == KD_TEXT) {
+        bbx_indev_resume();
+    } else {
+        bbx_indev_suspend();
         goto end;
-*/
+    }
+
     struct console_font_op cfo = {
         .op = KD_FONT_OP_GET,
         .width = UINT_MAX,

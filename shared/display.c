@@ -68,16 +68,17 @@ lv_display_t *bbx_display_create(bbx_backends_backend_id_t backend_id, bbx_displ
         return NULL;
     }
 
+    lv_display_set_physical_resolution(disp,
+        lv_display_get_horizontal_resolution(disp),
+        lv_display_get_vertical_resolution(disp));
+
     /* Apply configuration overrides if provided */
     if (config) {
         /* Set display offset */
         lv_display_set_offset(disp, config->x_offset, config->y_offset);
 
         /* Override resolution if specified */
-        if (config->hor_res > 0 || config->ver_res > 0) {
-            lv_display_set_physical_resolution(disp,
-                lv_display_get_horizontal_resolution(disp),
-                lv_display_get_vertical_resolution(disp));
+        if (config->hor_res > 0 && config->ver_res > 0) {
             lv_display_set_resolution(disp, config->hor_res, config->ver_res);
         }
 

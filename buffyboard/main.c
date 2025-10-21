@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-
 #include "buffyboard.h"
 #include "command_line.h"
 #include "config.h"
@@ -28,7 +27,6 @@
 #include <unistd.h>
 
 
-
 /**
  * Static variables
  */
@@ -36,6 +34,7 @@
 bb_cli_opts cli_opts;
 bb_config_opts conf_opts;
 
+static int fd_active;
 static lv_obj_t *keyboard = NULL;
 static sig_atomic_t redraw_requested = false;
 
@@ -148,6 +147,35 @@ static void pop_checked_modifier_keys(void) {
     }
 }
 
+static void on_new_terminal() {
+    if (!redraw_requested && conf_opts.quirks.ignore_unused_terminals) {
+        lseek(fd_active, 0, SEEK_SET);
+
+        char buffer[8];
+        ssize_t size = read(fd_active, buffer, sizeof(buffer) - 1);
+        if (size <= 0) {
+            bbx_log(BBX_LOG_LEVEL_WARNING, "Can't read /sys/class/tty/tty0/active");
+            return;
+        }
+        buffer[size] = 0;
+
+        unsigned int tty;
+        if (sscanf(buffer, "tty%u", &tty) != 1) {
+            bbx_log(BBX_LOG_LEVEL_WARNING, "Unexpected value of /sys/class/tty/tty0/active");
+            return;
+        }
+
+        if (!bb_terminal_is_busy(tty)) {
+            bbx_log(BBX_LOG_LEVEL_VERBOSE, "Terminal %u isn't used, skip automatic update.", tty);
+            return;
+        }
+    }
+
+    redraw_requested = false;
+    pop_checked_modifier_keys();
+    bb_terminal_shrink_current();
+    lv_obj_invalidate(keyboard);
+}
 
 /**
  * Main
@@ -226,9 +254,6 @@ int main(int argc, char *argv[]) {
     /* Prepare for terminal resizing and reset */
     bb_terminal_init(tty_height - 8, hor_res, ver_res);
 
-    /* Start input device monitor and auto-connect available devices */
-    bbx_indev_start_monitor_and_autoconnect(false, conf_opts.input.pointer, conf_opts.input.touchscreen);
-
     /* Initialise theme */
     bbx_theme_apply(bbx_themes_themes[conf_opts.theme.default_id]);
     lv_theme_apply(lv_screen_active());
@@ -251,8 +276,8 @@ int main(int argc, char *argv[]) {
     sq2lv_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
 
     /* Open the file to track virtual terminals */
-    int fd_tty = open("/sys/class/tty/tty0/active", O_RDONLY|O_NOCTTY|O_CLOEXEC);
-    if (fd_tty < 0) {
+    fd_active = open("/sys/class/tty/tty0/active", O_RDONLY|O_NOCTTY|O_CLOEXEC);
+    if (fd_active < 0) {
         perror("Can't open /sys/class/tty/tty0/active");
         return EXIT_FAILURE;
     }
@@ -265,13 +290,21 @@ int main(int argc, char *argv[]) {
 
     struct epoll_event event;
     event.events = EPOLLIN|EPOLLET;
-    event.data.fd = fd_tty;
+    event.data.ptr = __extension__ (void*) on_new_terminal;
 
-    int r = epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_tty, &event);
+    int r = epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fd_active, &event);
     if (r == -1) {
         perror("epoll_ctl() is failed");
         return EXIT_FAILURE;
     }
+
+    /* Attach input devices and start monitoring for new ones */
+    struct bbx_indev_opts input_config = {
+        .pointer = conf_opts.input.pointer,
+        .touchscreen = conf_opts.input.touchscreen
+    };
+    if (bbx_indev_init(fd_epoll, &input_config) == 0)
+        return EXIT_FAILURE;
 
     /* Set signal handlers */
     struct sigaction action;
@@ -300,39 +333,20 @@ int main(int argc, char *argv[]) {
         int r = epoll_pwait(fd_epoll, &event, 1, time_till_next, &sigmask);
         if (r == 0)
             continue;
-        if (r < 0) {
-            if (errno != EINTR) {
-                perror("epoll_wait() is failed");
-                return EXIT_FAILURE;
-            }
-            if (!redraw_requested)
-                continue;
-            redraw_requested = false;
-        } else if (conf_opts.quirks.ignore_unused_terminals) {
-            lseek(fd_tty, 0, SEEK_SET);
-
-            char buffer[8];
-            ssize_t size = read(fd_tty, buffer, sizeof(buffer) - 1);
-            if (size <= 0) {
-                bbx_log(BBX_LOG_LEVEL_WARNING, "Can't read /sys/class/tty/tty0/active");
-                continue;
-            }
-            buffer[size] = 0;
-
-            unsigned int tty;
-            if (sscanf(buffer, "tty%u", &tty) != 1) {
-                bbx_log(BBX_LOG_LEVEL_WARNING, "Unexpected value of /sys/class/tty/tty0/active");
-                continue;
-            }
-
-            if (!bb_terminal_is_busy(tty)) {
-                bbx_log(BBX_LOG_LEVEL_VERBOSE, "Terminal %u isn't used, skip automatic update.", tty);
-                continue;
-            }
+        if (r > 0) {
+            __extension__ void (*handler)() = event.data.ptr;
+            handler();
+            continue;
+        }
+        if (errno == EINTR) {
+            if (redraw_requested)
+                on_new_terminal();
+            continue;
         }
 
-        bb_terminal_shrink_current();
-        lv_obj_invalidate(keyboard);
+        bbx_log(BBX_LOG_LEVEL_ERROR, "epoll_pwait() is failed");
+        bb_terminal_reset_all();
+        return EXIT_FAILURE;
     }
 
     return 0;
