@@ -824,15 +824,17 @@ uint8_t bbx_indev_init(int fd_epoll, const struct bbx_indev_opts* opts) {
     return ret;
 
 
+#ifndef BBX_APP_BUFFYBOARD
 failure6:
     lv_obj_delete(mouse_cursor);
+#endif
 failure5:
 #ifndef BBX_APP_BUFFYBOARD
     xkb_keymap_unref(keymap);
 failure4:
     xkb_context_unref(context_xkb);
-#endif
 failure3:
+#endif
     udev_monitor_unref(monitor);
 failure2:
     udev_unref(context_udev);
