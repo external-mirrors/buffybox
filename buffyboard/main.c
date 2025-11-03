@@ -198,11 +198,6 @@ int main(int argc, char *argv[]) {
     bb_config_parse_directory("/etc/buffyboard.conf.d", &conf_opts);
     bb_config_parse_files(cli_opts.config_files, cli_opts.num_config_files, &conf_opts);
 
-    /* Set up uinput device */
-    if (!bb_uinput_device_init(sq2lv_unique_scancodes, sq2lv_num_unique_scancodes)) {
-        return EXIT_FAILURE;
-    }
-
     /* Initialise LVGL and set up logging callback */
     lv_init();
     lv_log_register_print_cb(bbx_log_print_cb);
@@ -275,16 +270,16 @@ int main(int argc, char *argv[]) {
     /* Apply default keyboard layout */
     sq2lv_switch_layout(keyboard, SQ2LV_LAYOUT_TERMINAL_US);
 
+    int fd_epoll = epoll_create1(EPOLL_CLOEXEC);
+    if (fd_epoll == -1) {
+        perror("epoll_create1() is failed");
+        return EXIT_FAILURE;
+    }
+
     /* Open the file to track virtual terminals */
     fd_active = open("/sys/class/tty/tty0/active", O_RDONLY|O_NOCTTY|O_CLOEXEC);
     if (fd_active < 0) {
         perror("Can't open /sys/class/tty/tty0/active");
-        return EXIT_FAILURE;
-    }
-
-    int fd_epoll = epoll_create1(EPOLL_CLOEXEC);
-    if (fd_epoll == -1) {
-        perror("epoll_create1() is failed");
         return EXIT_FAILURE;
     }
 
@@ -305,6 +300,11 @@ int main(int argc, char *argv[]) {
     };
     if (bbx_indev_init(fd_epoll, &input_config) == 0)
         return EXIT_FAILURE;
+
+    /* Set up uinput device */
+    if (!bb_uinput_device_init(sq2lv_unique_scancodes, sq2lv_num_unique_scancodes)) {
+        return EXIT_FAILURE;
+    }
 
     /* Set signal handlers */
     struct sigaction action;
