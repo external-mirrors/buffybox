@@ -6,13 +6,18 @@
 
 #include "uinput_device.h"
 
+#include "../shared/log.h"
+
+#include <linux/uinput.h>
+#include <assert.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <linux/uinput.h>
-
+#if UINPUT_VERSION < 5
+#error Buffyboard does not have support for uinput < 5
+#endif
 
 /**
  * Static variables
@@ -70,57 +75,50 @@ static bool uinput_device_synchronise() {
  * Public functions
  */
 
-bool bb_uinput_device_init(const int * const scancodes, int num_scancodes) {
+bool bb_uinput_device_init(const int * const keycodes, int num_keycodes) {
     fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
-	if (fd < 0) {
-		perror("Could not open /dev/uinput");
-		return false;
-	}
+    if (fd < 0) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Could not open /dev/uinput");
+        return false;
+    }
 
-	if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0) {
-		perror("Could not set EVBIT for EV_KEY");
-		return false;
-	}
+    if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Could not set EVBIT for EV_KEY");
+        return false;
+    }
 
-	if (ioctl(fd, UI_SET_EVBIT, EV_SYN) < 0) {
-		perror("Could not set EVBIT for EV_SYN");
-		return false;
-	}
-
-	for (int i = 0; i < num_scancodes; ++i) {
-        if (ioctl(fd, UI_SET_KEYBIT, scancodes[i]) < 0) {
-            perror("Could not set KEYBIT");
+    for (int i = 0; i < num_keycodes; ++i) {
+        if (ioctl(fd, UI_SET_KEYBIT, keycodes[i]) < 0) {
+            bbx_log(BBX_LOG_LEVEL_ERROR, "Could not set KEYBIT");
             return false;
         }
     }
 
-    struct uinput_user_dev device;
-	memset(&device, 0, sizeof(device));
-    strcpy(device.name, "buffyboard");
-	device.id.bustype = BUS_USB;
-	device.id.vendor = 1;
-	device.id.product = 1;
-	device.id.version = 1;
+    static_assert(sizeof("buffyboard") <= UINPUT_MAX_NAME_SIZE);
 
-	if (ioctl(fd, UI_DEV_SETUP, &device) < 0) {
-		perror("Could not set up uinput device");
-		return false;
-	}
+    struct uinput_setup usetup = { 0 };
+    usetup.id.bustype = BUS_VIRTUAL;
+    strcpy(usetup.name, "buffyboard");
 
-	if (ioctl(fd, UI_DEV_CREATE) < 0) {
-		perror("Could not create uinput device");
-		return false;
-	}
+    if (ioctl(fd, UI_DEV_SETUP, &usetup) < 0) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Could not set up uinput device");
+        return false;
+    }
+
+    if (ioctl(fd, UI_DEV_CREATE) < 0) {
+        bbx_log(BBX_LOG_LEVEL_ERROR, "Could not create uinput device");
+        return false;
+    }
 
     memset(&event, 0, sizeof(event));
 
     return true;
 }
 
-bool bb_uinput_device_emit_key_down(int scancode) {
-    return uinput_device_emit(EV_KEY, scancode, 1) && uinput_device_synchronise();
+bool bb_uinput_device_emit_key_down(int keycode) {
+    return uinput_device_emit(EV_KEY, keycode, 1) && uinput_device_synchronise();
 }
 
-bool bb_uinput_device_emit_key_up(int scancode) {
-    return uinput_device_emit(EV_KEY, scancode, 0) && uinput_device_synchronise();
+bool bb_uinput_device_emit_key_up(int keycode) {
+    return uinput_device_emit(EV_KEY, keycode, 0) && uinput_device_synchronise();
 }
