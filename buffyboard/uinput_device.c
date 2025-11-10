@@ -24,7 +24,20 @@
  */
 
 static int fd = -1;
-struct input_event event;
+static struct input_event events[2] = {
+    { .time.tv_sec = 0,
+      .time.tv_usec = 0,
+      .type = EV_KEY,
+      .code = 0,
+      .value = 0
+    },
+    { .time.tv_sec = 0,
+      .time.tv_usec = 0,
+      .type = EV_SYN,
+      .code = SYN_REPORT,
+      .value = 0
+    }
+};
 
 
 /**
@@ -32,42 +45,28 @@ struct input_event event;
  */
 
 /**
- * Emit an event on the device.
- * @param type event type
+ * Emit a key event on the device.
  * @param code event code
  * @param value event value
  * @return true if emitting the event was succesful, false otherwise
  */
-static bool uinput_device_emit(int type, int code, int value);
-
-/**
- * Emit a synchronisation event on the device
- * @return true if emitting the event was succesful, false otherwise
- */
-static bool uinput_device_synchronise();
+static bool emit_key(int code, int value);
 
 
 /**
  * Static functions
  */
 
-static bool uinput_device_emit(int type, int code, int value) {
-    event.type = type;
-    event.code = code;
-    event.value = value;
-    event.input_event_sec = 0;
-    event.input_event_usec = 0;
+static bool emit_key(int code, int value) {
+    events[0].code = code;
+    events[0].value = value;
 
-    if (write(fd, &event, sizeof(event)) != sizeof(event)) {
-        perror("Could not emit event");
+    if (write(fd, events, sizeof(events)) != sizeof(events)) {
+        bbx_log(BBX_LOG_LEVEL_WARNING, "Could not emit events");
         return false;
     }
 
     return true;
-}
-
-static bool uinput_device_synchronise() {
-    return uinput_device_emit(EV_SYN, SYN_REPORT, 0);
 }
 
 
@@ -110,15 +109,13 @@ bool bb_uinput_device_init(const int * const keycodes, int num_keycodes) {
         return false;
     }
 
-    memset(&event, 0, sizeof(event));
-
     return true;
 }
 
 bool bb_uinput_device_emit_key_down(int keycode) {
-    return uinput_device_emit(EV_KEY, keycode, 1) && uinput_device_synchronise();
+    return emit_key(keycode, 1);
 }
 
 bool bb_uinput_device_emit_key_up(int keycode) {
-    return uinput_device_emit(EV_KEY, keycode, 0) && uinput_device_synchronise();
+    return emit_key(keycode, 0);
 }
