@@ -12,26 +12,26 @@
 /**
  * Initialise the uinput keyboard device
  * 
- * @param scancodes array of scancodes the device can emit
- * @param num_scancodes number of scancodes the device can emit
+ * @param keycodes array of keycodes the device can emit
+ * @param num_keycodes number of keycodes the device can emit
  * @return true if creating the device was successful, false otherwise
  */
-bool bb_uinput_device_init(const int * const scancodes, int num_scancodes);
+bool bb_uinput_device_init(const int * const keycodes, int num_keycodes);
 
 /**
  * Emit a key down event
  * 
- * @param scancode the key's scancode
+ * @param keycode the key's keycode
  * @return true if emitting the event was successful, false otherwise
  */
-bool bb_uinput_device_emit_key_down(int scancode);
+bool bb_uinput_device_emit_key_down(int keycode);
 
 /**
  * Emit a key up event
  * 
- * @param scancode the key's scancode
+ * @param keycode the key's keycode
  * @return true if emitting the event was successful, false otherwise
  */
-bool bb_uinput_device_emit_key_up(int scancode);
+bool bb_uinput_device_emit_key_up(int keycode);
 
 #endif /* BB_UINPUT_DEVICE_H */
