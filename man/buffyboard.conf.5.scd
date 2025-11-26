@@ -25,6 +25,11 @@ for and, if found, merged in the following order:
 
 # OPTIONS
 
+## Keyboard
+*haptic_feedback* = <true|false>
+	Enable or disable vibrations when pressing keys.
+	Default: true.
+
 ## Theme
 *default* = <adwaita-light|adwaita-dark|breezy-light|breezy-dark|nord-light|nord-dark|pmos-light|pmos-dark>
 	Selects the default theme on boot. Can be changed at runtime to the

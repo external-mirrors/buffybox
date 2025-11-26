@@ -12,6 +12,7 @@
 
 #include "lvgl/lvgl.h"
 
+#include "../shared/force_feedback.h"
 #include "../shared/indev.h"
 #include "../shared/log.h"
 #include "../shared/theme.h"
@@ -92,6 +93,8 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
     if (btn_id == LV_BUTTONMATRIX_BUTTON_NONE) {
         return;
     }
+
+    bbx_force_feedback_play();
 
     if (sq2lv_is_layer_switcher(kb, btn_id)) {
         pop_checked_modifier_keys();
@@ -296,7 +299,8 @@ int main(int argc, char *argv[]) {
     /* Attach input devices and start monitoring for new ones */
     struct bbx_indev_opts input_config = {
         .pointer = conf_opts.input.pointer,
-        .touchscreen = conf_opts.input.touchscreen
+        .touchscreen = conf_opts.input.touchscreen,
+        .force_feedback = conf_opts.keyboard.haptic_feedback
     };
     if (bbx_indev_init(fd_epoll, &input_config) == 0)
         return EXIT_FAILURE;

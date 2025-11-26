@@ -71,6 +71,10 @@ static int parsing_handler(void* user_data, const char* section, const char* key
             if (bbx_config_parse_bool(value, &(opts->keyboard.popovers))) {
                 return 1;
             }
+        } else if (strcmp(key, "haptic_feedback") == 0) {
+            if (bbx_config_parse_bool(value, &(opts->keyboard.haptic_feedback))) {
+                return 1;
+            }
         }
     } else if (strcmp(section, "textarea") == 0) {
         if (strcmp(key, "obscured") == 0) {
@@ -161,6 +165,7 @@ void ul_config_init_opts(ul_config_opts *opts) {
     opts->keyboard.autohide = true;
     opts->keyboard.layout_id = SQ2LV_LAYOUT_US;
     opts->keyboard.popovers = true;
+    opts->keyboard.haptic_feedback = true;
     opts->textarea.obscured = true;
     opts->textarea.bullet = LV_SYMBOL_BULLET;
     opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;

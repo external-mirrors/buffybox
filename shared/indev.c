@@ -6,6 +6,7 @@
 #include "indev.h"
 
 #include "cursor/cursor.h"
+#include "force_feedback.h"
 #include "log.h"
 
 #include "lvgl/lvgl.h"
@@ -93,6 +94,7 @@ static struct {
 #endif
     uint8_t pointer : 1;
     uint8_t touchscreen : 1;
+    uint8_t force_feedback : 1;
 } options;
 
 /**
@@ -641,6 +643,12 @@ static void attach_input_device(struct udev_device* device) {
         break;
     }
 
+    /* A device can be a force feedback device and an input device independently,
+       so we check for both capabilities. */
+
+    if (options.force_feedback)
+        bbx_force_feedback_connect(device);
+
     struct libinput_device* dev = libinput_path_add_device(context_libinput, node);
     if (!dev) {
         bbx_log(BBX_LOG_LEVEL_WARNING, "libinput can't use %s", node);
@@ -795,6 +803,7 @@ uint8_t bbx_indev_init(int fd_epoll, const struct bbx_indev_opts* opts) {
 #endif
     options.pointer = opts->pointer;
     options.touchscreen = opts->touchscreen;
+    options.force_feedback = opts->force_feedback;
 
     attach_input_devices();
 
