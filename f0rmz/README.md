@@ -115,6 +115,7 @@ hostname=mydevice
 - [libinput] - Input device handling  
 - [libudev] - Device enumeration
 - [libxkbcommon] - Keyboard layout support
+- [libdrm] - DRM backend
 - evdev kernel module
 
 ## Backends

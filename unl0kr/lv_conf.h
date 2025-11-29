@@ -1159,7 +1159,8 @@
  *==================*/
 
 /** Use SDL to open window on PC and handle mouse and keyboard. */
-#define LV_USE_SDL              0
+// LV_USE_SDL is defined dynamically via meson.build so we must not define it here
+// #define LV_USE_SDL              0
 #if LV_USE_SDL
     #define LV_SDL_INCLUDE_PATH     <SDL2/SDL.h>
     #define LV_SDL_RENDER_MODE      LV_DISPLAY_RENDER_MODE_DIRECT   /**< LV_DISPLAY_RENDER_MODE_DIRECT is recommended for best performance */
@@ -1231,6 +1232,7 @@
 #endif
 
 /** Driver for /dev/dri/card */
+// LV_USE_LINUX_DRM is defined dynamically via meson.build so we must not define it here
 //#define LV_USE_LINUX_DRM        0
 
 #if LV_USE_LINUX_DRM

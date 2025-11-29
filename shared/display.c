@@ -63,6 +63,17 @@ lv_display_t *bbx_display_create(bbx_backends_backend_id_t backend_id, bbx_displ
         break;
 #endif /* LV_USE_LINUX_DRM */
 
+#if LV_USE_SDL
+    case BBX_BACKENDS_BACKEND_SDL:
+        bbx_log(BBX_LOG_LEVEL_VERBOSE, "Using SDL2 backend");
+	disp = lv_sdl_window_create(config->hor_res > 0 ? config->hor_res: 800, config->ver_res > 0 ? config->ver_res: 480);
+        if (!disp) {
+            bbx_log(BBX_LOG_LEVEL_ERROR, "Failed to create SDL2 display");
+            return NULL;
+        }
+        break;
+#endif /* LV_USE_SDL */
+
     default:
         bbx_log(BBX_LOG_LEVEL_ERROR, "Unable to find suitable backend");
         return NULL;

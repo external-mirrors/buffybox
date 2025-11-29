@@ -23,6 +23,13 @@ else
     f0rmz_args += '-DLV_USE_LINUX_DRM=0'
 endif
 
+if deplibsdl.found()
+    f0rmz_dependencies += deplibsdl
+    f0rmz_args += '-DLV_USE_SDL=1'
+else
+    f0rmz_args += '-DLV_USE_SDL=0'
+endif
+
 executable('f0rmz',
     include_directories: common_include_dirs,
     sources: f0rmz_sources + shared_sources + shared_sources_ul_f0 + squeek2lvgl_sources + lvgl_sources,

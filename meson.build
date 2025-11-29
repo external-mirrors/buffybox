@@ -14,6 +14,7 @@ depinih      = dependency('inih')
 deplibinput  = dependency('libinput')
 deplibudev   = dependency('libudev')
 depxkbcommon = dependency('xkbcommon') # For unl0kr and f0rmz only
+deplibsdl = dependency('sdl2', required: get_option('developer'))
 
 if get_option('man')
     depscdoc = dependency('scdoc', native: true)

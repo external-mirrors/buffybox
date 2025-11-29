@@ -9,7 +9,7 @@
 
 #include "lv_conf.h"
 
-#if LV_USE_LINUX_FBDEV == 0 && LV_USE_LINUX_DRM == 0
+#if LV_USE_LINUX_FBDEV == 0 && LV_USE_LINUX_DRM == 0 && LV_USE_SDL == 0
 #error Neither of graphical backends is enabled
 #endif
 
@@ -25,6 +25,9 @@ typedef enum {
 #endif
 #if LV_USE_LINUX_DRM
     BBX_BACKENDS_BACKEND_DRM,
+#endif
+#if LV_USE_SDL
+    BBX_BACKENDS_BACKEND_SDL,
 #endif
 } bbx_backends_backend_id_t;
 
