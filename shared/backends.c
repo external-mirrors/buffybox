@@ -17,6 +17,9 @@ static const char *backends[] = {
 #if LV_USE_LINUX_DRM
     "drm",
 #endif
+#if LV_USE_SDL
+    "sdl",
+#endif
     NULL
 };
 

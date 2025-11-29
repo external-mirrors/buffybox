@@ -23,6 +23,13 @@ else
     unl0kr_args += '-DLV_USE_LINUX_DRM=0'
 endif
 
+if deplibsdl.found()
+    unl0kr_dependencies += deplibsdl
+    unl0kr_args += '-DLV_USE_SDL=1'
+else
+    unl0kr_args += '-DLV_USE_SDL=0'
+endif
+
 executable('unl0kr',
     include_directories: common_include_dirs,
     sources: unl0kr_sources + shared_sources + shared_sources_ul_f0 + squeek2lvgl_sources + lvgl_sources,
