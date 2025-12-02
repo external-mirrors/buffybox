@@ -27,6 +27,7 @@ shared_sources = files(
     'shared/fonts/font_32.c',
     'shared/cli_common.c',
     'shared/config.c',
+    'shared/force_feedback.c',
     'shared/indev.c',
     'shared/log.c',
     'shared/theme.c',

@@ -48,7 +48,11 @@ for and, if found, merged in the following order:
 
 *popovers* = <true|false>
 	Enable or disable key press popovers showing the selected key.
-	default: true.
+	Default: true.
+
+*haptic_feedback* = <true|false>
+	Enable or disable vibrations when pressing keys.
+	Default: true.
 
 ## Textarea
 *obscured* = <true|false>

@@ -10,6 +10,7 @@
 
 #include "../shared/backends.h"
 #include "../shared/display.h"
+#include "../shared/force_feedback.h"
 #include "../shared/header.h"
 #include "../shared/indev.h"
 #include "../shared/keyboard.h"
@@ -334,6 +335,8 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
         return;
     }
 
+    bbx_force_feedback_play();
+
     if (sq2lv_is_layer_switcher(kb, btn_id)) {
         sq2lv_switch_layer(kb, btn_id);
         return;
@@ -447,7 +450,8 @@ int main(int argc, char *argv[]) {
         .keymap = &conf_opts.hw_keyboard,
         .keyboard = conf_opts.input.keyboard,
         .pointer = conf_opts.input.pointer,
-        .touchscreen = conf_opts.input.touchscreen
+        .touchscreen = conf_opts.input.touchscreen,
+        .force_feedback = conf_opts.keyboard.haptic_feedback
     };
     if (bbx_indev_init(fd_epoll, &input_config) == 0)
         exit_failure();

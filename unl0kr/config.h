@@ -39,6 +39,8 @@ typedef struct {
     sq2lv_layout_id_t layout_id;
     /* If true, display key popovers on press */
     bool popovers;
+    /* If true, vibrate on key presses */
+    bool haptic_feedback;
 } ul_config_opts_keyboard;
 
 /**

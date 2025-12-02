@@ -8,6 +8,7 @@
 
 #include "../shared/backends.h"
 #include "../shared/display.h"
+#include "../shared/force_feedback.h"
 #include "../shared/header.h"
 #include "../shared/indev.h"
 #include "../shared/keyboard.h"
@@ -37,19 +38,19 @@
 f0_cli_opts cli_opts;
 f0_config_opts conf_opts;
 
-bool is_alternate_theme = false;
-bool is_keyboard_hidden = false;
+static bool is_alternate_theme = false;
+static bool is_keyboard_hidden = false;
 
 static char **field_values = NULL;
 
-int current_field_index = 0;
+static int current_field_index = 0;
 
-lv_obj_t *form_container = NULL;
-lv_obj_t *form_textarea = NULL;
-lv_obj_t *keyboard = NULL;
+static lv_obj_t *form_container = NULL;
+static lv_obj_t *form_textarea = NULL;
+static lv_obj_t *keyboard = NULL;
 
-int32_t content_height_with_kb;
-int32_t content_height_without_kb;
+static int32_t content_height_with_kb;
+static int32_t content_height_without_kb;
 
 /**
  * Static prototypes
@@ -265,7 +266,7 @@ static void exit_failure();
  * Static functions
  */
 
- static void intro_key_cb(lv_event_t *event) {
+static void intro_key_cb(lv_event_t *event) {
     uint32_t key = lv_indev_get_key(lv_indev_active());
     if (key == LV_KEY_ENTER) {
         get_started_btn_clicked_cb(event);
@@ -408,6 +409,8 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
     if (btn_id == LV_BUTTONMATRIX_BUTTON_NONE) {
         return;
     }
+
+    bbx_force_feedback_play();
 
     if (sq2lv_is_layer_switcher(kb, btn_id)) {
         sq2lv_switch_layer(kb, btn_id);
@@ -889,7 +892,8 @@ int main(int argc, char *argv[]) {
         .keymap = &conf_opts.hw_keyboard,
         .keyboard = conf_opts.input.keyboard,
         .pointer = conf_opts.input.pointer,
-        .touchscreen = conf_opts.input.touchscreen
+        .touchscreen = conf_opts.input.touchscreen,
+        .force_feedback = conf_opts.keyboard.haptic_feedback
     };
     if (bbx_indev_init(fd_epoll, &input_config) == 0)
         exit_failure();

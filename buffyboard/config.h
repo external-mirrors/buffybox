@@ -12,6 +12,14 @@
 #include "sq2lv_layouts.h"
 
 /**
+ * Options related to the keyboard
+ */
+typedef struct {
+    /* If true, vibrate on key presses */
+    bool haptic_feedback;
+} bb_config_opts_keyboard;
+
+/**
  * Options related to the theme
  */
 typedef struct {
@@ -43,6 +51,8 @@ typedef struct {
  * Options parsed from config file(s)
  */
 typedef struct {
+    /* Options related to the keyboard */
+    bb_config_opts_keyboard keyboard;
     /* Options related to the theme */
     bb_config_opts_theme theme;
     /* Options related to input devices */

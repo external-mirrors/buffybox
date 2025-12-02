@@ -20,6 +20,7 @@ struct bbx_indev_opts {
 #endif
     uint8_t pointer : 1;
     uint8_t touchscreen : 1;
+    uint8_t force_feedback : 1;
 };
 
 #ifndef BBX_APP_BUFFYBOARD

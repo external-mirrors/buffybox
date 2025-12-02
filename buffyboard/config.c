@@ -40,7 +40,13 @@ static int parsing_handler(void* user_data, const char* section, const char* key
 static int parsing_handler(void* user_data, const char* section, const char* key, const char* value) {
     bb_config_opts *opts = (bb_config_opts *)user_data;
 
-    if (strcmp(section, "theme") == 0) {
+    if (strcmp(section, "keyboard") == 0) {
+        if (strcmp(key, "haptic_feedback") == 0) {
+            if (bbx_config_parse_bool(value, &(opts->keyboard.haptic_feedback))) {
+                return 1;
+            }
+        }
+    } else if (strcmp(section, "theme") == 0) {
         if (strcmp(key, "default") == 0) {
             bbx_themes_theme_id_t id = bbx_themes_find_theme_with_name(value);
             if (id != BBX_THEMES_THEME_NONE) {
@@ -80,6 +86,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
  */
 
 void bb_config_init_opts(bb_config_opts *opts) {
+    opts->keyboard.haptic_feedback = true;
     opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
     opts->input.pointer = true;
     opts->input.touchscreen = true;

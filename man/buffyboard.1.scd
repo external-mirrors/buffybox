@@ -54,7 +54,7 @@ result.
 
 # NOTES
 
-Some terminal commands, like _clear_ or _setfont_, can erase the keyboard or brake the layout of the terminal. In this case you should send a signal to Buffyboard or switch to another terminal to update the screen:
+Some terminal commands, like _clear_ or _setfont_, can erase the keyboard or break the layout of the terminal. In this case you should send a signal to Buffyboard or switch to another terminal to update the screen:
 
 ```
 setfont solar24x32;/usr/bin/kill -s SIGUSR1 buffyboard
