@@ -15,16 +15,21 @@ unl0kr_dependencies = [
 
 unl0kr_args = []
 
-deplibdrm = dependency('libdrm', required: get_option('with-drm'))
-if deplibdrm.found()
-    unl0kr_dependencies += deplibdrm
+if get_option('lvgl_backends').contains('framebuffer')
+    unl0kr_args += '-DLV_USE_LINUX_FBDEV=1'
+else
+    unl0kr_args += '-DLV_USE_LINUX_FBDEV=0'
+endif
+
+if get_option('lvgl_backends').contains('drm')
+    unl0kr_dependencies += dependency('libdrm')
     unl0kr_args += '-DLV_USE_LINUX_DRM=1'
 else
     unl0kr_args += '-DLV_USE_LINUX_DRM=0'
 endif
 
-if deplibsdl.found()
-    unl0kr_dependencies += deplibsdl
+if get_option('lvgl_backends').contains('sdl')
+    unl0kr_dependencies += dependency('sdl2')
     unl0kr_args += '-DLV_USE_SDL=1'
 else
     unl0kr_args += '-DLV_USE_SDL=0'

@@ -56,7 +56,7 @@ On distributions based on systemd, `unl0kr` can be used as a [password agent](ht
 # systemd-ask-password --no-tty # Unl0kr is started
 ```
 
-**Note**: SDL2 can be used as display backend for development purposes by setting the Meson option `developer` and use `backend=sdl` in the configuration file.
+**Note**: SDL can be used as a display backend for development purposes by setting the Meson option `lvgl_backends=sdl` and using `backend=sdl` in the configuration file.
 Other uses besides development are not supported by Buffybox.
 
 ## Packaging
@@ -121,3 +121,4 @@ For the license of bundled images and fonts, see [shared/cursor] and [shared/fon
 [shared/fonts]: ./shared/fonts
 [unl0kr]: ./unl0kr
 [unl0kr#42]: https://gitlab.com/cherrypicker/unl0kr/-/issues/42
+[f0rmz]: ./f0rmz

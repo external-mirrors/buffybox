@@ -29,8 +29,8 @@ for and, if found, merged in the following order:
 *animations* = <true|false>
 	Enable or disable animations. Useful for slower devices. Default: false.
 
-*backend* = <fbdev|drm>
-	The rendering backend to use. Default: fbdev.
+*backend* = <fbdev|drm|sdl>
+	The rendering backend to use. Default: the first compiled backend from the list above.
 
 *timeout* = <value>
 	The time in seconds before unl0kr will consider the entry a failure 

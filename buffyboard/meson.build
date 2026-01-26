@@ -11,8 +11,7 @@ buffyboard_sources = files(
 )
 
 buffyboard_dependencies = [
-    common_dependencies,
-    meson.get_compiler('c').find_library('m', required: false)
+    common_dependencies
 ]
 
 buffyboard_args = [
