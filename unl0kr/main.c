@@ -261,7 +261,7 @@ static void set_keyboard_hidden(bool is_hidden) {
     lv_anim_set_var(&keyboard_anim, container);
     lv_anim_set_exec_cb(&keyboard_anim, (lv_anim_exec_xcb_t) lv_obj_set_height);
     lv_anim_set_path_cb(&keyboard_anim, lv_anim_path_ease_out);
-    lv_anim_set_time(&keyboard_anim, 500);
+    lv_anim_set_duration(&keyboard_anim, 500);
 
     lv_anim_set_values(&keyboard_anim,
         is_hidden? content_height_with_kb : content_height_without_kb,
@@ -275,7 +275,7 @@ static void set_keyboard_hidden(bool is_hidden) {
         lv_anim_set_var(&pad_anim, container);
         lv_anim_set_exec_cb(&pad_anim, pad_anim_cb);
         lv_anim_set_path_cb(&pad_anim, lv_anim_path_ease_out);
-        lv_anim_set_time(&pad_anim, 500);
+        lv_anim_set_duration(&pad_anim, 500);
 
         lv_anim_set_values(&pad_anim,
             is_hidden? content_pad_bottom_with_kb : content_pad_bottom_without_kb,
