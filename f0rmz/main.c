@@ -325,7 +325,7 @@ static void set_keyboard_hidden(bool is_hidden) {
     lv_anim_set_var(&container_anim, form_container);
     lv_anim_set_exec_cb(&container_anim, (lv_anim_exec_xcb_t) lv_obj_set_height);
     lv_anim_set_path_cb(&container_anim, lv_anim_path_ease_out);
-    lv_anim_set_time(&container_anim, 500);
+    lv_anim_set_duration(&container_anim, 500);
 
     lv_anim_set_values(&container_anim,
         is_hidden? content_height_with_kb : content_height_without_kb,
@@ -576,7 +576,7 @@ static void show_intro_screen(void) {
     /* Body */
     lv_obj_t *body = lv_label_create(container);
     lv_label_set_text(body, conf_opts.intro.body);
-    lv_label_set_long_mode(body, LV_LABEL_LONG_WRAP);
+    lv_label_set_long_mode(body, LV_LABEL_LONG_MODE_WRAP);
     lv_obj_set_width(body, LV_PCT(80));
     lv_obj_set_style_text_align(body, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_set_style_pad_bottom(body, 30, LV_PART_MAIN);
