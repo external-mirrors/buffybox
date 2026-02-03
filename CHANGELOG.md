@@ -16,6 +16,7 @@ If a change only affects particular applications, they are listed in parentheses
 - fix(buffyboard): Send EV_KEY and EV_SYN simultaneously (!74, thanks @vstoiakin)
 - feat(f0rmz,unl0kr): Add SDL backend to ease development (!75, thanks @DylanVanAssche)
 - feat: Add config option for haptic feedback, default: true (!76, thanks @vstoiakin)
+- feat: Make framebuffer backend optional and introduce new `lvgl_backends` build option (!78, thanks @vstoiakin)
 
 ## 3.4.2 (2025-10-02)
 
