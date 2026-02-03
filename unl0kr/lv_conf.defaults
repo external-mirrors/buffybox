@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # Manual post-processing steps for the generated lv_conf.h
-# 1. Comment LV_USE_LINUX_DRM (handled by meson.build)
-# 2. Comment LV_BIG_ENDIAN_SYSTEM (handled by meson.build)
-# 3. Add `#define LV_FONT_CUSTOM_DECLARE LV_FONT_DECLARE(bbx_font_32)` (a bug in generate_lv_conf.py)
+# 1. Comment LV_USE_SDL
+#            LV_USE_LINUX_FBDEV
+#            LV_USE_LINUX_DRM
+#            LV_BIG_ENDIAN_SYSTEM (handled by meson.build)
+# 2. Add `#define LV_FONT_CUSTOM_DECLARE LV_FONT_DECLARE(bbx_font_32)` (a bug in generate_lv_conf.py)
 
 LV_COLOR_DEPTH	32
 LV_USE_STDLIB_MALLOC	LV_STDLIB_CLIB
@@ -106,7 +108,9 @@ LV_USE_GRID	0
 
 LV_USE_OBSERVER	0
 
-LV_USE_LINUX_FBDEV	1
+LV_USE_SDL	0
+
+LV_USE_LINUX_FBDEV	0
 LV_LINUX_FBDEV_BSD	0
 LV_LINUX_FBDEV_RENDER_MODE	LV_DISPLAY_RENDER_MODE_DIRECT
 
