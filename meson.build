@@ -10,6 +10,12 @@ add_project_arguments(
     language: 'c'
 )
 
+if host_machine.cpu_family() == 'aarch64'
+    add_project_arguments('-DLV_USE_DRAW_SW_ASM=LV_DRAW_SW_ASM_NEON', language: 'c')
+else
+    add_project_arguments('-DLV_USE_DRAW_SW_ASM=LV_DRAW_SW_ASM_NONE', language: 'c')
+endif
+
 depinih      = dependency('inih')
 deplibinput  = dependency('libinput')
 deplibudev   = dependency('libudev')
