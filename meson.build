@@ -25,6 +25,13 @@ if get_option('man')
     depscdoc = dependency('scdoc', native: true)
 endif
 
+depsystemd = dependency('systemd', required: false)
+systemd_system_unit_dir = depsystemd.get_variable(
+    pkgconfig: 'systemd_system_unit_dir',
+    pkgconfig_define: ['prefix', get_option('prefix')],
+    default_value: get_option('prefix') / 'lib' / 'systemd' / 'system'
+)
+
 common_include_dirs = include_directories('.')
 
 shared_sources = files(

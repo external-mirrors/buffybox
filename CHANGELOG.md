@@ -18,6 +18,7 @@ If a change only affects particular applications, they are listed in parentheses
 - feat: Add config option for haptic feedback, default: true (!76, thanks @vstoiakin)
 - feat: Make framebuffer backend optional and introduce new `lvgl_backends` build option (!78, thanks @vstoiakin)
 - feat: Enable NEON optimizations on aarch64 in LVGL (!79, thanks @vstoiakin)
+- feat: Allow building systemd password agent and installing unit files without systemd at build time (!80, thanks @craftyguy)
 
 ## 3.4.2 (2025-10-02)
 
