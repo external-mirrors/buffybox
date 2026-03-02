@@ -32,22 +32,19 @@ install_data('buffyboard.conf',
     install_tag: 'buffyboard'
 )
 
-depsystemd = dependency('systemd', required: get_option('systemd-buffyboard-service'))
-if depsystemd.found()
-    system_unit_dir = depsystemd.get_variable(pkgconfig: 'systemd_system_unit_dir')
-
+if get_option('systemd')
     configure_file(
         configuration: {'bindir': get_option('prefix') / get_option('bindir')},
         input: 'buffyboard.service.in',
         output: 'buffyboard.service',
         install: true,
-        install_dir: system_unit_dir,
+        install_dir: systemd_system_unit_dir,
         install_tag: 'buffyboard'
     )
 
     install_data('getty-buffyboard.conf',
         rename: 'buffyboard.conf',
-        install_dir: system_unit_dir / 'getty@.service.d',
+        install_dir: systemd_system_unit_dir / 'getty@.service.d',
         install_tag: 'buffyboard'
     )
 endif

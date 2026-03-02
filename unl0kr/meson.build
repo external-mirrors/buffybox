@@ -49,8 +49,7 @@ install_data('unl0kr.conf',
     install_tag: 'unl0kr'
 )
 
-depsystemd = dependency('systemd', required: get_option('systemd-password-agent'))
-if depsystemd.found()
+if get_option('systemd')
     executable('unl0kr-agent',
         sources: files('unl0kr-agent.c'),
         dependencies: depinih,
@@ -60,10 +59,8 @@ if depsystemd.found()
         install_tag: 'unl0kr'
     )
 
-    system_unit_dir = depsystemd.get_variable(pkgconfig: 'systemd_system_unit_dir')
-
     install_data('unl0kr-agent.path',
-        install_dir: system_unit_dir,
+        install_dir: systemd_system_unit_dir,
         install_tag: 'unl0kr'
     )
 
@@ -72,7 +69,7 @@ if depsystemd.found()
         input: 'unl0kr-agent.service.in',
         output: 'unl0kr-agent.service',
         install: true,
-        install_dir: system_unit_dir,
+        install_dir: systemd_system_unit_dir,
         install_tag: 'unl0kr'
     )
 endif
