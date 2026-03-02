@@ -30,6 +30,13 @@ for and, if found, merged in the following order:
 	Enable or disable vibrations when pressing keys.
 	Default: true.
 
+*sticky_shift* = <true|false>
+	Changes shift key behavior. When true, the keyboard remains in uppercase mode
+	until the shift key is pressed again (sticky). When false, the keyboard switches
+	back to lowercase mode and the shift key deactivates after a non-modifier key is
+	pressed.
+	Default: true.
+
 ## Theme
 *default* = <adwaita-light|adwaita-dark|breezy-light|breezy-dark|nord-light|nord-dark|pmos-light|pmos-dark>
 	Selects the default theme on boot. Can be changed at runtime to the

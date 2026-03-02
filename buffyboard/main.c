@@ -116,6 +116,11 @@ static void keyboard_value_changed_cb(lv_event_t *event) {
     /* Pop any previously checked modifiers when a non-modifier key was pressed */
     if (!is_modifier) {
         pop_checked_modifier_keys();
+
+        /* If sticky_shift is disabled and we're in uppercase mode, switch back to lowercase */
+        if (!conf_opts.keyboard.sticky_shift && lv_keyboard_get_mode(keyboard) == LV_KEYBOARD_MODE_TEXT_UPPER) {
+            lv_keyboard_set_mode(keyboard, LV_KEYBOARD_MODE_TEXT_LOWER);
+        }
     }
 }
 
