@@ -10,6 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+- feat(buffyboard): Add sticky_shift config option to control shift key behavior
 - fix(unl0kr): Two clicks were required to toggle the password when "obscured" is set to "false" in unl0kr.conf (!68, thanks @vstoiakin)
 - feat: Use events instead of threads for input processing (!63, thanks @vstoiakin)
 - fix(buffyboard): Fix initialization of uinput (!73, thanks @vstoiakin)

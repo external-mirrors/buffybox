@@ -45,6 +45,10 @@ static int parsing_handler(void* user_data, const char* section, const char* key
             if (bbx_config_parse_bool(value, &(opts->keyboard.haptic_feedback))) {
                 return 1;
             }
+        } else if (strcmp(key, "sticky_shift") == 0) {
+            if (bbx_config_parse_bool(value, &(opts->keyboard.sticky_shift))) {
+                return 1;
+            }
         }
     } else if (strcmp(section, "theme") == 0) {
         if (strcmp(key, "default") == 0) {
@@ -87,6 +91,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
 
 void bb_config_init_opts(bb_config_opts *opts) {
     opts->keyboard.haptic_feedback = true;
+    opts->keyboard.sticky_shift = true;
     opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
     opts->input.pointer = true;
     opts->input.touchscreen = true;

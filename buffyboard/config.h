@@ -17,6 +17,9 @@
 typedef struct {
     /* If true, vibrate on key presses */
     bool haptic_feedback;
+    /* If true, remain in uppercase mode until shift is pressed again.
+     * If false, switch back to lowercase after a non-modifier key is pressed. */
+    bool sticky_shift;
 } bb_config_opts_keyboard;
 
 /**
