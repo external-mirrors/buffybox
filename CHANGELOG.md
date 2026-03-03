@@ -10,6 +10,10 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
+Nothing at the moment.
+
+## 3.5.1 (2026-03-03)
+
 - fix(unl0kr): Add install section to systemd path unit (!86, thanks @craftyguy)
 - fix(unl0kr): Restore dynamic horizontal padding for input text box (!85, thanks @craftyguy)
 - fix: Fix keys being dropped when typing quickly (!84, thanks @craftyguy)
