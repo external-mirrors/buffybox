@@ -25,17 +25,9 @@
 
 static int fd = -1;
 static struct input_event events[2] = {
-    { .time.tv_sec = 0,
-      .time.tv_usec = 0,
-      .type = EV_KEY,
-      .code = 0,
-      .value = 0
-    },
-    { .time.tv_sec = 0,
-      .time.tv_usec = 0,
-      .type = EV_SYN,
+    { .type = EV_KEY },
+    { .type = EV_SYN,
       .code = SYN_REPORT,
-      .value = 0
     }
 };
 
