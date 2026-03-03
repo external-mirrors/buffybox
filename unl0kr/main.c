@@ -238,7 +238,7 @@ static void set_password_obscured(bool is_obscured) {
     lv_textarea_set_password_mode(textarea, is_obscured);
 }
 
-static void toggle_kb_btn_clicked_cb(lv_event_t *event) {   
+static void toggle_kb_btn_clicked_cb(lv_event_t *event) {
     LV_UNUSED(event);
     toggle_keyboard_hidden();
 }
@@ -470,6 +470,8 @@ int main(int argc, char *argv[]) {
     const int32_t hor_res = lv_display_get_horizontal_resolution(disp);
     const int32_t ver_res = lv_display_get_vertical_resolution(disp);
     const int32_t keyboard_height = ver_res > hor_res ? ver_res / 2.5 : ver_res / 1.8; /* Height for 5 rows */
+    const int32_t padding = keyboard_height / 10;
+    const int32_t side_pad = (hor_res > ver_res ? (hor_res - ver_res) / 2 : 0) + padding;
 
     /* Prevent scrolling when keyboard is off-screen */
     lv_obj_t *screen = lv_screen_active();
@@ -507,8 +509,8 @@ int main(int argc, char *argv[]) {
     lv_obj_set_flex_align(container, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
     lv_obj_set_size(container, LV_PCT(100), is_keyboard_hidden? content_height_without_kb : content_height_with_kb);
     lv_obj_set_style_pad_top(container, 10, LV_PART_MAIN);
-    lv_obj_set_style_pad_left(container, 20, LV_PART_MAIN);
-    lv_obj_set_style_pad_right(container, 20, LV_PART_MAIN);
+    lv_obj_set_style_pad_left(container, side_pad, LV_PART_MAIN);
+    lv_obj_set_style_pad_right(container, side_pad, LV_PART_MAIN);
 
     int32_t content_pad_row = 10;
 
@@ -564,7 +566,7 @@ int main(int argc, char *argv[]) {
     lv_obj_add_event_cb(toggle_pw_btn, toggle_pw_btn_clicked_cb, LV_EVENT_CLICKED, NULL);
 
     /* The bottom pad is used to center content when the keyboard is hidden */
-    content_pad_bottom_with_kb = 20;
+    content_pad_bottom_with_kb = padding;
 
     int32_t content_native_height = textarea_height;
     if (cli_opts.message) {
