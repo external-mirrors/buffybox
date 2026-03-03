@@ -16,3 +16,6 @@ Before=shutdown.target
 [Path]
 DirectoryNotEmpty=/run/systemd/ask-password
 MakeDirectory=yes
+
+[Install]
+WantedBy=paths.target
