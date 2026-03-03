@@ -458,6 +458,14 @@ static void on_input_event() {
             if (ignore)
                 break;
 
+            /* If a new key is pressed while the previous is still held (i.e. fast typers),
+            synthesize a release so LVGL sees the required state transition and
+            the new keypress is registered */
+            if (pressed && data->state == LV_INDEV_STATE_PRESSED) {
+                data->state = LV_INDEV_STATE_RELEASED;
+                lv_indev_read(ext->keypad);
+            }
+
             data->state = pressed ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
 
             lv_indev_read(ext->keypad);
