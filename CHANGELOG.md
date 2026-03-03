@@ -11,6 +11,7 @@ If a change only affects particular applications, they are listed in parentheses
 ## Unreleased
 
 - fix(unl0kr): Add install section to systemd path unit (!86, thanks @craftyguy)
+- fix(unl0kr): Restore dynamic horizontal padding for input text box (!85, thanks @craftyguy)
 
 ## 3.5.0 (2026-03-02)
 
