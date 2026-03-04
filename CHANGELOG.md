@@ -10,7 +10,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 ## Unreleased
 
-Nothing at the moment.
+- fix(buffyboard): Remove initialization of .time.* in static input_event to fix build error on 32-bit platforms (!87, thanks @craftyguy)
 
 ## 3.5.1 (2026-03-03)
 
