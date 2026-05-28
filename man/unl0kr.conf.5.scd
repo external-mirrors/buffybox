@@ -27,7 +27,7 @@ for and, if found, merged in the following order:
 
 ## General
 *animations* = <true|false>
-	Enable or disable animations. Useful for slower devices. Default: false.
+	Enable or disable animations. Useful for slower devices. Default: true.
 
 *backend* = <fbdev|drm|sdl>
 	The rendering backend to use. Default: the first compiled backend from the list above.
@@ -60,20 +60,20 @@ for and, if found, merged in the following order:
 	the UI at runtime. Default: true.
 
 *bullet* = <value>
-	The character that will be used to obscure the password. Default: bullet.
+	The character that will be used to obscure the password. Default: • (U+2022).
 
 ## Theme
 *default* = <adwaita-light|adwaita-dark|breezy-light|breezy-dark|nord-light|nord-dark|pmos-light|pmos-dark>
 	Selects the default theme on boot. Can be changed at runtime to the 
-	alternative theme. Default: breezy-dark.
+	alternative theme. Default: breezy-light.
 
 *alternative* = <breezy-light|breezy-dark|pmos-light|pmos-dark>
 	Selects the alternative theme which the user can then choose on boot.
-	Default: breezy-light.
+	Default: breezy-dark.
 
 ## Input
 *keyboard* = <true|false>
-	Enable or disable the use of hardware keyboards. Default: true
+	Enable or disable the use of hardware keyboards. Default: true.
 
 *pointer* = <true|false>
 	Enable or disable the use of a hardware mouse or other pointing device.
@@ -82,6 +82,15 @@ for and, if found, merged in the following order:
 *touchscreen* = <true|false>
 	Enable or disable the use of the touchscreen.
 	Default: true.
+
+## Hardware keyboard
+*rules*++
+*model*++
+*layout*++
+*variant*++
+*options*
+	RMLVO options for xkbcommon, used for proper handling of hardware keyboards.
+	Default: built-in xkbcommon values.
 
 ## Quirks
 *fbdev_force_refresh* = <true|false>
