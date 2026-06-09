@@ -159,7 +159,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
  */
 
 void ul_config_init_opts(ul_config_opts *opts) {
-    opts->general.animations = false;
+    opts->general.animations = true;
     opts->general.backend = 0;
     opts->general.timeout = 0;
     opts->keyboard.autohide = true;
@@ -168,8 +168,8 @@ void ul_config_init_opts(ul_config_opts *opts) {
     opts->keyboard.haptic_feedback = true;
     opts->textarea.obscured = true;
     opts->textarea.bullet = LV_SYMBOL_BULLET;
-    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
-    opts->theme.alternate_id = BBX_THEMES_THEME_BREEZY_LIGHT;
+    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_LIGHT;
+    opts->theme.alternate_id = BBX_THEMES_THEME_BREEZY_DARK;
     opts->input.keyboard = true;
     opts->input.pointer = true;
     opts->input.touchscreen = true;

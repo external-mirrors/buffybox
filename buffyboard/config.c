@@ -92,7 +92,7 @@ static int parsing_handler(void* user_data, const char* section, const char* key
 void bb_config_init_opts(bb_config_opts *opts) {
     opts->keyboard.haptic_feedback = true;
     opts->keyboard.sticky_shift = true;
-    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
+    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_LIGHT;
     opts->input.pointer = true;
     opts->input.touchscreen = true;
     opts->quirks.fbdev_force_refresh = false;

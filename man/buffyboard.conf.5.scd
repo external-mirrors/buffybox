@@ -40,7 +40,7 @@ for and, if found, merged in the following order:
 ## Theme
 *default* = <adwaita-light|adwaita-dark|breezy-light|breezy-dark|nord-light|nord-dark|pmos-light|pmos-dark>
 	Selects the default theme on boot. Can be changed at runtime to the
-	alternative theme. Default: breezy-dark.
+	alternative theme. Default: breezy-light.
 
 ## Input
 *pointer* = <true|false>

@@ -189,8 +189,8 @@ void f0_config_init_opts(f0_config_opts *opts) {
     opts->general.backend = 0;
     opts->intro.title = "A Form!";
     opts->intro.body = "Please complete the following form.";
-    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_DARK;
-    opts->theme.alternate_id = BBX_THEMES_THEME_BREEZY_LIGHT;
+    opts->theme.default_id = BBX_THEMES_THEME_BREEZY_LIGHT;
+    opts->theme.alternate_id = BBX_THEMES_THEME_BREEZY_DARK;
     opts->keyboard.autohide = true;
     opts->keyboard.layout_id = SQ2LV_LAYOUT_US;
     opts->keyboard.popovers = true;
