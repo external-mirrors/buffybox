@@ -57,6 +57,11 @@ static int32_t content_height_without_kb;
  */
 
 /**
+ * Callback for buttons on a stylus.
+ */
+static void tablet_tool_button_cb();
+
+/**
  * Handle LV_EVENT_CLICKED events from the theme toggle button.
  *
  * @param event the event object
@@ -271,6 +276,10 @@ static void intro_key_cb(lv_event_t *event) {
     if (key == LV_KEY_ENTER) {
         get_started_btn_clicked_cb(event);
     }
+}
+
+static void tablet_tool_button_cb() {
+    sq2lv_toggle_fourth_layer(keyboard);
 }
 
 static void toggle_theme_btn_clicked_cb(lv_event_t *event) {
@@ -899,6 +908,7 @@ int main(int argc, char *argv[]) {
         exit_failure();
 
     bbx_indev_set_key_power_cb(shutdown);
+    bbx_indev_set_tablet_tool_button_cb(tablet_tool_button_cb);
 
     /* Hide the on-screen keyboard by default if a physical keyboard is connected */
     if (conf_opts.keyboard.autohide && bbx_indev_is_keyboard_connected()) {

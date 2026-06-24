@@ -176,6 +176,14 @@ bool sq2lv_switch_layer(lv_obj_t *keyboard, uint16_t btn_id) {
     return true;
 }
 
+void sq2lv_toggle_fourth_layer(lv_obj_t *keyboard) {
+    int layer_index = get_layer_index(keyboard);
+    if (layer_index == 3)
+        lv_keyboard_set_mode(keyboard, layer_index_to_keyboard_mode(0));
+    else
+        lv_keyboard_set_mode(keyboard, layer_index_to_keyboard_mode(3));
+}
+
 bool sq2lv_is_modifier(lv_obj_t *keyboard, uint16_t btn_id) {
     if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
         return false;

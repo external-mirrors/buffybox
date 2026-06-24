@@ -44,6 +44,11 @@ static sig_atomic_t redraw_requested = false;
  */
 
 /**
+ * Callback for buttons on a stylus.
+ */
+static void tablet_tool_button_cb();
+
+/**
  * Handle signals sent to the process.
  *
  * @param signum the signal's number
@@ -75,6 +80,10 @@ static void pop_checked_modifier_keys(void);
 /**
  * Static functions
  */
+
+static void tablet_tool_button_cb() {
+    sq2lv_toggle_fourth_layer(keyboard);
+}
 
 static void signal_handler(int signum) {
     if (signum == SIGUSR1) {
@@ -309,6 +318,8 @@ int main(int argc, char *argv[]) {
     };
     if (bbx_indev_init(fd_epoll, &input_config) == 0)
         return EXIT_FAILURE;
+
+    bbx_indev_set_tablet_tool_button_cb(tablet_tool_button_cb);
 
     /* Set up uinput device */
     if (!bb_uinput_device_init(sq2lv_unique_scancodes, sq2lv_num_unique_scancodes)) {
