@@ -49,6 +49,13 @@ bool sq2lv_is_layer_switcher(lv_obj_t *keyboard, uint16_t btn_id);
 bool sq2lv_switch_layer(lv_obj_t *keyboard, uint16_t btn_id);
 
 /**
+ * A toggle between the first and the fourth layer.
+ *
+ * @param keyboard keyboard widget
+ */
+void sq2lv_toggle_fourth_layer(lv_obj_t *keyboard);
+
+/**
  * Check if a key is a modifier in the current layer.
  *
  * @param keyboard keyboard widget

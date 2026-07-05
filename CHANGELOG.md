@@ -12,6 +12,7 @@ If a change only affects particular applications, they are listed in parentheses
 
 - fix(buffyboard): Remove initialization of .time.* in static input_event to fix build error on 32-bit platforms (!87, thanks @craftyguy)
 - misc: synchronize default values of options in binaries and configuration files (!88, thanks @vstoiakin)
+- feat: add support for styluses on tablets (!89, thanks @vstoiakin)
 
 ## 3.5.1 (2026-03-03)
 

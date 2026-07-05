@@ -87,6 +87,7 @@ static uint8_t num_touchpads = 0;
 #ifndef BBX_APP_BUFFYBOARD
 static void (*on_key_power_cb)() = NULL;
 #endif
+static void (*on_tablet_tool_button_cb)() = NULL;
 
 static struct {
 #ifndef BBX_APP_BUFFYBOARD
@@ -163,6 +164,8 @@ static enum input_device_type identify_input_device(struct udev_device* device) 
 static void add_device_extension(struct libinput_device* device) {
     enum input_device_type type = (enum input_device_type) libinput_device_get_user_data(device);
     libinput_device_set_user_data(device, NULL);
+
+    static_assert(BBX_INDEV_NONE == 0);
     if (type == BBX_INDEV_NONE) {
         struct udev_device *dev = libinput_device_get_udev_device(device);
         if (!dev) {
@@ -222,7 +225,8 @@ static void add_device_extension(struct libinput_device* device) {
 #endif
 
     if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER) ||
-        libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH)) {
+        libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH) ||
+        libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_TOOL)) {
         ext->pointer1 = lv_indev_create();
         if (!ext->pointer1) {
             bbx_log(BBX_LOG_LEVEL_ERROR, "Out of memory");
@@ -595,6 +599,62 @@ static void on_input_event() {
             break;
         }
 
+        case LIBINPUT_EVENT_TABLET_TOOL_TIP: {
+            struct libinput_event_tablet_tool *tablet_tool_event = libinput_event_get_tablet_tool_event(event);
+
+            struct indev_ext *data = lv_indev_get_user_data(ext->pointer1);
+
+            if (libinput_event_tablet_tool_get_tip_state(tablet_tool_event) == LIBINPUT_TABLET_TOOL_TIP_DOWN) {
+                lv_display_t* display = lv_indev_get_display(ext->pointer1);
+
+                int32_t x = libinput_event_tablet_tool_get_x_transformed(tablet_tool_event, display->physical_hor_res);
+                int32_t y = libinput_event_tablet_tool_get_y_transformed(tablet_tool_event, display->physical_ver_res);
+                x -= display->offset_x;
+                y -= display->offset_y;
+                if (x < 0 || x >= display->hor_res || y < 0 || y >= display->ver_res)
+                    break;
+                data->point.x = x;
+                data->point.y = y;
+                data->state = LV_INDEV_STATE_PRESSED;
+            } else {
+                data->state = LV_INDEV_STATE_RELEASED;
+            }
+
+            lv_indev_read(ext->pointer1);
+            break;
+        }
+
+        case LIBINPUT_EVENT_TABLET_TOOL_AXIS: {
+            struct libinput_event_tablet_tool *tablet_tool_event = libinput_event_get_tablet_tool_event(event);
+
+            if (libinput_event_tablet_tool_x_has_changed(tablet_tool_event) == 0 &&
+                libinput_event_tablet_tool_y_has_changed(tablet_tool_event) == 0)
+                break;
+
+            struct indev_ext *data = lv_indev_get_user_data(ext->pointer1);
+            lv_display_t* display = lv_indev_get_display(ext->pointer1);
+
+            int32_t x = libinput_event_tablet_tool_get_x_transformed(tablet_tool_event, display->physical_hor_res);
+            int32_t y = libinput_event_tablet_tool_get_y_transformed(tablet_tool_event, display->physical_ver_res);
+            x -= display->offset_x;
+            y -= display->offset_y;
+            if (x < 0 || x >= display->hor_res || y < 0 || y >= display->ver_res)
+                break;
+            data->point.x = x;
+            data->point.y = y;
+
+            lv_indev_read(ext->pointer1);
+            break;
+        }
+
+        case LIBINPUT_EVENT_TABLET_TOOL_BUTTON: {
+            struct libinput_event_tablet_tool *tablet_tool_event = libinput_event_get_tablet_tool_event(event);
+
+            bool pressed = libinput_event_tablet_tool_get_button_state(tablet_tool_event) == LIBINPUT_BUTTON_STATE_PRESSED;
+            if (pressed && on_tablet_tool_button_cb)
+                on_tablet_tool_button_cb();
+        }
+
         default:
             break;
         }
@@ -885,3 +945,7 @@ void bbx_indev_set_key_power_cb(void (*callback)()) {
     on_key_power_cb = callback;
 }
 #endif
+
+void bbx_indev_set_tablet_tool_button_cb(void (*callback)()) {
+    on_tablet_tool_button_cb = callback;
+}

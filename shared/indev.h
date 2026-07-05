@@ -61,4 +61,9 @@ bool bbx_indev_is_keyboard_connected();
 void bbx_indev_set_key_power_cb(void (*callback)());
 #endif
 
+/**
+ * Set a function that will be called on pressing any button on a stylus.
+ */
+void bbx_indev_set_tablet_tool_button_cb(void (*callback)());
+
 #endif /* BBX_INDEV_H */
