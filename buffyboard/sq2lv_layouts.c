@@ -17,7 +17,7 @@ static const char * const short_name_terminal_us = "terminal/us";
 
 /* Layer: Lowercase letters - generated from base */
 
-static const int num_keys_lower_terminal_us = 38;
+static const uint32_t num_keys_lower_terminal_us = 38;
 
 static const char * const keycaps_lower_terminal_us[] = { \
     "Ctrl", "Alt", LV_SYMBOL_UP, LV_SYMBOL_DOWN, LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, "\n", \
@@ -35,15 +35,15 @@ static const lv_buttonmatrix_ctrl_t attributes_lower_terminal_us[] = { \
     SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, 7, SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
-static const int num_modifiers_lower_terminal_us = 2;
+static const uint32_t num_modifiers_lower_terminal_us = 2;
 
-static const int modifier_idxs_lower_terminal_us[] = { \
+static const uint32_t modifier_idxs_lower_terminal_us[] = { \
     0, 1 \
 };
 
-static const int num_switchers_lower_terminal_us = 3;
+static const uint32_t num_switchers_lower_terminal_us = 3;
 
-static const int switcher_idxs_lower_terminal_us[] = { \
+static const uint32_t switcher_idxs_lower_terminal_us[] = { \
     25, 34, 36 \
 };
 
@@ -79,7 +79,7 @@ static const int scancode_nums_lower_terminal_us[] = { \
 
 /* Layer: Uppercase letters - generated from upper */
 
-static const int num_keys_upper_terminal_us = 38;
+static const uint32_t num_keys_upper_terminal_us = 38;
 
 static const char * const keycaps_upper_terminal_us[] = { \
     "Ctrl", "Alt", "PgUp", "PgDn", "Home", "End", "\n", \
@@ -97,15 +97,15 @@ static const lv_buttonmatrix_ctrl_t attributes_upper_terminal_us[] = { \
     SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, 7, SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
-static const int num_modifiers_upper_terminal_us = 2;
+static const uint32_t num_modifiers_upper_terminal_us = 2;
 
-static const int modifier_idxs_upper_terminal_us[] = { \
+static const uint32_t modifier_idxs_upper_terminal_us[] = { \
     0, 1 \
 };
 
-static const int num_switchers_upper_terminal_us = 3;
+static const uint32_t num_switchers_upper_terminal_us = 3;
 
-static const int switcher_idxs_upper_terminal_us[] = { \
+static const uint32_t switcher_idxs_upper_terminal_us[] = { \
     25, 34, 36 \
 };
 
@@ -141,7 +141,7 @@ static const int scancode_nums_upper_terminal_us[] = { \
 
 /* Layer: Numbers / symbols - generated from numbers */
 
-static const int num_keys_numbers_terminal_us = 39;
+static const uint32_t num_keys_numbers_terminal_us = 39;
 
 static const char * const keycaps_numbers_terminal_us[] = { \
     "Ctrl", "Alt", LV_SYMBOL_UP, LV_SYMBOL_DOWN, LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, "\n", \
@@ -159,15 +159,15 @@ static const lv_buttonmatrix_ctrl_t attributes_numbers_terminal_us[] = { \
     SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, 7, LV_BUTTONMATRIX_CTRL_POPOVER | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 2, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
-static const int num_modifiers_numbers_terminal_us = 2;
+static const uint32_t num_modifiers_numbers_terminal_us = 2;
 
-static const int modifier_idxs_numbers_terminal_us[] = { \
+static const uint32_t modifier_idxs_numbers_terminal_us[] = { \
     0, 1 \
 };
 
-static const int num_switchers_numbers_terminal_us = 2;
+static const uint32_t num_switchers_numbers_terminal_us = 2;
 
-static const int switcher_idxs_numbers_terminal_us[] = { \
+static const uint32_t switcher_idxs_numbers_terminal_us[] = { \
     26, 35 \
 };
 
@@ -203,7 +203,7 @@ static const int scancode_nums_numbers_terminal_us[] = { \
 
 /* Layer: Symbols - generated from symbols */
 
-static const int num_keys_symbols_terminal_us = 39;
+static const uint32_t num_keys_symbols_terminal_us = 39;
 
 static const char * const keycaps_symbols_terminal_us[] = { \
     "Ctrl", "Alt", LV_SYMBOL_UP, LV_SYMBOL_DOWN, LV_SYMBOL_LEFT, LV_SYMBOL_RIGHT, "\n", \
@@ -221,15 +221,15 @@ static const lv_buttonmatrix_ctrl_t attributes_symbols_terminal_us[] = { \
     SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, 7, LV_BUTTONMATRIX_CTRL_POPOVER | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 2, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
-static const int num_modifiers_symbols_terminal_us = 2;
+static const uint32_t num_modifiers_symbols_terminal_us = 2;
 
-static const int modifier_idxs_symbols_terminal_us[] = { \
+static const uint32_t modifier_idxs_symbols_terminal_us[] = { \
     0, 1 \
 };
 
-static const int num_switchers_symbols_terminal_us = 2;
+static const uint32_t num_switchers_symbols_terminal_us = 2;
 
-static const int switcher_idxs_symbols_terminal_us[] = { \
+static const uint32_t switcher_idxs_symbols_terminal_us[] = { \
     26, 35 \
 };
 
@@ -265,7 +265,7 @@ static const int scancode_nums_symbols_terminal_us[] = { \
 
 /* Layer: Actions - generated from actions */
 
-static const int num_keys_actions_terminal_us = 30;
+static const uint32_t num_keys_actions_terminal_us = 30;
 
 static const char * const keycaps_actions_terminal_us[] = { \
     "Ctrl", "Alt", "PgUp", "PgDn", "Home", "End", "\n", \
@@ -283,15 +283,15 @@ static const lv_buttonmatrix_ctrl_t attributes_actions_terminal_us[] = { \
     SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, SQ2LV_CTRL_NON_CHAR | LV_BUTTONMATRIX_CTRL_NO_REPEAT | 3, SQ2LV_CTRL_NON_CHAR | 3, SQ2LV_CTRL_NON_CHAR | 3, SQ2LV_CTRL_NON_CHAR | 3 \
 };
 
-static const int num_modifiers_actions_terminal_us = 2;
+static const uint32_t num_modifiers_actions_terminal_us = 2;
 
-static const int modifier_idxs_actions_terminal_us[] = { \
+static const uint32_t modifier_idxs_actions_terminal_us[] = { \
     0, 1 \
 };
 
-static const int num_switchers_actions_terminal_us = 1;
+static const uint32_t num_switchers_actions_terminal_us = 1;
 
-static const int switcher_idxs_actions_terminal_us[] = { \
+static const uint32_t switcher_idxs_actions_terminal_us[] = { \
     24 \
 };
 

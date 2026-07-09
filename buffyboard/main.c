@@ -153,10 +153,10 @@ static void emit_key_events(uint16_t btn_id, bool key_down, bool key_up) {
 }
 
 static void pop_checked_modifier_keys(void) {
-    int num_modifiers = 0;
-    const int *modifier_idxs = sq2lv_get_modifier_indexes(keyboard, &num_modifiers);
+    uint32_t num_modifiers = 0;
+    const uint32_t *modifier_idxs = sq2lv_get_modifier_indexes(keyboard, &num_modifiers);
 
-    for (int i = 0; i < num_modifiers; ++i) {
+    for (uint32_t i = 0; i < num_modifiers; ++i) {
         if (!lv_buttonmatrix_has_button_ctrl(keyboard, modifier_idxs[i], LV_BUTTONMATRIX_CTRL_CHECKED)) {
             emit_key_events(modifier_idxs[i], false, true);
             lv_buttonmatrix_set_button_ctrl(keyboard, modifier_idxs[i], LV_BUTTONMATRIX_CTRL_CHECKED);

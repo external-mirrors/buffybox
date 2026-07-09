@@ -51,7 +51,7 @@ static int get_layer_index(lv_obj_t *keyboard);
  * @param btn_id button index corresponding to the key
  * @return the destination layer's index or -1 if the key is not a layer switcher
  */
-static int get_destination_layer_index_for_layer_switcher(lv_obj_t *keyboard, uint16_t btn_id);
+static int get_destination_layer_index_for_layer_switcher(lv_obj_t *keyboard, uint32_t btn_id);
 
 
 /**
@@ -108,7 +108,7 @@ static int get_layer_index(lv_obj_t *keyboard) {
     return keyboard_mode_to_layer_index(lv_keyboard_get_mode(keyboard));
 }
 
-static int get_destination_layer_index_for_layer_switcher(lv_obj_t *keyboard, uint16_t btn_id) {
+static int get_destination_layer_index_for_layer_switcher(lv_obj_t *keyboard, uint32_t btn_id) {
     if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
         return -1;
     }
@@ -118,7 +118,7 @@ static int get_destination_layer_index_for_layer_switcher(lv_obj_t *keyboard, ui
         return -1;
     }
 
-    for (int i = 0; i < sq2lv_layouts[current_layout_id].layers[layer_index].num_switchers; ++i) {
+    for (uint32_t i = 0; i < sq2lv_layouts[current_layout_id].layers[layer_index].num_switchers; ++i) {
         if (sq2lv_layouts[current_layout_id].layers[layer_index].switcher_idxs[i] == btn_id) {
             return sq2lv_layouts[current_layout_id].layers[layer_index].switcher_dests[i];
         }
@@ -162,11 +162,11 @@ void sq2lv_switch_layout(lv_obj_t *keyboard, sq2lv_layout_id_t layout_id) {
     current_layout_id = layout_id;
 }
 
-bool sq2lv_is_layer_switcher(lv_obj_t *keyboard, uint16_t btn_id) {
+bool sq2lv_is_layer_switcher(lv_obj_t *keyboard, uint32_t btn_id) {
     return get_destination_layer_index_for_layer_switcher(keyboard, btn_id) >= 0;
 }
 
-bool sq2lv_switch_layer(lv_obj_t *keyboard, uint16_t btn_id) {
+bool sq2lv_switch_layer(lv_obj_t *keyboard, uint32_t btn_id) {
     int destination_layer_index = get_destination_layer_index_for_layer_switcher(keyboard, btn_id);
     if (destination_layer_index < 0 || destination_layer_index >= sq2lv_layouts[current_layout_id].num_layers) {
         return false;
@@ -184,7 +184,7 @@ void sq2lv_toggle_fourth_layer(lv_obj_t *keyboard) {
         lv_keyboard_set_mode(keyboard, layer_index_to_keyboard_mode(3));
 }
 
-bool sq2lv_is_modifier(lv_obj_t *keyboard, uint16_t btn_id) {
+bool sq2lv_is_modifier(lv_obj_t *keyboard, uint32_t btn_id) {
     if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
         return false;
     }
@@ -194,7 +194,7 @@ bool sq2lv_is_modifier(lv_obj_t *keyboard, uint16_t btn_id) {
         return false;
     }
 
-    for (int i = 0; i < sq2lv_layouts[current_layout_id].layers[layer_index].num_modifiers; ++i) {
+    for (uint32_t i = 0; i < sq2lv_layouts[current_layout_id].layers[layer_index].num_modifiers; ++i) {
         if (sq2lv_layouts[current_layout_id].layers[layer_index].modifier_idxs[i] == btn_id) {
             return true;
         }
@@ -203,7 +203,7 @@ bool sq2lv_is_modifier(lv_obj_t *keyboard, uint16_t btn_id) {
     return false;
 }
 
-int *sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers) {
+const uint32_t *sq2lv_get_modifier_indexes(lv_obj_t *keyboard, uint32_t *num_modifiers) {
     if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
         *num_modifiers = 0;
         return NULL;
@@ -220,11 +220,11 @@ int *sq2lv_get_modifier_indexes(lv_obj_t *keyboard, int *num_modifiers) {
         return NULL;
     }
 
-    return (int *)(&(sq2lv_layouts[current_layout_id].layers[layer_index].modifier_idxs[0]));
+    return sq2lv_layouts[current_layout_id].layers[layer_index].modifier_idxs;
 }
 
 #if SQ2LV_SCANCODES_ENABLED
-const int *sq2lv_get_scancodes(lv_obj_t *keyboard, uint16_t btn_id, int *num_scancodes) {
+const int *sq2lv_get_scancodes(lv_obj_t *keyboard, uint32_t btn_id, int *num_scancodes) {
     if (current_layout_id < 0 || current_layout_id >= sq2lv_num_layouts) {
         *num_scancodes = 0;
         return NULL;

@@ -18,19 +18,19 @@ typedef enum {
 /* Layer type */
 typedef struct {
     /* Number of keys */
-    const int num_keys;
+    const uint32_t num_keys;
     /* Key caps */
     const char * const * const keycaps;
     /* Key attributes */
     const lv_buttonmatrix_ctrl_t * const attributes;
     /* Number of modifier keys */
-    const int num_modifiers;
+    const uint32_t num_modifiers;
     /* Button indexes of modifier keys */
-    const int * const modifier_idxs;
+    const uint32_t * const modifier_idxs;
     /* Number of buttons that trigger a layer switch */
-    const int num_switchers;
+    const uint32_t num_switchers;
     /* Button indexes that trigger a layer switch */
-    const int * const switcher_idxs;
+    const uint32_t * const switcher_idxs;
     /* Indexes of layers to jump to when triggering layer switch buttons */
     const int * const switcher_dests;
     /* Total number of scancodes */
