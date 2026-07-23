@@ -312,24 +312,15 @@ keycap_for_key = {
     '←': 'LV_SYMBOL_LEFT',
     '→': 'LV_SYMBOL_RIGHT',
     'BackSpace': 'LV_SYMBOL_BACKSPACE',
-    'colon': ':',
-    'period': '.',
-    'Shift_L': 'SQ2LV_SYMBOL_SHIFT',
-    'space': ' ',
+    'show_upper': 'SQ2LV_SYMBOL_SHIFT',
     'Return': 'LV_SYMBOL_OK',
     'Up': 'LV_SYMBOL_UP',
     'Left': 'LV_SYMBOL_LEFT',
     'Down': 'LV_SYMBOL_DOWN',
-    'Right': 'LV_SYMBOL_RIGHT'
+    'Right': 'LV_SYMBOL_RIGHT',
+    'PageUp': 'PgUp',
+    'PageDown': 'PgDn'
 }
-
-def key_to_keycap(args, key):
-    """Return the keycap for a key.
-    
-    args -- commandline arguments
-    key -- the key
-    """
-    return keycap_for_key[key] if key in keycap_for_key else key
 
 
 def key_is_modifier(key, data_buttons):
@@ -344,8 +335,8 @@ def key_is_modifier(key, data_buttons):
 repeatable_keys = {
     'BackSpace',
     'Del',
-    'PgUp',
-    'PgDn',
+    'PageUp',
+    'PageDown',
     'Return',
     'space',
     '↑',
@@ -383,7 +374,10 @@ def key_to_attributes(key, is_locked, is_lockable, is_extra_top_row, data_button
         attributes.append('SQ2LV_CTRL_MOD_ACTIVE')
     elif is_lockable:
         attributes.append('SQ2LV_CTRL_MOD_INACTIVE')
-    elif key in data_buttons and key not in ['"', 'colon', 'period', 'space'] or key in ['↑', '←', '↓', '→']:
+    elif is_extra_top_row:
+        attributes.append('SQ2LV_CTRL_NON_CHAR')
+        attributes.append('LV_BUTTONMATRIX_CTRL_POPOVER')
+    elif key in data_buttons and ('action' in data_buttons[key] or 'keysym' in data_buttons[key]):
         attributes.append('SQ2LV_CTRL_NON_CHAR')
     elif key not in ['space']:
         attributes.append('LV_BUTTONMATRIX_CTRL_POPOVER')
@@ -391,17 +385,17 @@ def key_to_attributes(key, is_locked, is_lockable, is_extra_top_row, data_button
     if not key_can_repeat(key):
         attributes.append('LV_BUTTONMATRIX_CTRL_NO_REPEAT')
 
-    if is_extra_top_row:
-        attributes.append('SQ2LV_CTRL_NON_CHAR')
     if key == '<hidden>':
         attributes.append('LV_BUTTONMATRIX_CTRL_HIDDEN')
 
-    if key not in data_buttons or key in ['"', 'colon', 'period']:
-        attributes.append('2')
+    if 'SQ2LV_CTRL_NON_CHAR' in attributes or \
+       'SQ2LV_CTRL_MOD_INACTIVE' in attributes or \
+       'SQ2LV_CTRL_MOD_ACTIVE' in attributes:
+        attributes.append('3')
     elif key == 'space':
         attributes.append('7')
     else:
-        attributes.append('3')
+        attributes.append('2')
 
     return ' | '.join(attributes)
 
@@ -477,6 +471,7 @@ scancodes_for_keycap = {
     'Z': ['KEY_LEFTSHIFT', 'KEY_Z'],
     'Alt': ['KEY_LEFTALT'],
     'Ctrl': ['KEY_LEFTCTRL'],
+    'Shift': ['KEY_LEFTSHIFT'],
     'LV_SYMBOL_UP': ['KEY_UP'],
     'LV_SYMBOL_DOWN': ['KEY_DOWN'],
     'LV_SYMBOL_LEFT': ['KEY_LEFT'],
@@ -622,13 +617,16 @@ def get_keycaps_attrs_modifiers_switchers_scancodes(args, view_id, data_views, d
 
             keycap = None
 
-            if key in data_buttons and 'label' in data_buttons[key] and key not in ['Up', 'Left', 'Down', 'Right']:
+            if key in keycap_for_key:
+                keycap = keycap_for_key[key]
+            elif key not in data_buttons:
+                keycap = key
+            elif 'text' in data_buttons[key]:
+                keycap = data_buttons[key]['text'].replace('\\', '\\\\')
+            elif 'label' in data_buttons[key]:
                 keycap = data_buttons[key]['label'].replace('\\', '\\\\')
             else:
-                keycap = key_to_keycap(args, key)
-
-            if not keycap:
-                continue
+                keycap = key
 
             keycaps_in_row.append(keycap_to_c_value(keycap))
 
@@ -809,8 +807,6 @@ if __name__ == '__main__':
                         for scancode in scancodes_in_row:
                             unique_scancodes[scancode] = True
 
-                    c_builder.add_line(f'static const int num_scancodes_{layer_identifier} = {len(scancodes)};')
-                    c_builder.add_line()
                     c_builder.add_array(True, 'const int', f'scancodes_{layer_identifier}', scancodes_flat, '', '')
                     c_builder.add_line()
                     c_builder.add_array(True, 'const int', f'scancode_idxs_{layer_identifier}', scancode_idxs, '', '')
@@ -827,7 +823,7 @@ if __name__ == '__main__':
                 c_builder.add_line('    {')
                 fields = ['num_keys', 'keycaps', 'attributes', 'num_modifiers', 'modifier_idxs', 'num_switchers', 'switcher_idxs', 'switcher_dests']
                 if args.generate_scancodes:
-                    fields += ['num_scancodes', 'scancodes', 'scancode_idxs', 'scancode_nums']
+                    fields += ['scancodes', 'scancode_idxs', 'scancode_nums']
                 for k, field in enumerate(fields):
                     c_builder.add_line(f'        .{field} = {field}_{identifier}{comma_if_needed(fields, k)}')
                 c_builder.add_line('    }' + comma_if_needed(layer_identifiers, i))
@@ -868,8 +864,6 @@ if __name__ == '__main__':
     h_builder.add_line('    /* Indexes of layers to jump to when triggering layer switch buttons */')
     h_builder.add_line('    const int * const switcher_dests;')
     if args.generate_scancodes:
-        h_builder.add_line('    /* Total number of scancodes */')
-        h_builder.add_line('    const int num_scancodes;')
         h_builder.add_line('    /* Flat array of scancodes */')
         h_builder.add_line('    const int * const scancodes;')
         h_builder.add_line('    /* Start index in scancodes array for key cap */')
