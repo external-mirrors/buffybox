@@ -1,6 +1,8 @@
 Buffyboard
 ==========
 
+<img src="BuffyboardLogo.svg" alt="100x100" height="100"/>
+
 Touch-enabled framebuffer keyboard (not only) for vampire slayers.
 
 [[_TOC_]]
